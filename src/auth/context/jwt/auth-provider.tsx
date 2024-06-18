@@ -89,7 +89,7 @@ export function AuthProvider({ children }: Props) {
       if (accessToken && isValidToken(accessToken)) {
         setSession(accessToken);
 
-        const res = await axios.post('https://checklist.pmcweb.vn/be/api/ent_user/check-auth', [],
+        const res = await axios.post('http://localhost:8888/api/ent_user/check-auth',
           {
             headers: {
               'Content-Type': 'application/json',
@@ -98,8 +98,9 @@ export function AuthProvider({ children }: Props) {
           }
         );
 
-        const { data } = res.data;
+       
 
+        const { data } = res.data;
         dispatch({
           type: Types.INITIAL,
           payload: {
@@ -133,13 +134,13 @@ export function AuthProvider({ children }: Props) {
   }, [initialize]);
 
   // LOGIN
-  const login = useCallback(async (UserName: string, Password: string) => {
+  const login = useCallback(async (MaPMC: string, Password: string) => {
     const data = {
-      UserName,
+      MaPMC,
       Password,
     };
 
-    const urlHttp = 'https://checklist.pmcweb.vn/be/api/ent_user/login';
+    const urlHttp = 'http://localhost:8888/api/ent_user/login';
     const res = await axios.post(urlHttp, data);
     const { token, user } = res.data;
 

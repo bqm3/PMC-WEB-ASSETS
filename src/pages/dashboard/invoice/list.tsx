@@ -8,7 +8,7 @@ export default function InvoiceListPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Invoice List</title>
+        <title> Trang quản trị: Invoice List</title>
       </Helmet>
 
       <InvoiceListView />

@@ -8,7 +8,7 @@ export default function ChatPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Chat</title>
+        <title> Trang quản trị: Chat</title>
       </Helmet>
 
       <ChatView />

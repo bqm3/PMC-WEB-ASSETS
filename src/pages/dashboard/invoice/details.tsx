@@ -14,7 +14,7 @@ export default function InvoiceDetailsPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Invoice Details</title>
+        <title> Trang quản trị: Invoice Details</title>
       </Helmet>
 
       <InvoiceDetailsView id={`${id}`} />

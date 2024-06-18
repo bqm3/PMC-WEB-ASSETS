@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 // routes
 import { paths } from 'src/routes/paths';
 // locales
@@ -53,6 +53,8 @@ export function useNavData() {
   const { t } = useLocales();
   const { user, logout } = useAuthContext();
 
+  useEffect(() => {}, []);
+
   const data = useMemo(() => {
     const navigationData = [
       // OVERVIEW
@@ -76,67 +78,66 @@ export function useNavData() {
       },
       // MANAGEMENT
       {
-        subheader: t('management'),
+        subheader: t('lists'),
 
         items:
-          user?.Permission === 1
+          user?.ID_Chucvu === 1
             ? [
                 // KHU VUC
-                {
-                  title: t('area'),
-                  path: paths.dashboard.khuvuc.root,
-                  icon: ICONS.tour,
-                  children: [
-                    { title: t('list'), path: paths.dashboard.khuvuc.root },
-                    { title: t('create'), path: paths.dashboard.khuvuc.new },
-                  ],
-                },
-                {
-                  title: t('article'),
-                  path: paths.dashboard.hangmuc.root,
-                  icon: ICONS.kanban,
-                  children: [
-                    { title: t('list'), path: paths.dashboard.hangmuc.root },
-                    { title: t('create'), path: paths.dashboard.hangmuc.new,  },
-                    
-                  ],
-                },
-                {
-                  title: t('calv'),
-                  path: paths.dashboard.calv.root,
-                  icon: ICONS.job,
-                  children: [
-                    { title: t('list'), path: paths.dashboard.calv.root },
-                    { title: t('create'), path: paths.dashboard.calv.new },
-                  ],
-                },
-                {
-                  title: t('taikhoangiamsat'),
-                  path: paths.dashboard.quanlygiamsat.root,
-                  icon: ICONS.external,
-                  children: [
-                    { title: t('list'), path: paths.dashboard.quanlygiamsat.root },
-                  ],
-                },
-                {
-                  title: t('giamsat'),
-                  path: paths.dashboard.giamsat.root,
-                  icon: ICONS.user,
-                  children: [
-                    { title: t('list'), path: paths.dashboard.giamsat.root },
-                    { title: t('create'), path: paths.dashboard.giamsat.new },
-                  ],
-                },
-                {
-                  title: t('checklist'),
-                  path: paths.dashboard.checklist.root,
-                  icon: ICONS.lock,
-                  children: [
-                    { title: t('list'), path: paths.dashboard.checklist.root },
-                    { title: t('create'), path: paths.dashboard.checklist.new },
-                    { title: t('calamviec'), path: paths.dashboard.checklist.lists },
-                  ],
-                },
+                // {
+                //   title: t('area'),
+                //   path: paths.dashboard.khuvuc.root,
+                //   icon: ICONS.tour,
+                //   children: [
+                //     { title: t('list'), path: paths.dashboard.khuvuc.root },
+                //     { title: t('create'), path: paths.dashboard.khuvuc.new },
+                //   ],
+                // },
+                // {
+                //   title: t('article'),
+                //   path: paths.dashboard.hangmuc.root,
+                //   icon: ICONS.kanban,
+                //   children: [
+                //     { title: t('list'), path: paths.dashboard.hangmuc.root },
+                //     { title: t('create'), path: paths.dashboard.hangmuc.new,  },
+                //   ],
+                // },
+                // {
+                //   title: t('calv'),
+                //   path: paths.dashboard.calv.root,
+                //   icon: ICONS.job,
+                //   children: [
+                //     { title: t('list'), path: paths.dashboard.calv.root },
+                //     { title: t('create'), path: paths.dashboard.calv.new },
+                //   ],
+                // },
+                // {
+                //   title: t('taikhoangiamsat'),
+                //   path: paths.dashboard.quanlygiamsat.root,
+                //   icon: ICONS.external,
+                //   children: [
+                //     { title: t('list'), path: paths.dashboard.quanlygiamsat.root },
+                //   ],
+                // },
+                // {
+                //   title: t('giamsat'),
+                //   path: paths.dashboard.giamsat.root,
+                //   icon: ICONS.user,
+                //   children: [
+                //     { title: t('list'), path: paths.dashboard.giamsat.root },
+                //     { title: t('create'), path: paths.dashboard.giamsat.new },
+                //   ],
+                // },
+                // {
+                //   title: t('checklist'),
+                //   path: paths.dashboard.checklist.root,
+                //   icon: ICONS.lock,
+                //   children: [
+                //     { title: t('list'), path: paths.dashboard.checklist.root },
+                //     { title: t('create'), path: paths.dashboard.checklist.new },
+                //     { title: t('calamviec'), path: paths.dashboard.checklist.lists },
+                //   ],
+                // },
               ]
             : [],
       },
@@ -155,44 +156,63 @@ export function useNavData() {
     ];
 
     // Conditionally add "Tạo tài khoản" tab if user's role_id is 1
-    if (user?.Permission === 3) {
+    if (user?.ID_Chucvu === 1 || user?.ID_Chucvu === 2) {
       navigationData[1].items.push(
         {
-          title: t('project'),
-          path: paths.dashboard.duan.root,
-          icon: ICONS.tour,
+          title: t('grouppolicy'),
+          path: paths.dashboard.grouppolicy.root,
+          icon: ICONS.file,
           children: [
-            { title: t('create'), path: paths.dashboard.duan.new },
-            { title: t('list'), path: paths.dashboard.duan.root },
+            { title: t('list'), path: paths.dashboard.grouppolicy.root },
+            { title: t('create'), path: paths.dashboard.grouppolicy.new },
           ],
         },
         {
-          title: t('building'),
-          path: paths.dashboard.toanha.root,
+          title: t('policy'),
+          path: paths.dashboard.policy.root,
+          icon: ICONS.external,
+          children: [
+            { title: t('list'), path: paths.dashboard.policy.root },
+            { title: t('create'), path: paths.dashboard.policy.new },
+          ],
+        },
+        {
+          title: t('phongbanda'),
+          path: paths.dashboard.phongbanda.root,
           icon: ICONS.banking,
           children: [
-            { title: t('create'), path: paths.dashboard.toanha.new },
-            { title: t('list'), path: paths.dashboard.toanha.root },
+            { title: t('list'), path: paths.dashboard.phongbanda.root },
+            { title: t('create'), path: paths.dashboard.phongbanda.new },
           ],
         },
         {
-          title: t('tang'),
-          path: paths.dashboard.tang.root,
-          icon: ICONS.tour,
+          title: t('nhomts'),
+          path: paths.dashboard.nhomts.root,
+          icon: ICONS.ecommerce,
           children: [
-            { title: t('create'), path: paths.dashboard.tang.new },
-            { title: t('list'), path: paths.dashboard.tang.root },
+            { title: t('list'), path: paths.dashboard.nhomts.root },
+            { title: t('create'), path: paths.dashboard.nhomts.new },
           ],
         },
         {
-          title: t('createaccount'),
-          path: paths.dashboard.createUser.root,
+          title: t('taisan'),
+          path: paths.dashboard.taisan.root,
+          icon: ICONS.product,
+          children: [
+            { title: t('list'), path: paths.dashboard.taisan.root },
+            { title: t('create'), path: paths.dashboard.taisan.new },  
+          ],
+        },
+        {
+          title: t('createauser'),
+          path: paths.dashboard.createuser.root,
           icon: ICONS.user,
           children: [
-            { title: t('create'), path: paths.dashboard.createUser.root },
-            { title: t('list'), path: paths.dashboard.createUser.list },
+            { title: t('list'), path: paths.dashboard.createuser.root },
+            { title: t('create'), path: paths.dashboard.createuser.new },  
           ],
-        }
+        },
+        
       );
     }
 

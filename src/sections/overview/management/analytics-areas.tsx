@@ -39,9 +39,7 @@ interface Props extends CardProps {
 export default function AnaLyticsDuan({ title, subheader, list, ...other }: Props) {
   const router = useRouter();
 
-  const handleViewRow = useCallback(() => {
-    router.push(paths.dashboard.duan.root);
-  }, [router]);
+  
 
   return (
     <Card {...other}>
@@ -53,7 +51,7 @@ export default function AnaLyticsDuan({ title, subheader, list, ...other }: Prop
             size="small"
             color="inherit"
             endIcon={<Iconify icon="eva:arrow-ios-forward-fill" width={18} sx={{ ml: -0.5 }} />}
-            onClick={() => handleViewRow()}
+            // onClick={() => handleViewRow()}
           >
             Xem tất cả
           </Button>

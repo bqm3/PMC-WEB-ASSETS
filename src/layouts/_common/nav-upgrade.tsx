@@ -11,15 +11,6 @@ import { useLocales } from 'src/locales';
 // auth
 import { useAuthContext } from 'src/auth/hooks';
 
-// hooks
-
-// routes
-
-// locales
-
-// components
-
-
 // ----------------------------------------------------------------------
 
 export default function NavUpgrade() {
@@ -37,8 +28,8 @@ export default function NavUpgrade() {
     >
       <Stack alignItems="center">
         <Box sx={{ position: 'relative' }}>
-        <Avatar alt={user?.UserName} sx={{ mr: 2 }}>
-            {user?.UserName?.charAt(0).toUpperCase()}
+        <Avatar alt={user?.Hoten} sx={{ mr: 2 }}>
+            {user?.Hoten?.charAt(0).toUpperCase()}
           </Avatar>
           <Label
             color="success"
@@ -52,19 +43,17 @@ export default function NavUpgrade() {
               borderBottomLeftRadius: 2,
             }}
           >
-            {user?.Permission === 1 && 'Giám đốc dự án' }
-            {user?.Permission === 2 && 'Giám sát' }
-            {user?.Permission === 3 && 'Phòng Số Hóa' }
+            {user?.ent_chinhanh?.Tenchinhanh }
           </Label>
         </Box>
 
         <Stack spacing={0.5} sx={{ mt: 1.5, mb: 2 }}>
           <Typography variant="subtitle2" noWrap>
-            {user?.UserName}
+            {user?.Hoten}
           </Typography>
 
           <Typography variant="body2" noWrap sx={{ color: 'text.disabled' }}>
-            {user?.Emails}
+            {user?.Email}
           </Typography>
         </Stack>
 

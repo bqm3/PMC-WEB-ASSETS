@@ -8,7 +8,7 @@ export default function TourListPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Tour List</title>
+        <title> Trang quản trị: Tour List</title>
       </Helmet>
 
       <TourListView />

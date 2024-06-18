@@ -8,7 +8,7 @@ export default function ProductCreatePage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Create a new product</title>
+        <title> Trang quản trị: Create a new product</title>
       </Helmet>
 
       <ProductCreateView />

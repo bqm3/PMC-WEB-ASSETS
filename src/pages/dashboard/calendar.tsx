@@ -8,7 +8,7 @@ export default function CalendarPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Calendar</title>
+        <title> Trang quản trị: Calendar</title>
       </Helmet>
 
       <CalendarView />

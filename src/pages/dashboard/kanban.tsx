@@ -8,7 +8,7 @@ export default function KanbanPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Kanban</title>
+        <title> Trang quản trị: Kanban</title>
       </Helmet>
 
       <KanbanView />

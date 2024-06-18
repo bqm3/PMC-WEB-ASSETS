@@ -8,7 +8,7 @@ export default function OverviewBankingPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Banking</title>
+        <title> Trang quản trị: Banking</title>
       </Helmet>
 
       <OverviewBankingView />

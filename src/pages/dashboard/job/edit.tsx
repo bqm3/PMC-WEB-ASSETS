@@ -14,7 +14,7 @@ export default function JobEditPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Dashboard: Job Edit</title>
+        <title> Trang quản trị: Dashboard: Job Edit</title>
       </Helmet>
 
       <JobEditView id={`${id}`} />

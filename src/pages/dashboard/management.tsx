@@ -8,7 +8,7 @@ export default function OverviewManagementsPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Quản lý dự án</title>
+        <title> Trang quản trị: Quản lý dự án</title>
       </Helmet>
 
       <OverviewManagementsView />

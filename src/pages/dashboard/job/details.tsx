@@ -14,7 +14,7 @@ export default function JobDetailsPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Job Details</title>
+        <title> Trang quản trị: Job Details</title>
       </Helmet>
 
       <JobDetailsView id={`${id}`} />

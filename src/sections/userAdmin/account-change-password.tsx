@@ -58,7 +58,7 @@ export default function AccountChangePassword() {
   const onSubmit = handleSubmit(async (data) => {
     try {
       axios
-        .post(`https://checklist.pmcweb.vn/be/api/ent_user/change-password`, data, {
+        .post(`http://localhost:8888/api/ent_user/change-password`, data, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -69,25 +69,24 @@ export default function AccountChangePassword() {
           enqueueSnackbar('Đổi mật khẩu thành công!');
         })
         .catch((error) => {
-          console.log('error.response', error.response);
           if (error.response) {
             enqueueSnackbar({
               variant: 'error',
-              autoHideDuration: 3000,
+              autoHideDuration: 2000,
               message: `${error.response.data.message}`,
             });
           } else if (error.request) {
             // Lỗi không nhận được phản hồi từ server
             enqueueSnackbar({
               variant: 'error',
-              autoHideDuration: 3000,
+              autoHideDuration: 2000,
               message: `Không nhận được phản hồi từ máy chủ`,
             });
           } else {
             // Lỗi khi cấu hình request
             enqueueSnackbar({
               variant: 'error',
-              autoHideDuration: 3000,
+              autoHideDuration: 2000,
               message: `Lỗi gửi yêu cầu`,
             });
           }

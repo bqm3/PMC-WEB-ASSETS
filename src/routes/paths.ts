@@ -136,6 +136,7 @@ export const paths = {
         edit: `${ROOTS.DASHBOARD}/service/${MOCK_ID}/edit`,
       },
     },
+    
     khuvuc: {
       root: `${ROOTS.DASHBOARD}/khuvuc`,
       new: `${ROOTS.DASHBOARD}/khuvuc/new`,
@@ -171,57 +172,11 @@ export const paths = {
       details: (id: string) => `${ROOTS.DASHBOARD}/quan-ly-giam-sat/${id}`,
       edit: (id: string) => `${ROOTS.DASHBOARD}/quan-ly-giam-sat/${id}/edit`,
     },
-
-    checklist: {
-      root: `${ROOTS.DASHBOARD}/checklist`,
-      new: `${ROOTS.DASHBOARD}/checklist/new`,
-      detail: (id: string) => `${ROOTS.DASHBOARD}/checklist/lists/${id}`,
-      edit: (id: string) => `${ROOTS.DASHBOARD}/checklist/${id}/edit`,
-      lists :`${ROOTS.DASHBOARD}/checklist/lists`, 
-    },
-    createUser: {
-      root: `${ROOTS.DASHBOARD}/create-user`,
-      list: `${ROOTS.DASHBOARD}/create-user/list`,
-      edit: (id: string) => `${ROOTS.DASHBOARD}/create-user/${id}/edit`,
-    },
-    duan: {
-      root: `${ROOTS.DASHBOARD}/duan`,
-      new: `${ROOTS.DASHBOARD}/duan/new`,
-      details: (id: string) => `${ROOTS.DASHBOARD}/duan/${id}`,
-      edit: (id: string) => `${ROOTS.DASHBOARD}/duan/${id}/edit`,
-    },
-    toanha: {
-      root: `${ROOTS.DASHBOARD}/toanha`,
-      new: `${ROOTS.DASHBOARD}/toanha/new`,
-      details: (id: string) => `${ROOTS.DASHBOARD}/toanha/${id}`,
-      edit: (id: string) => `${ROOTS.DASHBOARD}/toanha/${id}/edit`,
-    },
     userAdmin: {
       root: `${ROOTS.DASHBOARD}/user/`,
       profile: `${ROOTS.DASHBOARD}/user/`,
     },
-    room: {
-      root: `${ROOTS.DASHBOARD}/room`,
-      new: `${ROOTS.DASHBOARD}/room/new`,
-      details: (id: string) => `${ROOTS.DASHBOARD}/room/${id}`,
-      edit: (id: string) => `${ROOTS.DASHBOARD}/room/${id}/edit`,
-      demo: {
-        details: `${ROOTS.DASHBOARD}/room/${MOCK_ID}`,
-        edit: `${ROOTS.DASHBOARD}/room/${MOCK_ID}/edit`,
-      },
-    },
-    orderBooking: {
-      root: `${ROOTS.DASHBOARD}/order-booking`,
-      list: `${ROOTS.DASHBOARD}/order-booking/services`,
-      details: (id: string|number) => `${ROOTS.DASHBOARD}/order-booking/${id}`,
-      edit: (id: string| number) => `${ROOTS.DASHBOARD}/order-booking/${id}/edit`,
-      detail_service: (id: string|number) => `${ROOTS.DASHBOARD}/order-booking/services/${id}`,
-      edit_service: (id: string| number) => `${ROOTS.DASHBOARD}/order-booking/services/${id}/edit`,
-      demo: {
-        details: `${ROOTS.DASHBOARD}/order-booking/${MOCK_ID}`,
-        edit: `${ROOTS.DASHBOARD}/order-booking/${MOCK_ID}/edit`,
-      },
-    },
+    
     accountEmployee: {
       root: `${ROOTS.DASHBOARD}/account-employee`,
     },
@@ -294,6 +249,32 @@ export const paths = {
         details: `${ROOTS.DASHBOARD}/tour/${MOCK_ID}`,
         edit: `${ROOTS.DASHBOARD}/tour/${MOCK_ID}/edit`,
       },
+    },
+
+    grouppolicy: {
+      root: `${ROOTS.DASHBOARD}/group-policy`,
+      new: `${ROOTS.DASHBOARD}/group-policy/new`,
+     
+    },
+    policy: {
+      root: `${ROOTS.DASHBOARD}/policy`,
+      new: `${ROOTS.DASHBOARD}/policy/new`,
+    },
+    phongbanda: {
+      root: `${ROOTS.DASHBOARD}/phong-ban`,
+      new: `${ROOTS.DASHBOARD}/phong-ban/new`,
+    },
+    nhomts: {
+      root: `${ROOTS.DASHBOARD}/nhom-tai-san`,
+      new: `${ROOTS.DASHBOARD}/nhom-tai-san/new`,
+    },
+    createuser: {
+      root: `${ROOTS.DASHBOARD}/create-user`,
+      new: `${ROOTS.DASHBOARD}/create-user/new`,
+    },
+    taisan: {
+      root: `${ROOTS.DASHBOARD}/tai-san`,
+      new: `${ROOTS.DASHBOARD}/tai-san/new`,
     },
   },
 };

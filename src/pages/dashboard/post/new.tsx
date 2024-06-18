@@ -8,7 +8,7 @@ export default function PostCreatePage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Create a new post</title>
+        <title> Trang quản trị: Create a new post</title>
       </Helmet>
 
       <PostCreateView />

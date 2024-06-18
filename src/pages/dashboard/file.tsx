@@ -8,7 +8,7 @@ export default function OverviewFilePage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: File</title>
+        <title> Trang quản trị: File</title>
       </Helmet>
 
       <OverviewFileView />

@@ -14,7 +14,7 @@ export default function TourEditPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Tour Edit</title>
+        <title> Trang quản trị: Tour Edit</title>
       </Helmet>
 
       <TourEditView id={`${id}`} />

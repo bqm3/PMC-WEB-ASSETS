@@ -14,7 +14,7 @@ export default function PostEditPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Post Edit</title>
+        <title> Trang quản trị: Post Edit</title>
       </Helmet>
 
       <PostEditView title={`${title}`} />

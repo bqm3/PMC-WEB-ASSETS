@@ -14,7 +14,7 @@ export default function PostDetailsPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Post Details</title>
+        <title> Trang quản trị: Post Details</title>
       </Helmet>
 
       <PostDetailsView title={`${title}`} />

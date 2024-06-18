@@ -14,7 +14,7 @@ export default function ProductDetailsPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Product Details</title>
+        <title> Trang quản trị: Product Details</title>
       </Helmet>
 
       <ProductDetailsView id={`${id}`} />

@@ -14,7 +14,7 @@ export default function TourDetailsPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Analytics</title>
+        <title> Trang quản trị: Analytics</title>
       </Helmet>
 
       <TourDetailsView id={`${id}`} />

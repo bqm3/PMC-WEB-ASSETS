@@ -95,7 +95,7 @@ export default function GiamsatNewEditForm({ id }: Props) {
   const onSubmit = async () => {
     setLoading(true);
     await axios
-      .put(`https://checklist.pmcweb.vn/be/api/ent_user/set-up/${id}`, checkedStates, {
+      .put(`http://localhost:8888/api/ent_user/set-up/${id}`, checkedStates, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -114,21 +114,21 @@ export default function GiamsatNewEditForm({ id }: Props) {
         if (error.response) {
           enqueueSnackbar({
             variant: 'error',
-            autoHideDuration: 3000,
+            autoHideDuration: 2000,
             message: `${error.response.data.message}`,
           });
         } else if (error.request) {
           // Lỗi không nhận được phản hồi từ server
           enqueueSnackbar({
             variant: 'error',
-            autoHideDuration: 3000,
+            autoHideDuration: 2000,
             message: `Không nhận được phản hồi từ máy chủ`,
           });
         } else {
           // Lỗi khi cấu hình request
           enqueueSnackbar({
             variant: 'error',
-            autoHideDuration: 3000,
+            autoHideDuration: 2000,
             message: `Lỗi gửi yêu cầu`,
           });
         }

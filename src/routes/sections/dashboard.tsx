@@ -22,35 +22,15 @@ const OverviewManagementPage = lazy(() => import('src/pages/dashboard/management
 const OverviewBankingPage = lazy(() => import('src/pages/dashboard/banking'));
 const OverviewBookingPage = lazy(() => import('src/pages/dashboard/booking'));
 const OverviewFilePage = lazy(() => import('src/pages/dashboard/file'));
-// TYPE ROOM
-const TypeRoomListPage = lazy(() => import('src/pages/dashboard/type-room/list'));
-const TypeRoomEditPage = lazy(() => import('src/pages/dashboard/type-room/edit'));
-// TYPE SERVICE
-const TypeServiceListPage = lazy(() => import('src/pages/dashboard/type-service/list'));
-const TypeServiceEditPage = lazy(() => import('src/pages/dashboard/type-service/edit'));
 // SERVICE
 const ServiceListPage = lazy(() => import('src/pages/dashboard/service/list'));
 const ServiceEditPage = lazy(() => import('src/pages/dashboard/service/edit'));
-// ROOM
-const RoomListsPage = lazy(() => import('src/pages/dashboard/room/list'));
-const RoomDetailPage = lazy(() => import('src/pages/dashboard/room/details'));
-const RoomNewPage = lazy(() => import('src/pages/dashboard/room/new'));
-const RoomEditPage = lazy(() => import('src/pages/dashboard/room/edit'));
-// ORDER BOOKING
-
-const OrderBookingListPage = lazy(() => import('src/pages/dashboard/order-booking/list'));
-const ServiceBookingListView = lazy(() => import('src/pages/dashboard/order-booking/list-service'));
-const OrderBookingDetailsPage = lazy(() => import('src/pages/dashboard/order-booking/details'));
-const OrderBookingEditPage = lazy(() => import('src/pages/dashboard/order-booking/edit'));
-const ServiceBookingEditPage = lazy(() => import('src/pages/dashboard/order-booking/edit-service'));
-
 // PRODUCT
 const ProductDetailsPage = lazy(() => import('src/pages/dashboard/product/details'));
 const ProductListPage = lazy(() => import('src/pages/dashboard/product/list'));
 const ProductCreatePage = lazy(() => import('src/pages/dashboard/product/new'));
 const ProductEditPage = lazy(() => import('src/pages/dashboard/product/edit'));
-// ORDER
-const OrderListPage = lazy(() => import('src/pages/dashboard/order/list'));
+
 // INVOICE
 const InvoiceListPage = lazy(() => import('src/pages/dashboard/invoice/list'));
 const InvoiceDetailsPage = lazy(() => import('src/pages/dashboard/invoice/details'));
@@ -90,62 +70,36 @@ const PermissionDeniedPage = lazy(() => import('src/pages/dashboard/permission')
 // BLANK PAGE
 const BlankPage = lazy(() => import('src/pages/dashboard/blank'));
 //
-const CreateEmployeePage = lazy(() => import('src/pages/dashboard/create-employee/new'));
-const ListEmployeePage = lazy(() => import('src/pages/dashboard/create-employee/list'));
-const ListEditEmployeePage = lazy(() => import('src/pages/dashboard/create-employee/edit'));
+// const CreateEmployeePage = lazy(() => import('src/pages/dashboard/create-employee/new'));
+// const ListEmployeePage = lazy(() => import('src/pages/dashboard/create-employee/list'));
+// const ListEditEmployeePage = lazy(() => import('src/pages/dashboard/create-employee/edit'));
 
 const EmployeeAccountPage = lazy(() => import('src/pages/dashboard/account/account'));
 
 // FICILITIES
 const OverviewFicilitiesPage = lazy(() => import('src/pages/dashboard/facilities'));
 
-// Khu vực
-const KhuVucListsPage = lazy(() => import('src/pages/dashboard/khuvuc/list'));
-const KhuVucNewPage = lazy(() => import('src/pages/dashboard/khuvuc/new'));
-const KhuvucEditPage = lazy(() => import('src/pages/dashboard/khuvuc/edit'));
-
-// Tang
-const TangListsPage = lazy(() => import('src/pages/dashboard/tang/list'));
-const TangNewPage = lazy(() => import('src/pages/dashboard/tang/new'));
-// const TangEditPage = lazy(() => import('src/pages/dashboard/tang/edit'));
-
-// Hạng mục
-const HangMucListsPage = lazy(() => import('src/pages/dashboard/hangmuc/list'));
-const HangMucNewPage = lazy(() => import('src/pages/dashboard/hangmuc/new'));
-const HangMucEditPage = lazy(() => import('src/pages/dashboard/hangmuc/edit'));
-
-// Ca lam viec
-const CalvListsPage = lazy(() => import('src/pages/dashboard/calv/list'));
-const CalvNewPage = lazy(() => import('src/pages/dashboard/calv/new'));
-const CalvEditPage = lazy(() => import('src/pages/dashboard/calv/edit'));
-
-// Giam sat
-const GiamsatListsPage = lazy(() => import('src/pages/dashboard/giamsat/list'));
-const GiamsatNewPage = lazy(() => import('src/pages/dashboard/giamsat/new'));
-const GiamsatEditPage = lazy(() => import('src/pages/dashboard/giamsat/edit'));
-
 
 const QuanlyGiamsatListsPage = lazy(() => import('src/pages/dashboard/quanlygiamsat/list'));
 const QuanlyGiamsatEditPage = lazy(() => import('src/pages/dashboard/quanlygiamsat/edit'));
 
-// Dự án
-const DuanListsPage = lazy(() => import('src/pages/dashboard/duan/list'));
-const DuanNewPage = lazy(() => import('src/pages/dashboard/duan/new'));
-const DuanEditPage = lazy(() => import('src/pages/dashboard/duan/edit'));
+const GroupPolicyListsPage = lazy(() => import('src/pages/dashboard/grouppolicy/list'));
+const GroupPolicyNewPage = lazy(() => import('src/pages/dashboard/grouppolicy/new'));
 
-// Tòa nhà
-const ToanhaListsPage = lazy(() => import('src/pages/dashboard/toanha/list'));
-const ToanhaNewPage = lazy(() => import('src/pages/dashboard/toanha/new'));
-const ToanhaEditPage = lazy(() => import('src/pages/dashboard/toanha/edit'));
+const PolicyListsPage = lazy(() => import('src/pages/dashboard/policy/list'));
+const PolicyNewPage = lazy(() => import('src/pages/dashboard/policy/new'));
 
-// Checklist
-const CheckListListsPage = lazy(() => import('src/pages/dashboard/checklist/list'));
-const TCheckListListsPage = lazy(() => import('src/pages/dashboard/checklist/tlist'));
-const CheckListNewPage = lazy(() => import('src/pages/dashboard/checklist/new'));
-const CheckListEditPage = lazy(() => import('src/pages/dashboard/checklist/edit'));
-const CaChecklistDetailPage = lazy(() => import('src/pages/dashboard/checklist/detail'));
+const PhongBanDaListsPage = lazy(() => import('src/pages/dashboard/phongbanda/list'));
+const PhongBanDaNewPage = lazy(() => import('src/pages/dashboard/phongbanda/new'));
 
-const UserAdminProfilePage = lazy(() => import('src/pages/dashboard/userAdmin/profile'));
+const NhomTsListsPage = lazy(() => import('src/pages/dashboard/nhom/list'));
+const NhomTsNewPage = lazy(() => import('src/pages/dashboard/nhom/new'));
+
+const CreateUserListsPage = lazy(() => import('src/pages/dashboard/create-user/list'));
+const CreateUserNewPage = lazy(() => import('src/pages/dashboard/create-user/new'));
+
+const TaiSanListsPage = lazy(() => import('src/pages/dashboard/taisan/list'));
+const TaiSanNewPage = lazy(() => import('src/pages/dashboard/taisan/new'));
 // -----------------------------------------
 
 export const dashboardRoutes = [
@@ -170,148 +124,61 @@ export const dashboardRoutes = [
       { path: 'booking', element: <OverviewBookingPage /> },
       { path: 'file', element: <OverviewFilePage /> },
       { path: 'ficilities', element: <OverviewFicilitiesPage /> },
+      
       {
-        path: 'type-room',
+        path: 'group-policy',
         children: [
-          { element: <TypeRoomListPage />, index: true },
-          { path: 'list', element: <TypeRoomListPage /> },
-          { path: ':id/edit', element: <TypeRoomEditPage /> },
-          { path: 'new', element: <TypeRoomEditPage /> },
+          { element: <GroupPolicyListsPage />, index: true },
+          { path: 'list', element: <GroupPolicyListsPage /> },
+          { path: 'new', element: <GroupPolicyNewPage /> },
         ],
       },
       {
-        path: 'type-service',
+        path: 'policy',
         children: [
-          { element: <TypeServiceListPage />, index: true },
-          { path: 'list', element: <TypeServiceListPage /> },
-          { path: ':id/edit', element: <TypeServiceEditPage /> },
-          { path: 'new', element: <TypeServiceEditPage /> },
+          { element: <PolicyListsPage />, index: true },
+          { path: 'list', element: <PolicyListsPage /> },
+          { path: 'new', element: <PolicyNewPage /> },
         ],
       },
       {
-        path: 'service',
+        path: 'phong-ban',
         children: [
-          { element: <ServiceListPage />, index: true },
-          { path: 'list', element: <ServiceListPage /> },
-          { path: ':id/edit', element: <ServiceEditPage /> },
-          { path: 'new', element: <ServiceNewView /> },
+          { element: <PhongBanDaListsPage />, index: true },
+          { path: 'list', element: <PhongBanDaListsPage /> },
+          { path: 'new', element: <PhongBanDaNewPage /> },
         ],
       },
       {
-        path: 'room',
+        path: 'nhom-tai-san',
         children: [
-          { element: <RoomListsPage />, index: true },
-          { path: 'list', element: <RoomListsPage /> },
-          { path: ':id', element: <RoomDetailPage /> },
-          { path: ':id/edit', element: <RoomEditPage /> },
-          { path: 'new', element: <RoomNewPage /> },
+          { element: <NhomTsListsPage />, index: true },
+          { path: 'list', element: <NhomTsListsPage /> },
+          { path: 'new', element: <NhomTsNewPage /> },
         ],
-      },
-      {
-        path: 'khuvuc',
-        children: [
-          { element: <KhuVucListsPage />, index: true },
-          { path: 'list', element: <KhuVucListsPage /> },
-          { path: ':id/edit', element: <KhuvucEditPage /> },
-          { path: 'new', element: <KhuVucNewPage /> },
-        ],
-      },
-      {
-        path: 'hangmuc',
-        children: [
-          { element: <HangMucListsPage />, index: true },
-          { path: 'list', element: <HangMucListsPage /> },
-          { path: ':id/edit', element: <HangMucEditPage /> },
-          { path: 'new', element: <HangMucNewPage /> },
-        ],
-      },
-      {
-        path: 'calv',
-        children: [
-          { element: <CalvListsPage />, index: true },
-          { path: 'list', element: <CalvListsPage /> },
-          { path: ':id/edit', element: <CalvEditPage /> },
-          { path: 'new', element: <CalvNewPage /> },
-        ],
-      },
-      {
-        path: 'giamsat',
-        children: [
-          { element: <GiamsatListsPage />, index: true },
-          { path: 'list', element: <GiamsatListsPage /> },
-          { path: ':id/edit', element: <GiamsatEditPage /> },
-          { path: 'new', element: <GiamsatNewPage /> },
-        ],
-      },
-      {
-        path: 'checklist',
-        children: [
-          { element: <CheckListListsPage />, index: true },
-          { path: 'list', element: <CheckListListsPage /> },
-          { path: ':id/edit', element: <CheckListEditPage /> },
-          { path: 'lists/:id', element: <CaChecklistDetailPage /> },
-          { path: 'new', element: <CheckListNewPage /> },
-          { path: 'lists', element: <TCheckListListsPage /> },
-        ],
-      },
-      {
-        path: 'toanha',
-        children: [
-          { element: <ToanhaListsPage />, index: true },
-          { path: 'list', element: <ToanhaListsPage /> },
-          { path: ':id/edit', element: <ToanhaEditPage /> },
-          { path: 'new', element: <ToanhaNewPage /> },
-        ],
-      },
-      {
-        path: 'tang',
-        children: [
-          { element: <TangListsPage />, index: true },
-          { path: 'list', element: <TangListsPage /> },
-          // { path: ':id/edit', element: <TangEditPage /> },
-          { path: 'new', element: <TangNewPage /> },
-        ],
-      },
-      {
-        path: 'duan',
-        children: [
-          { element: <DuanListsPage />, index: true },
-          { path: 'list', element: <DuanListsPage /> },
-          { path: ':id/edit', element: <DuanEditPage /> },
-          { path: 'new', element: <DuanNewPage /> },
-        ],
-      },
-      {
-        path: 'user',
-        children: [
-          { element: <UserAdminProfilePage />, index: true },
-          { path: 'profile', element: <UserAdminProfilePage /> },
-        ],
-      },
-      {
-        path: 'order-booking',
-        children: [
-          { element: <OrderBookingListPage />, index: true },
-          { path: 'services', element: <ServiceBookingListView /> },
-          { path: ':id', element: <OrderBookingDetailsPage /> },
-          { path: ':id/edit', element: <OrderBookingEditPage /> },
-          { path: 'services/:id/edit', element: <ServiceBookingEditPage /> },
-          { path: 'services/:id', element: <OrderBookingEditPage /> },
-          // { path: 'new', element: <InvoiceCreatePage /> },
-        ],
-      },
-      {
-        path: 'account-employee',
-        children: [{ element: <EmployeeAccountPage />, index: true }],
       },
       {
         path: 'create-user',
         children: [
-          { element: <CreateEmployeePage />, index: true },
-          { path: 'list', element: <ListEmployeePage /> },
-          { path: ':id/edit', element: <ListEditEmployeePage /> },
+          { element: <CreateUserListsPage />, index: true },
+          { path: 'list', element: <CreateUserListsPage /> },
+          { path: 'new', element: <CreateUserNewPage /> },
         ],
       },
+      {
+        path: 'tai-san',
+        children: [
+          { element: <TaiSanListsPage />, index: true },
+          { path: 'list', element: <TaiSanListsPage /> },
+          { path: 'new', element: <TaiSanNewPage /> },
+        ],
+      },
+
+      {
+        path: 'account-employee',
+        children: [{ element: <EmployeeAccountPage />, index: true }],
+      },
+     
       {
         path: 'quan-ly-giam-sat',
         children: [
@@ -320,18 +187,7 @@ export const dashboardRoutes = [
           { path: ':id/edit', element: <QuanlyGiamsatEditPage /> },
         ],
       },
-      {
-        path: 'userMinimal',
-        children: [
-          { element: <UserProfilePage />, index: true },
-          { path: 'profile', element: <UserProfilePage /> },
-          { path: 'cards', element: <UserCardsPage /> },
-          { path: 'list', element: <UserListPage /> },
-          { path: 'new', element: <UserCreatePage /> },
-          { path: ':id/edit', element: <UserEditPage /> },
-          { path: 'account', element: <UserAccountPage /> },
-        ],
-      },
+     
       {
         path: 'product',
         children: [
@@ -342,14 +198,7 @@ export const dashboardRoutes = [
           { path: ':id/edit', element: <ProductEditPage /> },
         ],
       },
-      {
-        path: 'order',
-        children: [
-          { element: <OrderListPage />, index: true },
-          { path: 'list', element: <OrderListPage /> },
-          // { path: ':id', element: <OrderDetailsPage /> },
-        ],
-      },
+      
       {
         path: 'invoice',
         children: [

@@ -8,7 +8,7 @@ export default function ProfilePage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Thông tin cá nhân</title>
+        <title> Trang quản trị: Thông tin cá nhân</title>
       </Helmet>
 
       <AccountView />

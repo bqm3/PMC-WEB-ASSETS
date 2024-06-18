@@ -8,7 +8,7 @@ export default function JobCreatePage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Create a new job</title>
+        <title> Trang quản trị: Create a new job</title>
       </Helmet>
 
       <JobCreateView />

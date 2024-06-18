@@ -40,12 +40,12 @@ export default function JwtLoginView() {
   const password = useBoolean();
 
   const LoginSchema = Yup.object().shape({
-    UserName: Yup.string().required('Phải có tên người dùng'),
+    MaPMC: Yup.string().required('Phải có mã PMC'),
     Password: Yup.string().required('Phải có mật khẩu'),
   });
 
   const defaultValues = {
-    UserName: '',
+    MaPMC: '',
     Password: '',
   };
 
@@ -62,11 +62,10 @@ export default function JwtLoginView() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await login?.(data.UserName, data.Password);
+      await login?.(data.MaPMC, data.Password);
 
       router.push(returnTo || PATH_AFTER_LOGIN);
     } catch (error) {
-      console.error(error);
       reset();
       setErrorMsg(typeof error === 'string' ? error : error.message);
     }
@@ -82,7 +81,7 @@ export default function JwtLoginView() {
     <Stack spacing={2.5}>
       {!!errorMsg && <Alert severity="error">{errorMsg}</Alert>}
 
-      <RHFTextField name="UserName" label="Tài khoản" />
+      <RHFTextField name="MaPMC" label="Tài khoản" />
 
       <RHFTextField
         name="Password"

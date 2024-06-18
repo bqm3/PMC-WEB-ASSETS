@@ -14,7 +14,7 @@ export default function InvoiceEditPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Invoice Edit</title>
+        <title> Trang quản trị: Invoice Edit</title>
       </Helmet>
 
       <InvoiceEditView id={`${id}`} />

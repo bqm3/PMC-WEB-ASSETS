@@ -100,7 +100,7 @@ export default function GiamsatListView() {
 
   useEffect(() => {
     // Assuming khoiCV is set elsewhere in your component
-    khoiCV.forEach((khoi) => {
+    khoiCV?.forEach((khoi) => {
       set_STATUS_OPTIONS((prevOptions) => [
         ...prevOptions,
         { value: khoi.ID_Khoi.toString(), label: khoi.KhoiCV },
@@ -139,7 +139,7 @@ export default function GiamsatListView() {
   const handleDeleteRow = useCallback(
     async (id: string) => {
       await axios
-        .put(`https://checklist.pmcweb.vn/be/api/ent_giamsat/delete/${id}`, [], {
+        .put(`http://localhost:8888/api/ent_giamsat/delete/${id}`, [], {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -157,21 +157,21 @@ export default function GiamsatListView() {
           if (error.response) {
             enqueueSnackbar({
               variant: 'error',
-              autoHideDuration: 3000,
+              autoHideDuration: 2000,
               message: `${error.response.data.message}`,
             });
           } else if (error.request) {
             // Lỗi không nhận được phản hồi từ server
             enqueueSnackbar({
               variant: 'error',
-              autoHideDuration: 3000,
+              autoHideDuration: 2000,
               message: `Không nhận được phản hồi từ máy chủ`,
             });
           } else {
             // Lỗi khi cấu hình request
             enqueueSnackbar({
               variant: 'error',
-              autoHideDuration: 3000,
+              autoHideDuration: 2000,
               message: `Lỗi gửi yêu cầu`,
             });
           }

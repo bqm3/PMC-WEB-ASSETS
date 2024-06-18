@@ -8,7 +8,7 @@ export default function PermissionDeniedPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Permission Denied</title>
+        <title> Trang quản trị: Permission Denied</title>
       </Helmet>
 
       <PermissionDeniedView />

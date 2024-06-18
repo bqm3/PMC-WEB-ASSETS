@@ -8,7 +8,7 @@ export default function UserCardsPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: User Cards</title>
+        <title> Trang quản trị: User Cards</title>
       </Helmet>
 
       <UserCardsView />

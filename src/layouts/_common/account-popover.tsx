@@ -77,25 +77,25 @@ export default function AccountPopover() {
         }}
       >
         <Avatar
-          alt={user?.UserName}
+          alt={user?.Hoten}
           sx={{
             width: 36,
             height: 36,
             border: (theme) => `solid 2px ${theme.palette.background.default}`,
           }}
         >
-          {user?.UserName?.charAt(0).toUpperCase()}
+          {user?.Hoten?.charAt(0).toUpperCase()}
         </Avatar>
       </IconButton>
 
       <CustomPopover open={popover.open} onClose={popover.onClose} sx={{ width: 200, p: 0 }}>
         <Box sx={{ p: 2, pb: 1.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {user?.UserName}
+            {user?.Hoten}
           </Typography>
 
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {user?.Emails}
+            {user?.Email}
           </Typography>
         </Box>
 

@@ -8,7 +8,7 @@ export default function UserListPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: User List</title>
+        <title> Trang quản trị: User List</title>
       </Helmet>
 
       <UserListView />

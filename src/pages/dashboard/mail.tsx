@@ -8,7 +8,7 @@ export default function MailPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Mail</title>
+        <title> Trang quản trị: Mail</title>
       </Helmet>
 
       <MailView />

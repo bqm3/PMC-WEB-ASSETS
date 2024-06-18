@@ -8,7 +8,7 @@ export default function GiamsatListPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Danh sách tài khoản giám sát</title>
+        <title> Trang quản trị: Danh sách tài khoản giám sát</title>
       </Helmet>
 
       <GiamsatListView />
