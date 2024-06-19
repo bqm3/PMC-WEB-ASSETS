@@ -28,6 +28,18 @@ export type IDonvi = {
   Donvi: string;
 }
 
+export type INam = {
+  ID_Nam: string;
+  Nam: string;
+  Giatri: string;
+}
+
+export type IThang = {
+  ID_Thang: string;
+  Thang: string;
+  iThang: string;
+}
+
 export type INhomts = {
   ID_Nhomts: string;
   Manhom: string;
@@ -41,6 +53,12 @@ export type IPolicy = {
   GroupPolicy: string;
   isDelete: string;
   ent_grouppolicy: IGroupPolicy;
+}
+
+export type INghiepvu = {
+  ID_Nghiepvu: string;
+  Nghiepvu: string;
+  isDelete: string;
 }
 
 export type ITaisan = {

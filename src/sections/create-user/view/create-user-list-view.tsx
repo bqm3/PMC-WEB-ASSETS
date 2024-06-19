@@ -75,8 +75,8 @@ const TABLE_HEAD = [
   { id: 'MaPMC', label: 'Mã PMC', width: 150 },
   { id: 'Hoten', label: 'Họ tên', width: 150 },
   { id: 'Gioitinh', label: 'Giới tính', width: 150 },
+  { id: 'Diachi', label: 'Địa chỉ', width: 180 },
   { id: 'Sodienthoai', label: 'Số điện thoại', width: 150 },
-  { id: 'Diachi', label: 'Điện thoại', width: 150 },
   { id: '', width: 88 },
 ];
 
@@ -189,7 +189,7 @@ export default function GroupPolicyListView() {
     async (id: string) => {
       await axios
         .put(
-          `http://localhost:8888/api/ent_connguoi/delete/${id}`,
+          `https://checklist.pmcweb.vn/pmc-assets/api/ent_connguoi/delete/${id}`,
 
           {
             headers: {
@@ -249,7 +249,7 @@ export default function GroupPolicyListView() {
   const handleUpdate = useCallback(
     async (id: string) => {
       await axios
-        .put(`http://localhost:8888/api/ent_connguoi/update/${id}`, dataSelect, {
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/ent_connguoi/update/${id}`, dataSelect, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -305,7 +305,7 @@ export default function GroupPolicyListView() {
     <>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
-          heading="Danh sách chính sách"
+          heading="Danh sách tài khoản"
           links={[
             {
               name: 'Dashboard',
@@ -319,48 +319,7 @@ export default function GroupPolicyListView() {
         />
 
         <Card>
-          {/* <Tabs
-            value={filters.status}
-            onChange={handleFilterStatus}
-            sx={{
-              px: 2.5,
-              boxShadow: (theme) => `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
-            }}
-          >
-            {STATUS_OPTIONS.map((tab) => (
-              <Tab
-                key={tab.value}
-                iconPosition="end"
-                value={tab.value}
-                label={tab.label}
-                icon={
-                  <Label
-                    variant={
-                      ((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'
-                    }
-                    color={
-                      (tab.value === '1' && 'success') ||
-                      (tab.value === '2' && 'warning') ||
-                      (tab.value === '3' && 'error') ||
-                      'default'
-                    }
-                  >
-                    {tab.value === 'all' && user?.length}
-                    {tab.value === '1' &&
-                      user?.filter((item) => `${item.ID_KhoiCV}` === '1').length}
-
-                    {tab.value === '2' &&
-                      user?.filter((item) => `${item.ID_KhoiCV}` === '2').length}
-                    {tab.value === '3' &&
-                      user?.filter((item) => `${item.ID_KhoiCV}` === '3').length}
-                    {tab.value === '4' &&
-                      user?.filter((item) => `${item.ID_KhoiCV}` === '4').length}
-                  </Label>
-                }
-              />
-            ))}
-          </Tabs> */}
-
+          
           <GiamsatTableToolbar
             filters={filters}
             onFilters={handleFilters}

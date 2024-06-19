@@ -100,6 +100,9 @@ const CreateUserNewPage = lazy(() => import('src/pages/dashboard/create-user/new
 
 const TaiSanListsPage = lazy(() => import('src/pages/dashboard/taisan/list'));
 const TaiSanNewPage = lazy(() => import('src/pages/dashboard/taisan/new'));
+
+const PhieuNXListsPage = lazy(() => import('src/pages/dashboard/phieunx/list'));
+const PhieuNXNewPage = lazy(() => import('src/pages/dashboard/phieunx/new'));
 // -----------------------------------------
 
 export const dashboardRoutes = [
@@ -171,6 +174,14 @@ export const dashboardRoutes = [
           { element: <TaiSanListsPage />, index: true },
           { path: 'list', element: <TaiSanListsPage /> },
           { path: 'new', element: <TaiSanNewPage /> },
+        ],
+      },
+      {
+        path: 'phieu-nhap-xuat',
+        children: [
+          { element: <PhieuNXListsPage />, index: true },
+          { path: 'list', element: <PhieuNXListsPage /> },
+          { path: 'new', element: <PhieuNXNewPage /> },
         ],
       },
 

@@ -94,7 +94,7 @@ export default function CreateUserNewForm() {
     console.log('dasta', data);
     setLoading(true);
     await axios
-      .post(`http://localhost:8888/api/ent_connguoi/create`, data, {
+      .post(`https://checklist.pmcweb.vn/pmc-assets/api/ent_connguoi/create`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,

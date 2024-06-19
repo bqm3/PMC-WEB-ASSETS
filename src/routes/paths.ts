@@ -276,5 +276,9 @@ export const paths = {
       root: `${ROOTS.DASHBOARD}/tai-san`,
       new: `${ROOTS.DASHBOARD}/tai-san/new`,
     },
+    phieunx: {
+      root: `${ROOTS.DASHBOARD}/phieu-nhap-xuat`,
+      new: `${ROOTS.DASHBOARD}/phieu-nhap-xuat/new`,
+    },
   },
 };

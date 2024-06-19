@@ -204,6 +204,15 @@ export function useNavData() {
           ],
         },
         {
+          title: t('phieunx'),
+          path: paths.dashboard.phieunx.root,
+          icon: ICONS.invoice,
+          children: [
+            { title: t('list'), path: paths.dashboard.phieunx.root },
+            { title: t('create'), path: paths.dashboard.phieunx.new },  
+          ],
+        },
+        {
           title: t('createauser'),
           path: paths.dashboard.createuser.root,
           icon: ICONS.user,

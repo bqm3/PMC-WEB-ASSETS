@@ -96,7 +96,7 @@ export default function GroupPolicyNewForm() {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`http://localhost:8888/api/ent_phongbanda/create`, data, {
+      .post(`https://checklist.pmcweb.vn/pmc-assets/api/ent_phongbanda/create`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,

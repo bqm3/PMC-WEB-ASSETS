@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import axios from 'axios';
 // @mui
 import * as Yup from 'yup';
@@ -21,11 +21,11 @@ import { useRouter } from 'src/routes/hooks';
 import { useBoolean } from 'src/hooks/use-boolean';
 // _mock
 import {
+  useGetChinhanh,
   useGetGroupPolicy,
+  useGetNhomPb,
+  useGetPhongBanDa,
   useGetPolicy,
-  useGetTaisan,
-  useGetNhomts,
-  useGetDonvi,
 } from 'src/api/taisan';
 // components
 import Label from 'src/components/label';
@@ -48,7 +48,6 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
 import Dialog, { DialogProps } from '@mui/material/Dialog';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -59,29 +58,34 @@ import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import { useSnackbar } from 'src/components/snackbar';
 // types
 import { IKhuvucTableFilters, IKhuvucTableFilterValue } from 'src/types/khuvuc';
-import FormProvider, { RHFEditor } from 'src/components/hook-form';
 
 import {
-  IDonvi,
+  IChinhanh,
   IGroupPolicy,
-  INhomts,
-  ITaisan,
+  INhompb,
+  IPhongbanda,
+  IPolicy,
   ITaisanTableFilterValue,
   ITaisanTableFilters,
 } from 'src/types/taisan';
 //
-import GroupPolicyTableRow from '../tai-san-table-row';
-import GiamsatTableToolbar from '../tai-san-table-toolbar';
-import GiamsatTableFiltersResult from '../tai-san-table-filters-result';
+import GroupPolicyTableRow from '../phieunx-table-row';
+import GiamsatTableToolbar from '../phieunx-table-toolbar';
+import GiamsatTableFiltersResult from '../phieunx-table-filters-result';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'ID_Taisan', label: 'Mã', width: 100 },
-  { id: 'Tents', label: 'Tên tài sản', width: 150 },
-  { id: 'ID_Donvi', label: 'Đơn vị', width: 150 },
-  { id: 'Mats', label: 'Mã tài sản', width: 150 },
-  { id: '', width: 88 },
+  { id: 'ID_PhieuNX', label: 'Mã', width: 100 },
+  { id: 'ID_Nghiepvu', label: 'Mã phòng ban', width: 150 },
+  { id: 'Sophieu', label: 'Tên phòng ban', width: 150 },
+  { id: 'ID_NoiNhap', label: 'Địa chỉ', width: 150 },
+  { id: 'ID_NoiXuat', label: 'Chi nhánh', width: 150 },
+  { id: 'ID_Connguoi', label: 'Phòng ban', width: 150 },
+  { id: 'NgayNX', label: 'Phòng ban', width: 150 },
+  { id: 'ID_Nam', label: 'Phòng ban', width: 150 },
+  { id: 'iTinhtrang', label: 'Tình trạng', width: 150 },
+  { id: '', width: 50 },
 ];
 
 const defaultFilters: IKhuvucTableFilters = {
@@ -93,7 +97,7 @@ const STORAGE_KEY = 'accessToken';
 // ----------------------------------------------------------------------
 
 export default function GroupPolicyListView() {
-  const table = useTable({ defaultOrderBy: 'ID_Taisan' });
+  const table = useTable({ defaultOrderBy: 'ID_Phongban' });
 
   const settings = useSettingsContext();
 
@@ -109,21 +113,36 @@ export default function GroupPolicyListView() {
 
   const [filters, setFilters] = useState(defaultFilters);
 
-  const { taisan, mutateTaisan } = useGetTaisan();
+  const { policy } = useGetPolicy();
 
-  const { nhomts } = useGetNhomts();
+  const { grouppolicy } = useGetGroupPolicy();
 
-  const { donvi } = useGetDonvi();
+  const { chinhanh } = useGetChinhanh();
 
-  const [tableData, setTableData] = useState<ITaisan[]>([]);
+  const { nhompb } = useGetNhomPb();
 
-  const [dataSelect, setDataSelect] = useState<ITaisan>();
+  const { phongbanda, mutatePhongBanDa } = useGetPhongBanDa();
+
+  const [tableData, setTableData] = useState<IPhongbanda[]>([]);
+
+  const [dataSelect, setDataSelect] = useState<IPhongbanda>();
 
   useEffect(() => {
-    if (taisan?.length > 0) {
-      setTableData(taisan);
+    if (phongbanda?.length > 0) {
+      setTableData(phongbanda);
     }
-  }, [taisan, mutateTaisan]);
+  }, [phongbanda, mutatePhongBanDa]);
+
+  const [STATUS_OPTIONS, set_STATUS_OPTIONS] = useState([{ value: 'all', label: 'Tất cả' }]);
+
+  useEffect(() => {
+    grouppolicy.forEach((data) => {
+      set_STATUS_OPTIONS((prevOptions) => [
+        ...prevOptions,
+        { value: data.ID_GroupPolicy.toString(), label: data.GroupPolicy },
+      ]);
+    });
+  }, [grouppolicy]);
 
   const dataFiltered = applyFilter({
     inputData: tableData,
@@ -173,22 +192,12 @@ export default function GroupPolicyListView() {
   );
 
   const GroupPolicySchema = Yup.object().shape({
-    Tents: Yup.string().required('Không được để trống'),
-    ID_Nhomts: Yup.string().required('Không được để trống'),
-    ID_Donvi: Yup.string().required('Không được để trống'),
+    GroupPolicy: Yup.string().required('Không được để trống'),
   });
 
-  const defaultValues = useMemo(
-    () => ({
-      ID_Nhomts: dataSelect?.ID_Nhomts || '',
-      ID_Donvi: dataSelect?.ID_Donvi || '',
-      Mats: dataSelect?.Mats || '',
-      Tents: dataSelect?.Tents || '',
-      Thongso: dataSelect?.Thongso || '',
-      Ghichu: dataSelect?.Ghichu || '',
-    }),
-    [dataSelect]
-  );
+  const defaultValues = {
+    GroupPolicy: '',
+  };
 
   const methods = useForm({
     resolver: yupResolver(GroupPolicySchema),
@@ -204,7 +213,7 @@ export default function GroupPolicyListView() {
   const handleDeleteRow = useCallback(
     async (id: string) => {
       await axios
-        .put(`https://checklist.pmcweb.vn/pmc-assets/api/ent_taisan/delete/${id}`, {
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/ent_policy/delete/${id}`, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -212,7 +221,7 @@ export default function GroupPolicyListView() {
         })
         .then((res) => {
           // reset();
-          const deleteRow = tableData?.filter((row) => row.ID_Taisan !== id);
+          const deleteRow = tableData?.filter((row) => row.ID_Phongban !== id);
           setTableData(deleteRow);
 
           table.onUpdatePageDeleteRow(dataInPage.length);
@@ -250,7 +259,7 @@ export default function GroupPolicyListView() {
   }, []);
 
   const handleViewRow = useCallback(
-    (data: ITaisan) => {
+    (data: IPhongbanda) => {
       confirm.onTrue();
       popover.onClose();
       setDataSelect(data);
@@ -261,7 +270,7 @@ export default function GroupPolicyListView() {
   const handleUpdate = useCallback(
     async (id: string) => {
       await axios
-        .put(`https://checklist.pmcweb.vn/pmc-assets/api/ent_taisan/update/${id}`, dataSelect, {
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/ent_phongbanda/update/${id}`, dataSelect, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -271,7 +280,7 @@ export default function GroupPolicyListView() {
           reset();
           confirm.onFalse();
           popover.onClose();
-          await mutateTaisan();
+          await mutatePhongBanDa();
 
           enqueueSnackbar({
             variant: 'success',
@@ -303,7 +312,7 @@ export default function GroupPolicyListView() {
           }
         });
     },
-    [accessToken, enqueueSnackbar, reset, confirm, dataSelect, popover, mutateTaisan] // Add accessToken and enqueueSnackbar as dependencies
+    [accessToken, enqueueSnackbar, dataSelect, reset, confirm, popover, mutatePhongBanDa] // Add accessToken and enqueueSnackbar as dependencies
   );
 
   const handleFilterStatus = useCallback(
@@ -313,11 +322,18 @@ export default function GroupPolicyListView() {
     [handleFilters]
   );
 
+  const getPolicyCount = (filter: any) => {
+    if (filter === 'all') {
+      return policy.length;
+    }
+    return policy.filter((item: any) => `${item.ID_GroupPolicy}` === `${filter}`).length;
+  };
+
   return (
     <>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
-          heading="Danh sách tài sản"
+          heading="Danh sách phòng ban"
           links={[
             {
               name: 'Dashboard',
@@ -331,6 +347,39 @@ export default function GroupPolicyListView() {
         />
 
         <Card>
+          {/* <Tabs
+            value={filters.status}
+            onChange={handleFilterStatus}
+            sx={{
+              px: 2.5,
+              boxShadow: (theme) => `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
+            }}
+          >
+            {STATUS_OPTIONS.map((tab) => (
+              <Tab
+                key={tab.value}
+                iconPosition="end"
+                value={tab.value}
+                label={tab.label}
+                icon={
+                  <Label
+                    variant={
+                      ((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'
+                    }
+                    color={
+                      (tab.value === '1' && 'success') ||
+                      (tab.value === '2' && 'warning') ||
+                      (tab.value === '3' && 'error') ||
+                      'default'
+                    }
+                  >
+                    {getPolicyCount(tab.value)}
+                  </Label>
+                }
+              />
+            ))}
+          </Tabs> */}
+
           <GiamsatTableToolbar
             filters={filters}
             onFilters={handleFilters}
@@ -357,7 +406,7 @@ export default function GroupPolicyListView() {
               numSelected={table.selected.length}
               rowCount={tableData?.length}
               onSelectAllRows={(checked) =>
-                table.onSelectAllRows(checked, tableData?.map((row) => row?.ID_Taisan))
+                table.onSelectAllRows(checked, tableData?.map((row) => row?.ID_Phongban))
               }
               action={
                 <Tooltip title="Delete">
@@ -378,7 +427,7 @@ export default function GroupPolicyListView() {
                   numSelected={table.selected.length}
                   onSort={table.onSort}
                   // onSelectAllRows={(checked) =>
-                  //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_Taisan))
+                  //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_Phongban))
                   // }
                 />
 
@@ -390,11 +439,11 @@ export default function GroupPolicyListView() {
                     )
                     .map((row) => (
                       <GroupPolicyTableRow
-                        key={row.ID_Taisan}
+                        key={row.ID_Phongban}
                         row={row}
-                        selected={table.selected.includes(row.ID_Taisan)}
-                        onSelectRow={() => table.onSelectRow(row.ID_Taisan)}
-                        onDeleteRow={() => handleDeleteRow(row.ID_Taisan)}
+                        selected={table.selected.includes(row.ID_Phongban)}
+                        onSelectRow={() => table.onSelectRow(row.ID_Phongban)}
+                        onDeleteRow={() => handleDeleteRow(row.ID_Phongban)}
                         onViewRow={() => handleViewRow(row)}
                       />
                     ))}
@@ -426,14 +475,12 @@ export default function GroupPolicyListView() {
       <GroupPolicyDialog
         open={confirm.value}
         dataSelect={dataSelect}
-        nhomts={nhomts}
-        donvi={donvi}
+        chinhanh={chinhanh}
+        nhompb={nhompb}
         onClose={confirm.onFalse}
         onChange={handleInputChange}
         handleUpdate={handleUpdate}
         handleSelectChange={handleSelectChange}
-        methods={methods}
-        setDataSelect={setDataSelect}
       />
 
       {/* <ConfirmDialog
@@ -469,7 +516,7 @@ function applyFilter({
   comparator,
   filters, // dateError,
 }: {
-  inputData: ITaisan[];
+  inputData: IPhongbanda[];
   comparator: (a: any, b: any) => number;
   filters: ITaisanTableFilters;
   // dateError: boolean;
@@ -489,143 +536,137 @@ function applyFilter({
   if (name) {
     inputData = inputData?.filter(
       (order) =>
-        order.ent_nhomts.Manhom.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order?.ent_nhomts?.Loaits.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.Mats.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.Tents.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.Thongso.toLowerCase().indexOf(name.toLowerCase()) !== -1
+        order.Mapb.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        order.Tenphongban.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        order.Diachi.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        order.ent_chinhanh.Tenchinhanh.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        order.ent_nhompb.Nhompb.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
+
+  // if (status !== 'all') {
+  //   inputData = inputData?.filter((order) => `${order?.ID_GroupPolicy}` === status);
+  // }
 
   return inputData;
 }
 
 interface ConfirmTransferDialogProps {
   open: boolean;
-  dataSelect?: ITaisan;
+  dataSelect?: IPhongbanda;
   onClose: VoidFunction;
   handleUpdate: (id: string) => void;
-  donvi: IDonvi[];
-  nhomts: INhomts[];
+  chinhanh: IChinhanh[];
+  nhompb: INhompb[];
   onChange: (event: React.FocusEvent<HTMLInputElement>) => void;
   onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
   handleSelectChange: any;
-  methods: any;
-  setDataSelect: any;
 }
 
 function GroupPolicyDialog({
   open,
   dataSelect,
-  donvi,
-  nhomts,
-  methods,
+  chinhanh,
+  nhompb,
   handleSelectChange,
   onChange,
   onClose,
   onBlur,
   handleUpdate,
-  setDataSelect,
 }: ConfirmTransferDialogProps) {
-  const idPolicy = dataSelect?.ID_Taisan;
-  const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
+  const idPolicy = dataSelect?.ID_Phongban;
 
   return (
-    <FormProvider methods={methods}>
-      <Dialog open={open} fullWidth maxWidth="lg" onClose={onClose}>
-        <DialogTitle>Cập nhật</DialogTitle>
+    <Dialog open={open} fullWidth maxWidth="md" onClose={onClose}>
+      <DialogTitle>Cập nhật</DialogTitle>
+      <Stack spacing={3} sx={{ px: 3 }}>
+        {chinhanh?.length > 0 && (
+          <FormControl fullWidth>
+            <InputLabel id="demo-simple-select-label-chi-nhanh">Thuộc chi nhánh</InputLabel>
+            <Select
+              name="ID_Chinhanh"
+              labelId="demo-simple-select-label-chi-nhanh"
+              id="demo-simple-select"
+              value={dataSelect?.ID_Chinhanh}
+              label="Chi nhánh"
+              onChange={handleSelectChange}
+            >
+              {chinhanh?.map((item) => (
+                <MenuItem key={item?.ID_Chinhanh} value={item?.ID_Chinhanh}>
+                  {item?.Tenchinhanh}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
 
-        <DialogContent dividers={scroll === 'paper'}>
-          <Stack spacing={3} sx={{ p: 3 }}>
-            <Stack style={{ display: 'flex', flexDirection: 'row', gap: 30 }} spacing={3}>
-              {nhomts?.length > 0 && (
-                <FormControl fullWidth>
-                  <InputLabel id="demo-simple-select-label">Tài sản</InputLabel>
-                  <Select
-                    name="ID_Nhomts"
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={dataSelect?.ID_Nhomts}
-                    onChange={handleSelectChange}
-                  >
-                    {nhomts?.map((item) => (
-                      <MenuItem key={item?.ID_Nhomts} value={item?.ID_Nhomts}>
-                        {item?.Loaits}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              )}
+        {nhompb?.length > 0 && (
+          <FormControl fullWidth>
+            <InputLabel id="demo-simple-select-label-phong-ban">Thuộc phòng ban</InputLabel>
+            <Select
+              name="ID_Nhompb"
+              labelId="demo-simple-select-label-phong-ban"
+              id="demo-simple-select"
+              value={dataSelect?.ID_Nhompb}
+              label="Phòng ban"
+              onChange={handleSelectChange}
+            >
+              {nhompb?.map((item) => (
+                <MenuItem key={item?.ID_Nhompb} value={item?.ID_Nhompb}>
+                  {item?.Nhompb}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
 
-              {donvi?.length > 0 && (
-                <FormControl fullWidth>
-                  <InputLabel id="demo-simple-select-label">Đơn vị</InputLabel>
-                  <Select
-                    name="ID_Donvi"
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={dataSelect?.ID_Donvi}
-                    onChange={handleSelectChange}
-                  >
-                    {donvi?.map((item) => (
-                      <MenuItem key={item?.ID_Donvi} value={item?.ID_Donvi}>
-                        {item?.Donvi}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              )}
-            </Stack>
-            <TextField
-              name="Tents"
-              label="Tên tài sản" // Vietnamese for "Category Name"
-              value={dataSelect?.Tents}
-              onChange={onChange} // Update local state and notify parent
-              fullWidth
-              onBlur={onBlur}
-            />
-            <RHFEditor
-              simple
-              name="Thongso"
-              value={dataSelect?.Thongso}
-              onChange={(value, delta, source, editor) => {
-                // Xử lý thay đổi giá trị
-                setDataSelect((prevData: any) => ({
-                  ...prevData,
-                  Thongso: value,
-                }));
-              }}
-            />
+        <TextField
+          name="Mapb"
+          label="Mã phòng ban" // Vietnamese for "Category Name"
+          value={dataSelect?.Mapb}
+          onChange={onChange} // Update local state and notify parent
+          fullWidth
+          onBlur={onBlur}
+        />
+        <TextField
+          name="Tenphongban"
+          label="Tên danh mục" // Vietnamese for "Category Name"
+          value={dataSelect?.Tenphongban}
+          onChange={onChange} // Update local state and notify parent
+          fullWidth
+        />
+        <TextField
+          name="Diachi"
+          label="Địa chỉ" // Vietnamese for "Category Name"
+          value={dataSelect?.Diachi}
+          onChange={onChange} // Update local state and notify parent
+          fullWidth
+        />
+        <TextField
+          name="Ghichu"
+          multiline
+          rows={4}
+          value={dataSelect?.Ghichu}
+          onChange={onChange}
+          label="Ghi chú"
+        />
+      </Stack>
 
-            <TextField
-              name="Ghichu"
-              label="Ghi chú" // Vietnamese for "Category Name"
-              value={dataSelect?.Ghichu}
-              onChange={onChange} // Update local state and notify parent
-              fullWidth
-              multiline
-              rows={3}
-              onBlur={onBlur}
-            />
-          </Stack>
-        </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Hủy</Button>
 
-        <DialogActions>
-          <Button onClick={onClose}>Hủy</Button>
-
-          <Button
-            variant="contained"
-            color="info"
-            onClick={() => {
-              if (idPolicy) {
-                handleUpdate(idPolicy);
-              }
-            }}
-          >
-            Cập nhật
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </FormProvider>
+        <Button
+          variant="contained"
+          color="info"
+          onClick={() => {
+            if (idPolicy) {
+              handleUpdate(idPolicy);
+            }
+          }}
+        >
+          Cập nhật
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 }
