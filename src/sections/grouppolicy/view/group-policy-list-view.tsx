@@ -64,9 +64,9 @@ const TABLE_HEAD = [
   { id: '', width: 88 },
 ];
 
-const defaultFilters: IKhuvucTableFilters = {
+const defaultFilters: ITaisanTableFilters= {
   name: '',
-  status: 'all',
+  status: 'all',startDate: null, endDate: null
 };
 
 

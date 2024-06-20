@@ -38,14 +38,14 @@ import {
 import { useSnackbar } from 'src/components/snackbar';
 // types
 import {
-  ICalv,
-  IGiamsat,
-  IHangMuc,
-  IKhuvuc,
-  IKhuvucTableFilters,
-  IKhuvucTableFilterValue,
-  IUser,
-} from 'src/types/khuvuc';
+  ITaisanTableFilters,
+  ITaisanTableFilterValue,
+  
+} from 'src/types/taisan';
+
+import {
+  IUser
+}from 'src/types/khuvuc';
 //
 import GiamsatTableRow from '../giamsat-table-row';
 import GiamsatTableToolbar from '../giamsat-table-toolbar';
@@ -62,9 +62,9 @@ const TABLE_HEAD = [
   { id: '', width: 88 },
 ];
 
-const defaultFilters: IKhuvucTableFilters = {
+const defaultFilters: ITaisanTableFilters= {
   name: '',
-  status: 'all',
+  status: 'all',startDate: null, endDate: null
 };
 
 const STORAGE_KEY = 'accessToken';
@@ -126,7 +126,7 @@ export default function GiamsatListView() {
   const notFound = (!dataFiltered?.length && canReset) || !dataFiltered?.length;
 
   const handleFilters = useCallback(
-    (name: string, value: IKhuvucTableFilterValue) => {
+    (name: string, value: ITaisanTableFilterValue) => {
       table.onResetPage();
       setFilters((prevState) => ({
         ...prevState,
@@ -389,7 +389,7 @@ function applyFilter({
 }: {
   inputData: IUser[];
   comparator: (a: any, b: any) => number;
-  filters: IKhuvucTableFilters;
+  filters: ITaisanTableFilters;
   // dateError: boolean;
 }) {
   const { status, name } = filters;

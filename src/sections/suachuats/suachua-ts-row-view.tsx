@@ -17,7 +17,8 @@ import { useBoolean } from 'src/hooks/use-boolean';
 // utils
 import { fCurrency } from 'src/utils/format-number';
 // types
-import { IGroupPolicy, IPhongbanda, IPolicy } from 'src/types/taisan';
+import { IOrderItem } from 'src/types/order';
+import { IKhuvuc, IHangMuc, ICalv, IGiamsat, IUser } from 'src/types/khuvuc';
 // components
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
@@ -28,32 +29,21 @@ import moment from 'moment';
 // ----------------------------------------------------------------------
 
 type Props = {
-  row: IPhongbanda;
+  row: IUser;
   selected: boolean;
   onViewRow: VoidFunction;
-  onSelectRow: VoidFunction;
-  onDeleteRow: VoidFunction;
+//   onSelectRow: VoidFunction;
+//   onDeleteRow: VoidFunction;
 };
 
 export default function CalvTableRow({
   row,
   selected,
   onViewRow,
-  onSelectRow,
-  onDeleteRow,
+//   onSelectRow,
+//   onDeleteRow,
 }: Props) {
-  const {
-    ID_Phongban,
-    ID_Chinhanh,
-    ID_Nhompb,
-    Mapb,
-    Thuoc,
-    Tenphongban,
-    Diachi,
-    Ghichu,
-    ent_chinhanh,
-    ent_nhompb,
-  } = row;
+  const { ID_Duan, ID_User, ID_KhoiCV, isDelete, ent_chucvu, ent_khoicv, UserName, Emails } = row;
 
   const confirm = useBoolean();
 
@@ -63,6 +53,7 @@ export default function CalvTableRow({
 
   const renderPrimary = (
     <TableRow hover selected={selected}>
+      
       <TableCell>
         <Box
           onClick={onViewRow}
@@ -73,17 +64,37 @@ export default function CalvTableRow({
             },
           }}
         >
-          PB-{ID_Phongban}
+          GS-{ID_User}
         </Box>
       </TableCell>
 
-      <TableCell> {Mapb} </TableCell>
-      <TableCell> {Tenphongban} </TableCell>
-      <TableCell> {Diachi} </TableCell>
-      <TableCell> {Thuoc} </TableCell>
-      <TableCell> {ent_chinhanh.Tenchinhanh} </TableCell>
-      <TableCell> {ent_nhompb.Nhompb} </TableCell>
-    
+      <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
+        <ListItemText
+          primary={UserName}
+          // secondary={ent_khoicv?.KhoiCV}
+          primaryTypographyProps={{ typography: 'body2' }}
+          secondaryTypographyProps={{
+            component: 'span',
+            color: 'text.disabled',
+          }}
+        />
+      </TableCell>
+      <TableCell align="center"> {Emails} </TableCell>
+      <TableCell align="center"> {ent_chucvu?.Chucvu}</TableCell>
+
+      <TableCell align="center">
+        <Label
+          variant="soft"
+          color={
+            (`${ID_KhoiCV}` === '1' && 'success') ||
+            (`${ID_KhoiCV}` === '2' && 'warning') ||
+            (`${ID_KhoiCV}` === '3' && 'error') ||
+            'default'
+          }
+        >
+          {ent_khoicv.KhoiCV}
+        </Label>
+      </TableCell>
       <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
         <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
           <Iconify icon="eva:more-vertical-fill" />
@@ -111,7 +122,7 @@ export default function CalvTableRow({
           <Iconify icon="solar:eye-bold" />
           Xem
         </MenuItem>
-        <MenuItem
+        {/* <MenuItem
           onClick={() => {
             confirm.onTrue();
             popover.onClose();
@@ -120,7 +131,7 @@ export default function CalvTableRow({
         >
           <Iconify icon="solar:trash-bin-trash-bold" />
           Xóa
-        </MenuItem>
+        </MenuItem> */}
       </CustomPopover>
 
       {/* <ConfirmDialog

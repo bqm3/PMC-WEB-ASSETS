@@ -17,7 +17,7 @@ import { useBoolean } from 'src/hooks/use-boolean';
 // utils
 import { fCurrency } from 'src/utils/format-number';
 // types
-import { IGroupPolicy, IPhongbanda, IPolicy } from 'src/types/taisan';
+import { IGroupPolicy, INhomts, ISuachuaTS } from 'src/types/taisan';
 // components
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
@@ -28,7 +28,7 @@ import moment from 'moment';
 // ----------------------------------------------------------------------
 
 type Props = {
-  row: IPhongbanda;
+  row: ISuachuaTS;
   selected: boolean;
   onViewRow: VoidFunction;
   onSelectRow: VoidFunction;
@@ -42,18 +42,7 @@ export default function CalvTableRow({
   onSelectRow,
   onDeleteRow,
 }: Props) {
-  const {
-    ID_Phongban,
-    ID_Chinhanh,
-    ID_Nhompb,
-    Mapb,
-    Thuoc,
-    Tenphongban,
-    Diachi,
-    Ghichu,
-    ent_chinhanh,
-    ent_nhompb,
-  } = row;
+  const { ID_Suachua, Ngaygiao, Sophieu, Nguoitheodoi, iTinhtrang } = row;
 
   const confirm = useBoolean();
 
@@ -73,17 +62,20 @@ export default function CalvTableRow({
             },
           }}
         >
-          PB-{ID_Phongban}
+          SC-{ID_Suachua}
         </Box>
       </TableCell>
 
-      <TableCell> {Mapb} </TableCell>
-      <TableCell> {Tenphongban} </TableCell>
-      <TableCell> {Diachi} </TableCell>
-      <TableCell> {Thuoc} </TableCell>
-      <TableCell> {ent_chinhanh.Tenchinhanh} </TableCell>
-      <TableCell> {ent_nhompb.Nhompb} </TableCell>
-    
+      <TableCell sx={{  alignItems: 'center' }}>
+        {Ngaygiao}
+      </TableCell>
+      <TableCell sx={{alignItems: 'center' }}>
+        {Sophieu}
+      </TableCell>
+      <TableCell sx={{alignItems: 'center' }}>
+        {Nguoitheodoi}
+      </TableCell>
+
       <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
         <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
           <Iconify icon="eva:more-vertical-fill" />

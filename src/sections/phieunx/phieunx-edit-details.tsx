@@ -27,7 +27,7 @@ import { ITaisan } from 'src/types/taisan';
 
 // ----------------------------------------------------------------------
 
-export default function InvoiceNewEditDetails() {
+export default function PhieuNXNewEditDetails() {
   const { control, setValue, watch, resetField } = useFormContext();
 
   const { fields, append, remove } = useFieldArray({
@@ -45,7 +45,7 @@ export default function InvoiceNewEditDetails() {
 
   const handleAdd = () => {
     append({
-      ID_Taisan: '',
+      ID_Taisan: null,
       Soluong: 0,
       Dongia: 0,
       Tong: 0,
@@ -55,7 +55,6 @@ export default function InvoiceNewEditDetails() {
   const handleRemove = (index: number) => {
     remove(index);
   };
-
 
   const handleChangeQuantity = useCallback(
     (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, index: number) => {
@@ -131,6 +130,8 @@ export default function InvoiceNewEditDetails() {
     </Stack>
   );
 
+  console.log('values', values);
+
   return (
     <Box sx={{ p: 3 }}>
       <Typography variant="h6" sx={{ color: 'text.disabled', mb: 3 }}>
@@ -144,11 +145,13 @@ export default function InvoiceNewEditDetails() {
               <Controller
                 name={`phieunxct[${index}].ID_Taisan`}
                 control={control}
-                render={() => (
+                defaultValue={`phieunxct[${index}].ent_taisan` || ''} // Ensure item?.ID_Taisan is correctly populated
+                render={({ field }) => (
                   <Autocomplete
-                    options={taisan.map((option: any) => option)}
-                    getOptionLabel={(option) =>
-                      typeof option.Tents === 'string' ? option.Tents : String(option.Tents)
+                    {...field}
+                    options={taisan}
+                    getOptionLabel={(option: any) =>
+                      taisan.find((i: any) => `${i.ID_Taisan}` === `${option}`)?.Tents || ''
                     }
                     onChange={(event, newValue) => handleTaiSanChange(event, newValue, index)}
                     renderInput={(params) => (
@@ -185,7 +188,11 @@ export default function InvoiceNewEditDetails() {
                 type="number"
                 name={`phieunxct[${index}].Dongia`}
                 label="Đơn giá"
-             
+                // value={
+                //   values.phieunxct[index].Dongia === 0
+                //     ? ''
+                //     : formatCash(values.phieunxct[index].Dongia)
+                // }
                 onChange={(event) => handleChangePrice(event, index)}
                 InputProps={{
                   startAdornment: (
@@ -206,8 +213,8 @@ export default function InvoiceNewEditDetails() {
                 label="Tổng tiền"
                 placeholder="0.00"
                 value={
-                  values.phieunxct[index]?.Tong === 0
-                    ? ''
+                  values.phieunxct[index]?.Tong === 0 || values.phieunxct[index]?.Tong === undefined
+                    ? values.phieunxct[index].Soluong * values.phieunxct[index].Dongia
                     : formatCash(values.phieunxct[index]?.Tong)
                 }
                 onChange={(event) => handleChangePrice(event, index)}
@@ -230,35 +237,41 @@ export default function InvoiceNewEditDetails() {
               />
             </Stack>
 
-            <Button
-              size="medium"
-              color="error"
-              startIcon={<Iconify icon="solar:trash-bin-trash-bold" />}
-              onClick={() => handleRemove(index)}
-            >
-              Xóa
-            </Button>
+            {values.iTinhtrang === '0' && (
+              <Button
+                size="medium"
+                color="error"
+                startIcon={<Iconify icon="solar:trash-bin-trash-bold" />}
+                onClick={() => handleRemove(index)}
+              >
+                Xóa
+              </Button>
+            )}
           </Stack>
         ))}
       </Stack>
 
-      <Divider sx={{ my: 3, borderStyle: 'dashed' }} />
+      {values.iTinhtrang === '0' && (
+        <>
+          <Divider sx={{ my: 3, borderStyle: 'dashed' }} />
 
-      <Stack
-        spacing={3}
-        direction={{ xs: 'column', md: 'row' }}
-        alignItems={{ xs: 'flex-end', md: 'center' }}
-      >
-        <Button
-          size="medium"
-          color="primary"
-          startIcon={<Iconify icon="mingcute:add-line" />}
-          onClick={handleAdd}
-          sx={{ flexShrink: 0 }}
-        >
-          Thêm phiếu
-        </Button>
-      </Stack>
+          <Stack
+            spacing={3}
+            direction={{ xs: 'column', md: 'row' }}
+            alignItems={{ xs: 'flex-end', md: 'center' }}
+          >
+            <Button
+              size="medium"
+              color="primary"
+              startIcon={<Iconify icon="mingcute:add-line" />}
+              onClick={handleAdd}
+              sx={{ flexShrink: 0 }}
+            >
+              Thêm phiếu
+            </Button>
+          </Stack>
+        </>
+      )}
 
       {renderTotal}
     </Box>

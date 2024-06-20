@@ -58,7 +58,6 @@ import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
 import { useSnackbar } from 'src/components/snackbar';
 // types
-import { IKhuvucTableFilters, IKhuvucTableFilterValue } from 'src/types/khuvuc';
 import FormProvider, { RHFEditor } from 'src/components/hook-form';
 
 import {
@@ -84,9 +83,11 @@ const TABLE_HEAD = [
   { id: '', width: 88 },
 ];
 
-const defaultFilters: IKhuvucTableFilters = {
+const defaultFilters: ITaisanTableFilters = {
   name: '',
   status: 'all',
+  startDate: null,
+  endDate: null,
 };
 
 const STORAGE_KEY = 'accessToken';
@@ -162,7 +163,7 @@ export default function GroupPolicyListView() {
   };
 
   const handleFilters = useCallback(
-    (name: string, value: IKhuvucTableFilterValue) => {
+    (name: string, value: ITaisanTableFilterValue) => {
       table.onResetPage();
       setFilters((prevState) => ({
         ...prevState,

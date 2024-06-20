@@ -161,7 +161,7 @@ export function useNavData() {
         {
           title: t('grouppolicy'),
           path: paths.dashboard.grouppolicy.root,
-          icon: ICONS.file,
+          icon: ICONS.folder,
           children: [
             { title: t('list'), path: paths.dashboard.grouppolicy.root },
             { title: t('create'), path: paths.dashboard.grouppolicy.new },
@@ -170,7 +170,7 @@ export function useNavData() {
         {
           title: t('policy'),
           path: paths.dashboard.policy.root,
-          icon: ICONS.external,
+          icon: ICONS.file,
           children: [
             { title: t('list'), path: paths.dashboard.policy.root },
             { title: t('create'), path: paths.dashboard.policy.new },
@@ -203,6 +203,7 @@ export function useNavData() {
             { title: t('create'), path: paths.dashboard.taisan.new },  
           ],
         },
+       
         {
           title: t('phieunx'),
           path: paths.dashboard.phieunx.root,
@@ -210,6 +211,23 @@ export function useNavData() {
           children: [
             { title: t('list'), path: paths.dashboard.phieunx.root },
             { title: t('create'), path: paths.dashboard.phieunx.new },  
+          ],
+        },
+        {
+          title: t('suachuats'),
+          path: paths.dashboard.suachuats.root,
+          icon: ICONS.disabled,
+          children: [
+            { title: t('list'), path: paths.dashboard.suachuats.root },
+            { title: t('create'), path: paths.dashboard.suachuats.new },  
+          ],
+        },
+        {
+          title: t('taisanqrcode'),
+          path: paths.dashboard.taisanqrcode.root,
+          icon: ICONS.external,
+          children: [
+            { title: t('list'), path: paths.dashboard.taisanqrcode.root },
           ],
         },
         {

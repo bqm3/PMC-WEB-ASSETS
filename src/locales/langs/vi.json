@@ -21,6 +21,8 @@
   "project": "Dự án",
   "phongbanda": "Phòng ban dự án",
   "nhomts": "Nhóm tài sản",
+  "suachuats":"Sửa chữa tài sản",
+  "taisanqrcode": "Tài sản QrCode",
   "grouppolicy": "Chính sách nhóm",
   "policy": "Chính sách chi tiết",
   "createauser": "Tạo tài khoản",

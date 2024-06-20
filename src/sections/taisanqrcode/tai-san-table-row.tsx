@@ -17,7 +17,7 @@ import { useBoolean } from 'src/hooks/use-boolean';
 // utils
 import { fCurrency } from 'src/utils/format-number';
 // types
-import { IGroupPolicy, IPhongbanda, IPolicy } from 'src/types/taisan';
+import { IGroupPolicy, IPolicy, ITaisan, ITaisanQrCode } from 'src/types/taisan';
 // components
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
@@ -28,7 +28,7 @@ import moment from 'moment';
 // ----------------------------------------------------------------------
 
 type Props = {
-  row: IPhongbanda;
+  row: ITaisanQrCode;
   selected: boolean;
   onViewRow: VoidFunction;
   onSelectRow: VoidFunction;
@@ -43,18 +43,22 @@ export default function CalvTableRow({
   onDeleteRow,
 }: Props) {
   const {
-    ID_Phongban,
-    ID_Chinhanh,
-    ID_Nhompb,
-    Mapb,
-    Thuoc,
-    Tenphongban,
-    Diachi,
+    ID_TaisanQr,
+    ID_Taisan,
+    Ngaykhoitao,
+    ID_Donvi,
+    MaQrCode,
+    Giatri,
+    iTinhtrang,
     Ghichu,
-    ent_chinhanh,
-    ent_nhompb,
+    ID_Phongban,
+    ID_Connguoi,
+    ent_phongbanda,
+    ent_connguoi,
+    ent_taisan,
   } = row;
 
+  console.log(row);
   const confirm = useBoolean();
 
   const collapse = useBoolean();
@@ -73,17 +77,18 @@ export default function CalvTableRow({
             },
           }}
         >
-          PB-{ID_Phongban}
+          TS-{ID_Taisan}
         </Box>
       </TableCell>
+      <TableCell> {ent_taisan.Tents} </TableCell>
 
-      <TableCell> {Mapb} </TableCell>
-      <TableCell> {Tenphongban} </TableCell>
-      <TableCell> {Diachi} </TableCell>
-      <TableCell> {Thuoc} </TableCell>
-      <TableCell> {ent_chinhanh.Tenchinhanh} </TableCell>
-      <TableCell> {ent_nhompb.Nhompb} </TableCell>
-    
+      <TableCell> {Ngaykhoitao} </TableCell>
+      <TableCell> {MaQrCode} </TableCell>
+      <TableCell> {fCurrency(Giatri) || ''} </TableCell>
+      <TableCell> {iTinhtrang || ''} </TableCell>
+      <TableCell> {ent_phongbanda?.Tenphongban} </TableCell>
+      <TableCell> {ent_connguoi?.Hoten} </TableCell>
+
       <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
         <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
           <Iconify icon="eva:more-vertical-fill" />

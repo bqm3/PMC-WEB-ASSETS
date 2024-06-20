@@ -8,7 +8,7 @@ import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 // types
-import { ITaisanTableFilters, ITaisanTableFilterValue } from 'src/types/taisan';
+import {IKhuvucTableFilters, IKhuvucTableFilterValue} from 'src/types/khuvuc'
 // components
 import Iconify from 'src/components/iconify';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
@@ -16,11 +16,10 @@ import CustomPopover, { usePopover } from 'src/components/custom-popover';
 // ----------------------------------------------------------------------
 
 type Props = {
-  filters: ITaisanTableFilters;
-  onFilters: (name: string, value: ITaisanTableFilterValue) => void;
+  filters: IKhuvucTableFilters;
+  onFilters: (name: string, value: IKhuvucTableFilterValue) => void;
   //
   canReset: boolean;
-  dateError: boolean;
   onResetFilters: VoidFunction;
 };
 
@@ -29,7 +28,6 @@ export default function OrderTableToolbar({
   onFilters,
   //
   canReset,
-  dateError,
   onResetFilters,
 }: Props) {
   const popover = usePopover();
@@ -41,21 +39,8 @@ export default function OrderTableToolbar({
     [onFilters]
   );
 
-  const handleFilterStartDate = useCallback(
-    (newValue: Date | null) => {
-      onFilters('startDate', newValue);
-    },
-    [onFilters]
-  );
-
-  const handleFilterEndDate = useCallback(
-    (newValue: Date | null) => {
-      onFilters('endDate', newValue);
-    },
-    [onFilters]
-  );
-
   return (
+    <>
       <Stack
         spacing={2}
         alignItems={{ xs: 'flex-end', md: 'center' }}
@@ -70,36 +55,11 @@ export default function OrderTableToolbar({
       >
 
         <Stack direction="row" alignItems="center" spacing={2} flexGrow={1} sx={{ width: 1 }}>
-        <DatePicker
-          label="Ngày bắt đầu"
-          value={filters.startDate}
-          onChange={handleFilterStartDate}
-          slotProps={{ textField: { fullWidth: true } }}
-          sx={{
-            maxWidth: { md: 180 },
-          }}
-        />
-
-        <DatePicker
-          label="Ngày kết thúc"
-          value={filters.endDate}
-          onChange={handleFilterEndDate}
-          slotProps={{
-            textField: {
-              fullWidth: true,
-              error: dateError,
-            },
-          }}
-          sx={{
-            maxWidth: { md: 180 },
-          }}
-        />
-
           <TextField
             fullWidth
             value={filters.name}
             onChange={handleFilterName}
-            placeholder="Tìm kiếm..."
+            placeholder="Tìm kiếm theo hệ thống..."
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -126,6 +86,39 @@ export default function OrderTableToolbar({
         )}
       </Stack>
 
-    
+      <CustomPopover
+        open={popover.open}
+        onClose={popover.onClose}
+        arrow="right-top"
+        sx={{ width: 140 }}
+      >
+        <MenuItem
+          onClick={() => {
+            popover.onClose();
+          }}
+        >
+          <Iconify icon="solar:printer-minimalistic-bold" />
+          Print
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => {
+            popover.onClose();
+          }}
+        >
+          <Iconify icon="solar:import-bold" />
+          Import
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => {
+            popover.onClose();
+          }}
+        >
+          <Iconify icon="solar:export-bold" />
+          Export
+        </MenuItem>
+      </CustomPopover>
+    </>
   );
 }

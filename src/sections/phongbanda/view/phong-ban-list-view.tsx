@@ -14,6 +14,11 @@ import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
 import IconButton from '@mui/material/IconButton';
 import TableContainer from '@mui/material/TableContainer';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
 // routes
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
@@ -51,7 +56,6 @@ import DialogActions from '@mui/material/DialogActions';
 import Dialog, { DialogProps } from '@mui/material/Dialog';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
@@ -69,9 +73,10 @@ import {
   ITaisanTableFilters,
 } from 'src/types/taisan';
 //
-import GroupPolicyTableRow from '../phong-ban-table-row';
-import GiamsatTableToolbar from '../phong-ban-table-toolbar';
-import GiamsatTableFiltersResult from '../phong-ban-table-filters-result';
+import PhongBanTableRow from '../phong-ban-table-row';
+import PhongBanTableToolbar from '../phong-ban-table-toolbar';
+import PhongBanTableFiltersResult from '../phong-ban-table-filters-result';
+
 
 // ----------------------------------------------------------------------
 
@@ -80,14 +85,17 @@ const TABLE_HEAD = [
   { id: 'Mapb', label: 'Mã phòng ban', width: 150 },
   { id: 'Tenphongban', label: 'Tên phòng ban', width: 150 },
   { id: 'Diachi', label: 'Địa chỉ', width: 150 },
+  { id: 'Thuoc', label: 'Thuộc', width: 150 },
   { id: 'ID_Chinhanh', label: 'Chi nhánh', width: 150 },
   { id: 'ID_Nhompb', label: 'Phòng ban', width: 150 },
   { id: '', width: 50 },
 ];
 
-const defaultFilters: IKhuvucTableFilters = {
+const defaultFilters: ITaisanTableFilters = {
   name: '',
   status: 'all',
+  startDate: null,
+  endDate: null,
 };
 
 const STORAGE_KEY = 'accessToken';
@@ -178,7 +186,7 @@ export default function GroupPolicyListView() {
   };
 
   const handleFilters = useCallback(
-    (name: string, value: IKhuvucTableFilterValue) => {
+    (name: string, value: ITaisanTableFilterValue) => {
       table.onResetPage();
       setFilters((prevState) => ({
         ...prevState,
@@ -189,11 +197,11 @@ export default function GroupPolicyListView() {
   );
 
   const GroupPolicySchema = Yup.object().shape({
-    GroupPolicy: Yup.string().required('Không được để trống'),
+    Tenphongban: Yup.string().required('Không được để trống'),
   });
 
   const defaultValues = {
-    GroupPolicy: '',
+    Tenphongban: '',
   };
 
   const methods = useForm({
@@ -319,12 +327,7 @@ export default function GroupPolicyListView() {
     [handleFilters]
   );
 
-  const getPolicyCount = (filter: any) => {
-    if (filter === 'all') {
-      return policy.length;
-    }
-    return policy.filter((item: any) => `${item.ID_GroupPolicy}` === `${filter}`).length;
-  };
+ 
 
   return (
     <>
@@ -377,7 +380,7 @@ export default function GroupPolicyListView() {
             ))}
           </Tabs> */}
 
-          <GiamsatTableToolbar
+          <PhongBanTableToolbar
             filters={filters}
             onFilters={handleFilters}
             //
@@ -386,7 +389,7 @@ export default function GroupPolicyListView() {
           />
 
           {canReset && (
-            <GiamsatTableFiltersResult
+            <PhongBanTableFiltersResult
               filters={filters}
               onFilters={handleFilters}
               //
@@ -435,7 +438,7 @@ export default function GroupPolicyListView() {
                       table.page * table.rowsPerPage + table.rowsPerPage
                     )
                     .map((row) => (
-                      <GroupPolicyTableRow
+                      <PhongBanTableRow
                         key={row.ID_Phongban}
                         row={row}
                         selected={table.selected.includes(row.ID_Phongban)}
@@ -536,6 +539,7 @@ function applyFilter({
         order.Mapb.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         order.Tenphongban.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         order.Diachi.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        order.Thuoc.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         order.ent_chinhanh.Tenchinhanh.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         order.ent_nhompb.Nhompb.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
@@ -616,27 +620,39 @@ function GroupPolicyDialog({
             </Select>
           </FormControl>
         )}
-
+        <FormControl>
+          <FormLabel id="demo-radio-buttons-group-label">Thuộc</FormLabel>
+          <RadioGroup
+            aria-labelledby="demo-radio-buttons-group-label"
+            defaultValue={dataSelect?.Thuoc}
+            onChange={handleSelectChange}
+            name="Thuoc"
+            style={{display: 'flex', flexDirection: 'row'}}
+          >
+            <FormControlLabel value="PMC" control={<Radio />} label="PMC" />
+            <FormControlLabel value="Dự án ngoài" control={<Radio />} label="Dự án ngoài" />
+          </RadioGroup>
+        </FormControl>
         <TextField
           name="Mapb"
-          label="Mã phòng ban" // Vietnamese for "Category Name"
+          label="Mã phòng ban" 
           value={dataSelect?.Mapb}
-          onChange={onChange} // Update local state and notify parent
+          onChange={onChange} 
           fullWidth
           onBlur={onBlur}
         />
         <TextField
           name="Tenphongban"
-          label="Tên danh mục" // Vietnamese for "Category Name"
+          label="Tên phòng ban" 
           value={dataSelect?.Tenphongban}
-          onChange={onChange} // Update local state and notify parent
+          onChange={onChange} 
           fullWidth
         />
         <TextField
           name="Diachi"
-          label="Địa chỉ" // Vietnamese for "Category Name"
+          label="Địa chỉ" 
           value={dataSelect?.Diachi}
-          onChange={onChange} // Update local state and notify parent
+          onChange={onChange}
           fullWidth
         />
         <TextField

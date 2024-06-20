@@ -19,11 +19,13 @@ import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
+import { fTimestamp } from 'src/utils/format-time';
 // _mock
 import {
   useGetChinhanh,
   useGetGroupPolicy,
   useGetNhomPb,
+  useGetPhieuNX,
   useGetPhongBanDa,
   useGetPolicy,
 } from 'src/api/taisan';
@@ -57,47 +59,46 @@ import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
 import { useSnackbar } from 'src/components/snackbar';
 // types
-import { IKhuvucTableFilters, IKhuvucTableFilterValue } from 'src/types/khuvuc';
-
 import {
   IChinhanh,
   IGroupPolicy,
   INhompb,
-  IPhongbanda,
+  IPhieuNX,
   IPolicy,
   ITaisanTableFilterValue,
   ITaisanTableFilters,
 } from 'src/types/taisan';
 //
-import GroupPolicyTableRow from '../phieunx-table-row';
-import GiamsatTableToolbar from '../phieunx-table-toolbar';
-import GiamsatTableFiltersResult from '../phieunx-table-filters-result';
+import PhieuNXTableRow from '../phieunx-table-row';
+import PhieuNXTableToolbar from '../phieunx-table-toolbar';
+import PhieuNXTableFiltersResult from '../phieunx-table-filters-result';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: 'ID_PhieuNX', label: 'Mã', width: 100 },
-  { id: 'ID_Nghiepvu', label: 'Mã phòng ban', width: 150 },
-  { id: 'Sophieu', label: 'Tên phòng ban', width: 150 },
-  { id: 'ID_NoiNhap', label: 'Địa chỉ', width: 150 },
-  { id: 'ID_NoiXuat', label: 'Chi nhánh', width: 150 },
-  { id: 'ID_Connguoi', label: 'Phòng ban', width: 150 },
-  { id: 'NgayNX', label: 'Phòng ban', width: 150 },
-  { id: 'ID_Nam', label: 'Phòng ban', width: 150 },
-  { id: 'iTinhtrang', label: 'Tình trạng', width: 150 },
+  { id: 'ID_Nghiepvu', label: 'Nghiệp vụ', width: 180 },
+  { id: 'Sophieu', label: 'Số phiếu', width: 100 },
+  { id: 'ID_NoiNhap', label: 'Nơi nhập', width: 180 },
+  { id: 'ID_NoiXuat', label: 'Nơi xuất', width: 180 },
+  { id: 'ID_Connguoi', label: 'Người nhập', width: 150 },
+  { id: 'NgayNX', label: 'Ngày nhập', width: 120 },
+  { id: 'iTinhtrang', label: 'Tình trạng', width: 100 },
   { id: '', width: 50 },
 ];
 
-const defaultFilters: IKhuvucTableFilters = {
+const defaultFilters: ITaisanTableFilters = {
   name: '',
   status: 'all',
+  startDate: null,
+  endDate: null,
 };
 
 const STORAGE_KEY = 'accessToken';
 // ----------------------------------------------------------------------
 
 export default function GroupPolicyListView() {
-  const table = useTable({ defaultOrderBy: 'ID_Phongban' });
+  const table = useTable({ defaultOrderBy: 'ID_PhieuNX' });
 
   const settings = useSettingsContext();
 
@@ -121,33 +122,34 @@ export default function GroupPolicyListView() {
 
   const { nhompb } = useGetNhomPb();
 
-  const { phongbanda, mutatePhongBanDa } = useGetPhongBanDa();
+  const { phieunx, mutatePhieuNX } = useGetPhieuNX();
 
-  const [tableData, setTableData] = useState<IPhongbanda[]>([]);
+  const [tableData, setTableData] = useState<IPhieuNX[]>([]);
 
-  const [dataSelect, setDataSelect] = useState<IPhongbanda>();
+  const [dataSelect, setDataSelect] = useState<IPhieuNX>();
 
   useEffect(() => {
-    if (phongbanda?.length > 0) {
-      setTableData(phongbanda);
+    if (phieunx?.length > 0) {
+      setTableData(phieunx);
     }
-  }, [phongbanda, mutatePhongBanDa]);
+  }, [phieunx, mutatePhieuNX]);
 
-  const [STATUS_OPTIONS, set_STATUS_OPTIONS] = useState([{ value: 'all', label: 'Tất cả' }]);
+  const [STATUS_OPTIONS, set_STATUS_OPTIONS] = useState([
+    { value: 'all', label: 'Tất cả' },
+    { value: '0', label: 'Mở' },
+    { value: '1', label: 'Khóa' },
+  ]);
 
-  useEffect(() => {
-    grouppolicy.forEach((data) => {
-      set_STATUS_OPTIONS((prevOptions) => [
-        ...prevOptions,
-        { value: data.ID_GroupPolicy.toString(), label: data.GroupPolicy },
-      ]);
-    });
-  }, [grouppolicy]);
+  const dateError =
+    filters.startDate && filters.endDate
+      ? filters.startDate.getTime() > filters.endDate.getTime()
+      : false;
 
   const dataFiltered = applyFilter({
     inputData: tableData,
     comparator: getComparator(table.order, table.orderBy),
     filters,
+    dateError,
   });
 
   const dataInPage = dataFiltered?.slice(
@@ -181,7 +183,7 @@ export default function GroupPolicyListView() {
   };
 
   const handleFilters = useCallback(
-    (name: string, value: IKhuvucTableFilterValue) => {
+    (name: string, value: ITaisanTableFilterValue) => {
       table.onResetPage();
       setFilters((prevState) => ({
         ...prevState,
@@ -213,7 +215,7 @@ export default function GroupPolicyListView() {
   const handleDeleteRow = useCallback(
     async (id: string) => {
       await axios
-        .put(`https://checklist.pmcweb.vn/pmc-assets/api/ent_policy/delete/${id}`, {
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/tb_phieunx/delete/${id}`, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -221,7 +223,7 @@ export default function GroupPolicyListView() {
         })
         .then((res) => {
           // reset();
-          const deleteRow = tableData?.filter((row) => row.ID_Phongban !== id);
+          const deleteRow = tableData?.filter((row) => row.ID_PhieuNX !== id);
           setTableData(deleteRow);
 
           table.onUpdatePageDeleteRow(dataInPage.length);
@@ -259,18 +261,16 @@ export default function GroupPolicyListView() {
   }, []);
 
   const handleViewRow = useCallback(
-    (data: IPhongbanda) => {
-      confirm.onTrue();
-      popover.onClose();
-      setDataSelect(data);
+    (id: string) => {
+      router.push(paths.dashboard.phieunx.detail(id));
     },
-    [confirm, popover]
+    [router]
   );
 
   const handleUpdate = useCallback(
     async (id: string) => {
       await axios
-        .put(`https://checklist.pmcweb.vn/pmc-assets/api/ent_phongbanda/update/${id}`, dataSelect, {
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/tb_phieunx/update/${id}`, dataSelect, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -280,7 +280,7 @@ export default function GroupPolicyListView() {
           reset();
           confirm.onFalse();
           popover.onClose();
-          await mutatePhongBanDa();
+          await mutatePhieuNX();
 
           enqueueSnackbar({
             variant: 'success',
@@ -312,7 +312,7 @@ export default function GroupPolicyListView() {
           }
         });
     },
-    [accessToken, enqueueSnackbar, dataSelect, reset, confirm, popover, mutatePhongBanDa] // Add accessToken and enqueueSnackbar as dependencies
+    [accessToken, enqueueSnackbar, dataSelect, reset, confirm, popover, mutatePhieuNX] // Add accessToken and enqueueSnackbar as dependencies
   );
 
   const handleFilterStatus = useCallback(
@@ -322,18 +322,13 @@ export default function GroupPolicyListView() {
     [handleFilters]
   );
 
-  const getPolicyCount = (filter: any) => {
-    if (filter === 'all') {
-      return policy.length;
-    }
-    return policy.filter((item: any) => `${item.ID_GroupPolicy}` === `${filter}`).length;
-  };
+
 
   return (
     <>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
-          heading="Danh sách phòng ban"
+          heading="Danh sách phiếu nhập xuất"
           links={[
             {
               name: 'Dashboard',
@@ -347,7 +342,7 @@ export default function GroupPolicyListView() {
         />
 
         <Card>
-          {/* <Tabs
+          <Tabs
             value={filters.status}
             onChange={handleFilterStatus}
             sx={{
@@ -367,29 +362,34 @@ export default function GroupPolicyListView() {
                       ((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'
                     }
                     color={
-                      (tab.value === '1' && 'success') ||
-                      (tab.value === '2' && 'warning') ||
-                      (tab.value === '3' && 'error') ||
+                      (tab.value === '0' && 'success') ||
+                      (tab.value === '1' && 'default') ||
                       'default'
                     }
                   >
-                    {getPolicyCount(tab.value)}
+                    {tab.value === 'all' && phieunx?.length}
+                    {tab.value === '0' &&
+                      phieunx?.filter((item) => `${item.iTinhtrang}` === '0').length}
+
+                    {tab.value === '1' &&
+                      phieunx?.filter((item) => `${item.iTinhtrang}` === '1').length}
                   </Label>
                 }
               />
             ))}
-          </Tabs> */}
+          </Tabs>
 
-          <GiamsatTableToolbar
+          <PhieuNXTableToolbar
             filters={filters}
             onFilters={handleFilters}
+            dateError={dateError}
             //
             canReset={canReset}
             onResetFilters={handleResetFilters}
           />
 
           {canReset && (
-            <GiamsatTableFiltersResult
+            <PhieuNXTableFiltersResult
               filters={filters}
               onFilters={handleFilters}
               //
@@ -406,7 +406,7 @@ export default function GroupPolicyListView() {
               numSelected={table.selected.length}
               rowCount={tableData?.length}
               onSelectAllRows={(checked) =>
-                table.onSelectAllRows(checked, tableData?.map((row) => row?.ID_Phongban))
+                table.onSelectAllRows(checked, tableData?.map((row) => row?.ID_PhieuNX))
               }
               action={
                 <Tooltip title="Delete">
@@ -427,7 +427,7 @@ export default function GroupPolicyListView() {
                   numSelected={table.selected.length}
                   onSort={table.onSort}
                   // onSelectAllRows={(checked) =>
-                  //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_Phongban))
+                  //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_PhieuNX))
                   // }
                 />
 
@@ -438,13 +438,13 @@ export default function GroupPolicyListView() {
                       table.page * table.rowsPerPage + table.rowsPerPage
                     )
                     .map((row) => (
-                      <GroupPolicyTableRow
-                        key={row.ID_Phongban}
+                      <PhieuNXTableRow
+                        key={row.ID_PhieuNX}
                         row={row}
-                        selected={table.selected.includes(row.ID_Phongban)}
-                        onSelectRow={() => table.onSelectRow(row.ID_Phongban)}
-                        onDeleteRow={() => handleDeleteRow(row.ID_Phongban)}
-                        onViewRow={() => handleViewRow(row)}
+                        selected={table.selected.includes(row.ID_PhieuNX)}
+                        onSelectRow={() => table.onSelectRow(row.ID_PhieuNX)}
+                        onDeleteRow={() => handleDeleteRow(row.ID_PhieuNX)}
+                        onViewRow={() => handleViewRow(row.ID_PhieuNX)}
                       />
                     ))}
 
@@ -514,14 +514,15 @@ export default function GroupPolicyListView() {
 function applyFilter({
   inputData,
   comparator,
-  filters, // dateError,
+  filters,
+  dateError,
 }: {
-  inputData: IPhongbanda[];
+  inputData: IPhieuNX[];
   comparator: (a: any, b: any) => number;
   filters: ITaisanTableFilters;
-  // dateError: boolean;
+  dateError: boolean;
 }) {
-  const { status, name } = filters;
+  const { status, name, startDate, endDate } = filters;
 
   const stabilizedThis = inputData?.map((el, index) => [el, index] as const);
 
@@ -535,25 +536,45 @@ function applyFilter({
 
   if (name) {
     inputData = inputData?.filter(
-      (order) =>
-        order.Mapb.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.Tenphongban.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.Diachi.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.ent_chinhanh.Tenchinhanh.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.ent_nhompb.Nhompb.toLowerCase().indexOf(name.toLowerCase()) !== -1
+      (item) =>
+        item.Sophieu.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        item.ent_nghiepvu.Nghiepvu.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        item.NoiNhap.Tenphongban.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        item.NoiNhap.Mapb.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        item.NoiXuat.Tenphongban.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        item.NoiXuat.Mapb.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        item.ent_connguoi.Hoten.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        item.ent_connguoi.MaPMC.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        item.ent_connguoi.Sodienthoai.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
 
-  // if (status !== 'all') {
-  //   inputData = inputData?.filter((order) => `${order?.ID_GroupPolicy}` === status);
-  // }
+  if (!dateError) {
+    if (startDate && endDate) {
+      // Đặt endDate vào cuối ngày
+      endDate.setHours(23);
+      endDate.setMinutes(59);
+      endDate.setSeconds(59);
+
+      const startTimestamp = fTimestamp(startDate);
+      const endTimestamp = fTimestamp(endDate);
+      inputData = inputData.filter((item) => {
+        const nxTimestamp = fTimestamp(item.NgayNX);
+        return nxTimestamp >= startTimestamp && nxTimestamp < endTimestamp;
+      });
+    }
+  }
+
+  if (status !== 'all') {
+    inputData = inputData?.filter((order) => `${order?.iTinhtrang}` === status);
+  }
 
   return inputData;
 }
 
 interface ConfirmTransferDialogProps {
   open: boolean;
-  dataSelect?: IPhongbanda;
+  dataSelect?: IPhieuNX;
   onClose: VoidFunction;
   handleUpdate: (id: string) => void;
   chinhanh: IChinhanh[];
@@ -574,13 +595,13 @@ function GroupPolicyDialog({
   onBlur,
   handleUpdate,
 }: ConfirmTransferDialogProps) {
-  const idPolicy = dataSelect?.ID_Phongban;
+  const idPolicy = dataSelect?.ID_PhieuNX;
 
   return (
     <Dialog open={open} fullWidth maxWidth="md" onClose={onClose}>
       <DialogTitle>Cập nhật</DialogTitle>
       <Stack spacing={3} sx={{ px: 3 }}>
-        {chinhanh?.length > 0 && (
+        {/* {chinhanh?.length > 0 && (
           <FormControl fullWidth>
             <InputLabel id="demo-simple-select-label-chi-nhanh">Thuộc chi nhánh</InputLabel>
             <Select
@@ -649,7 +670,7 @@ function GroupPolicyDialog({
           value={dataSelect?.Ghichu}
           onChange={onChange}
           label="Ghi chú"
-        />
+        /> */}
       </Stack>
 
       <DialogActions>

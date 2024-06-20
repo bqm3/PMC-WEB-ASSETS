@@ -103,6 +103,13 @@ const TaiSanNewPage = lazy(() => import('src/pages/dashboard/taisan/new'));
 
 const PhieuNXListsPage = lazy(() => import('src/pages/dashboard/phieunx/list'));
 const PhieuNXNewPage = lazy(() => import('src/pages/dashboard/phieunx/new'));
+const PhieuNXEditPage = lazy(() => import('src/pages/dashboard/phieunx/edit'));
+
+const SuaChuaTSListsPage = lazy(() => import('src/pages/dashboard/suachuats/list'));
+const SuaChuaTSNewPage = lazy(() => import('src/pages/dashboard/suachuats/new'));
+const SuaChuaTSEditPage = lazy(() => import('src/pages/dashboard/suachuats/edit'));
+
+const TaiSanQrCodeListsPage = lazy(() => import('src/pages/dashboard/taisanqrcode/list'));
 // -----------------------------------------
 
 export const dashboardRoutes = [
@@ -182,9 +189,28 @@ export const dashboardRoutes = [
           { element: <PhieuNXListsPage />, index: true },
           { path: 'list', element: <PhieuNXListsPage /> },
           { path: 'new', element: <PhieuNXNewPage /> },
+          { path: ':id/edit', element: <PhieuNXEditPage /> },
+          { path: ':id', element: <PhieuNXEditPage /> },
         ],
       },
 
+      {
+        path: 'sua-chua-ts',
+        children: [
+          { element: <SuaChuaTSListsPage />, index: true },
+          { path: 'list', element: <SuaChuaTSListsPage /> },
+          { path: 'new', element: <SuaChuaTSNewPage /> },
+          { path: ':id/edit', element: <ServiceEditPage /> },
+          { path: ':id', element: <ServiceEditPage /> },
+        ],
+      },
+      {
+        path: 'tai-san-qrcode',
+        children: [
+          { element: <TaiSanQrCodeListsPage />, index: true },
+          { path: 'list', element: <TaiSanQrCodeListsPage /> },
+        ],
+      },
       {
         path: 'account-employee',
         children: [{ element: <EmployeeAccountPage />, index: true }],

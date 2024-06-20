@@ -17,7 +17,7 @@ import { useBoolean } from 'src/hooks/use-boolean';
 // utils
 import { fCurrency } from 'src/utils/format-number';
 // types
-import { IGroupPolicy, IPhongbanda, IPolicy } from 'src/types/taisan';
+import { IPhieuNX } from 'src/types/taisan';
 // components
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
@@ -28,7 +28,7 @@ import moment from 'moment';
 // ----------------------------------------------------------------------
 
 type Props = {
-  row: IPhongbanda;
+  row: IPhieuNX;
   selected: boolean;
   onViewRow: VoidFunction;
   onSelectRow: VoidFunction;
@@ -43,15 +43,23 @@ export default function CalvTableRow({
   onDeleteRow,
 }: Props) {
   const {
-    ID_Phongban,
-    ID_Chinhanh,
-    ID_Nhompb,
-    Mapb,
-    Tenphongban,
-    Diachi,
+    ID_PhieuNX,
+    ID_Nghiepvu,
+    Sophieu,
+    ID_NoiNhap,
+    ID_NoiXuat,
+    ID_Connguoi,
+    NgayNX,
     Ghichu,
-    ent_chinhanh,
-    ent_nhompb,
+    ID_Nam,
+    ID_Thang,
+    iTinhtrang,
+    NoiNhap,
+    NoiXuat,
+    ent_nghiepvu,
+    ent_nam,
+    ent_thang,
+    ent_connguoi,
   } = row;
 
   const confirm = useBoolean();
@@ -72,16 +80,49 @@ export default function CalvTableRow({
             },
           }}
         >
-          PB-{ID_Phongban}
+          PNX-{ID_PhieuNX}
         </Box>
       </TableCell>
 
-      <TableCell> {Mapb} </TableCell>
-      <TableCell> {Tenphongban} </TableCell>
-      <TableCell> {Diachi} </TableCell>
-      <TableCell> {ent_chinhanh.Tenchinhanh} </TableCell>
-      <TableCell> {ent_nhompb.Nhompb} </TableCell>
-    
+      <TableCell> {ent_nghiepvu.Nghiepvu} </TableCell>
+      <TableCell> {Sophieu} </TableCell>
+      <TableCell sx={{ alignItems: 'center' }}>
+        <ListItemText
+          primary={NoiNhap.Tenphongban}
+          secondary={NoiNhap.Mapb}
+          primaryTypographyProps={{ typography: 'body2' }}
+          secondaryTypographyProps={{
+            component: 'span',
+            color: 'text.disabled',
+          }}
+        />
+      </TableCell>
+      <TableCell sx={{ alignItems: 'center' }}>
+        <ListItemText
+          primary={NoiXuat.Tenphongban}
+          secondary={NoiXuat.Mapb}
+          primaryTypographyProps={{ typography: 'body2' }}
+          secondaryTypographyProps={{
+            component: 'span',
+            color: 'text.disabled',
+          }}
+        />
+        </TableCell>
+      <TableCell> {ent_connguoi.Hoten} </TableCell>
+      <TableCell> {NgayNX} </TableCell>
+      <TableCell>
+        <Label
+          variant="soft"
+          color={
+            (`${iTinhtrang}` === '1' && 'default') ||
+            (`${iTinhtrang}` === '0' && 'success') || 'default'
+          }
+        >
+          {`${iTinhtrang}` === '1'  && 'Khóa'}
+          {`${iTinhtrang}` === '0'  && 'Mở'}
+        </Label>
+        </TableCell>
+
       <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
         <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
           <Iconify icon="eva:more-vertical-fill" />

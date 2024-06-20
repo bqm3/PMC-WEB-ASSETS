@@ -7,7 +7,6 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Unstable_Grid2';
-import MenuItem from '@mui/material/MenuItem';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
@@ -19,26 +18,14 @@ import { useRouter } from 'src/routes/hooks';
 import { useResponsive } from 'src/hooks/use-responsive';
 // _mock
 import { _tags, _roles, USER_GENDER_OPTIONS } from 'src/_mock';
-import FormProvider, {
-  RHFSelect,
-  RHFEditor,
-  RHFUpload,
-  RHFMultiSelect,
-  RHFTextField,
-  RHFAutocomplete,
-  RHFMultiCheckbox,
-  RHFRadioGroup
-} from 'src/components/hook-form';
-// types
 // api
-import { useGetGroupPolicy, useGetChinhanh, useGetNhomPb } from 'src/api/taisan';
 // components
 import { useSnackbar } from 'src/components/snackbar';
 // types
 // components
 import { useSettingsContext } from 'src/components/settings';
 import axios from 'axios';
-import { TAISAN_EXPERIENCE_OPTIONS } from 'src/_mock/_taisan';
+import FormProvider, { RHFTextField } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
 
@@ -55,28 +42,17 @@ export default function GroupPolicyNewForm() {
 
   const mdUp = useResponsive('up', 'md');
 
-  const { chinhanh } = useGetChinhanh();
-  
-  const { nhompb } = useGetNhomPb();
-
   const { enqueueSnackbar } = useSnackbar();
 
   const NewProductSchema = Yup.object().shape({
-    Mapb: Yup.string().required('Không được để trống'),
-    Tenphongban: Yup.string().required('Không được để trống'),
-    Diachi: Yup.string().required('Không được để trống'),
-    Thuoc: Yup.string()
+    Manhom: Yup.string().required('Không được để trống'),
+    Loaits: Yup.string().required('Không được để trống'),
   });
 
   const defaultValues = useMemo(
     () => ({
-      Mapb: '',
-      Tenphongban: '',
-      Diachi: '',
-      ID_Nhompb: null,
-      ID_Chinhanh: null,
-      Ghichu: '',
-      Thuoc: ''
+      Manhom: '',
+      Loaits: '',
     }),
     []
   );
@@ -100,7 +76,7 @@ export default function GroupPolicyNewForm() {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`https://checklist.pmcweb.vn/pmc-assets/api/ent_phongbanda/create`, data, {
+      .post(`https://checklist.pmcweb.vn/pmc-assets/api/ent_nhomts/create`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -156,53 +132,11 @@ export default function GroupPolicyNewForm() {
 
       <Grid xs={12} md={8}>
         <Card>
-          <Stack spacing={3} sx={{ p: 1.5 }}>
-            {nhompb?.length > 0 && (
-              <RHFSelect
-                name="ID_Nhompb"
-                label="Phòng ban"
-                InputLabelProps={{ shrink: true }}
-                PaperPropsSx={{ textTransform: 'capitalize' }}
-              >
-                {nhompb?.map((item) => (
-                  <MenuItem key={item?.ID_Nhompb} value={item?.ID_Nhompb}>
-                    {item?.Nhompb}
-                  </MenuItem>
-                ))}
-              </RHFSelect>
-            )}
+          <Stack spacing={2} sx={{ p: 1.5 }}>
+            <RHFTextField name="Manhom" label="Mã nhóm" />
           </Stack>
-          <Stack spacing={3} sx={{ p: 1.5 }}>
-            {chinhanh?.length > 0 && (
-              <RHFSelect
-                name="ID_Chinhanh"
-                label="Chi nhánh"
-                InputLabelProps={{ shrink: true }}
-                PaperPropsSx={{ textTransform: 'capitalize' }}
-              >
-                {chinhanh?.map((item) => (
-                  <MenuItem key={item?.ID_Chinhanh} value={item?.ID_Chinhanh}>
-                    {item?.Tenchinhanh}
-                  </MenuItem>
-                ))}
-              </RHFSelect>
-            )}
-          </Stack>
-          <Stack spacing={1} sx={{ p: 1.5 }}>
-              <Typography variant="subtitle2">Thuộc</Typography>
-              <RHFRadioGroup row spacing={2} name="Thuoc" options={TAISAN_EXPERIENCE_OPTIONS} />
-            </Stack>
-          <Stack spacing={3} sx={{ p: 1.5 }}>
-            <RHFTextField name="Mapb" label="Mã phòng ban" />
-          </Stack>
-          <Stack spacing={3} sx={{ p: 1.5 }}>
-            <RHFTextField name="Tenphongban" label="Tên phòng ban" />
-          </Stack>
-          <Stack spacing={3} sx={{ p: 1.5 }}>
-            <RHFTextField name="Diachi" label="Địa chỉ" />
-          </Stack>
-          <Stack spacing={3} sx={{ p: 1.5 }}>
-            <RHFTextField name="Ghichu" multiline rows={3} label="Ghi chú" />
+          <Stack spacing={2} sx={{ p: 1.5 }}>
+            <RHFTextField name="Loaits" label="Loại tài sản" />
           </Stack>
         </Card>
       </Grid>

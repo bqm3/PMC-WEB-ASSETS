@@ -279,6 +279,17 @@ export const paths = {
     phieunx: {
       root: `${ROOTS.DASHBOARD}/phieu-nhap-xuat`,
       new: `${ROOTS.DASHBOARD}/phieu-nhap-xuat/new`,
+      edit: (id: string) => `${ROOTS.DASHBOARD}/phieu-nhap-xuat/${id}/edit`,
+      detail: (id: string) => `${ROOTS.DASHBOARD}/phieu-nhap-xuat/${id}`,
+    },
+    suachuats: {
+      root: `${ROOTS.DASHBOARD}/sua-chua-ts`,
+      new: `${ROOTS.DASHBOARD}/sua-chua-ts/new`,
+      edit: (id: string) => `${ROOTS.DASHBOARD}/sua-chua-ts/${id}/edit`,
+      detail: (id: string) => `${ROOTS.DASHBOARD}/sua-chua-ts/${id}`,
+    },
+    taisanqrcode: {
+      root: `${ROOTS.DASHBOARD}/tai-san-qrcode`,
     },
   },
 };
