@@ -49,11 +49,12 @@ export default function PhieuNXNewEditDetails() {
       Soluong: 0,
       Dongia: 0,
       Tong: 0,
+      isDelete: 0,
     });
   };
 
   const handleRemove = (index: number) => {
-    remove(index);
+    setValue(`phieunxct[${index}].isDelete`, 1);
   };
 
   const handleChangeQuantity = useCallback(
@@ -130,8 +131,6 @@ export default function PhieuNXNewEditDetails() {
     </Stack>
   );
 
-  console.log('values', values);
-
   return (
     <Box sx={{ p: 3 }}>
       <Typography variant="h6" sx={{ color: 'text.disabled', mb: 3 }}>
@@ -140,118 +139,118 @@ export default function PhieuNXNewEditDetails() {
 
       <Stack divider={<Divider flexItem sx={{ borderStyle: 'dashed' }} />} spacing={3}>
         {fields.map((item, index) => (
-          <Stack key={item.id} alignItems="flex-end" spacing={1.5}>
-            <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ width: 1 }}>
-              <Controller
-                name={`phieunxct[${index}].ID_Taisan`}
-                control={control}
-                defaultValue={`phieunxct[${index}].ent_taisan` || ''} // Ensure item?.ID_Taisan is correctly populated
-                render={({ field }) => (
-                  <Autocomplete
-                    {...field}
-                    options={taisan}
-                    getOptionLabel={(option: any) =>
-                      taisan.find((i: any) => `${i.ID_Taisan}` === `${option}`)?.Tents || ''
-                    }
-                    onChange={(event, newValue) => handleTaiSanChange(event, newValue, index)}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Tài sản"
-                        variant="outlined"
-                        size="medium"
-                        sx={{ minWidth: { md: 400, xs: 250 } }}
+          <>
+            {values.phieunxct[index].isDelete === 0 && (
+              <Stack key={item.id} alignItems="flex-end" spacing={1.5}>
+                <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ width: 1 }}>
+                  <Controller
+                    name={`phieunxct[${index}].ID_Taisan`}
+                    control={control}
+                    defaultValue={`phieunxct[${index}].ent_taisan` || ''} // Ensure item?.ID_Taisan is correctly populated
+                    render={({ field }) => (
+                      <Autocomplete
+                        {...field}
+                        options={taisan}
+                        getOptionLabel={(option: any) =>
+                          taisan.find((i: any) => `${i.ID_Taisan}` === `${option}`)?.Tents || ''
+                        }
+                        onChange={(event, newValue) => handleTaiSanChange(event, newValue, index)}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            label="Tài sản"
+                            variant="outlined"
+                            size="medium"
+                            sx={{ minWidth: { md: 400, xs: 250 } }}
+                          />
+                        )}
+                        renderOption={(props, option) => (
+                          <li {...props} key={option.ID_Taisan}>
+                            {option.Tents}
+                          </li>
+                        )}
                       />
                     )}
-                    renderOption={(props, option) => (
-                      <li {...props} key={option.ID_Taisan}>
-                        {option.Tents}
-                      </li>
-                    )}
                   />
+
+                  <RHFTextField
+                    size="medium"
+                    type="number"
+                    name={`phieunxct[${index}].Soluong`}
+                    label="Số lượng"
+                    placeholder="0"
+                    onChange={(event) => handleChangeQuantity(event, index)}
+                    InputLabelProps={{ shrink: true }}
+                    // sx={{ maxWidth: { md: 96 } }}
+                  />
+
+                  <RHFTextField
+                    size="medium"
+                    type="number"
+                    name={`phieunxct[${index}].Dongia`}
+                    label="Đơn giá"
+                    onChange={(event) => handleChangePrice(event, index)}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Box sx={{ typography: 'subtitle2', color: 'text.disabled' }}>
+                            <span>&#8363;</span>
+                          </Box>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+
+                  <RHFTextField
+                    disabled
+                    size="medium"
+                    type="string"
+                    name={`phieunxct[${index}].Tong`}
+                    label="Tổng tiền"
+                    placeholder="0.00"
+                    value={
+                      values.phieunxct[index]?.Tong === 0 ||
+                      values.phieunxct[index]?.Tong === undefined
+                        ? values.phieunxct[index].Soluong * values.phieunxct[index].Dongia
+                        : formatCash(values.phieunxct[index]?.Tong)
+                    }
+                    onChange={(event) => handleChangePrice(event, index)}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Box sx={{ typography: 'subtitle2', color: 'text.disabled' }}>
+                            <span>&#8363;</span>
+                          </Box>
+                        </InputAdornment>
+                      ),
+                    }}
+                    sx={{
+                      minWidth: { md: 150 },
+                      maxWidth: { md: 180 },
+                      [`& .${inputBaseClasses.input}`]: {
+                        textAlign: { md: 'left' },
+                      },
+                    }}
+                  />
+                </Stack>
+
+                {(values.iTinhtrang === '0' || values.iTinhtrang === '') && (
+                  <Button
+                    size="medium"
+                    color="error"
+                    startIcon={<Iconify icon="solar:trash-bin-trash-bold" />}
+                    onClick={() => handleRemove(index)}
+                  >
+                    Xóa
+                  </Button>
                 )}
-              />
-
-              <RHFTextField
-                size="medium"
-                type="number"
-                name={`phieunxct[${index}].Soluong`}
-                label="Số lượng"
-                placeholder="0"
-                onChange={(event) => handleChangeQuantity(event, index)}
-                InputLabelProps={{ shrink: true }}
-                // sx={{ maxWidth: { md: 96 } }}
-              />
-
-              <RHFTextField
-                size="medium"
-                type="number"
-                name={`phieunxct[${index}].Dongia`}
-                label="Đơn giá"
-                // value={
-                //   values.phieunxct[index].Dongia === 0
-                //     ? ''
-                //     : formatCash(values.phieunxct[index].Dongia)
-                // }
-                onChange={(event) => handleChangePrice(event, index)}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Box sx={{ typography: 'subtitle2', color: 'text.disabled' }}>
-                        <span>&#8363;</span>
-                      </Box>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-
-              <RHFTextField
-                disabled
-                size="medium"
-                type="string"
-                name={`phieunxct[${index}].Tong`}
-                label="Tổng tiền"
-                placeholder="0.00"
-                value={
-                  values.phieunxct[index]?.Tong === 0 || values.phieunxct[index]?.Tong === undefined
-                    ? values.phieunxct[index].Soluong * values.phieunxct[index].Dongia
-                    : formatCash(values.phieunxct[index]?.Tong)
-                }
-                onChange={(event) => handleChangePrice(event, index)}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Box sx={{ typography: 'subtitle2', color: 'text.disabled' }}>
-                        <span>&#8363;</span>
-                      </Box>
-                    </InputAdornment>
-                  ),
-                }}
-                sx={{
-                  minWidth: { md: 150 },
-                  maxWidth: { md: 180 },
-                  [`& .${inputBaseClasses.input}`]: {
-                    textAlign: { md: 'left' },
-                  },
-                }}
-              />
-            </Stack>
-
-            {values.iTinhtrang === '0' && (
-              <Button
-                size="medium"
-                color="error"
-                startIcon={<Iconify icon="solar:trash-bin-trash-bold" />}
-                onClick={() => handleRemove(index)}
-              >
-                Xóa
-              </Button>
+              </Stack>
             )}
-          </Stack>
+          </>
         ))}
       </Stack>
 
-      {values.iTinhtrang === '0' && (
+      {(values.iTinhtrang === '0' || values.iTinhtrang === '') && (
         <>
           <Divider sx={{ my: 3, borderStyle: 'dashed' }} />
 

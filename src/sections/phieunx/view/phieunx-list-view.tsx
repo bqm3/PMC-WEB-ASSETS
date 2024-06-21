@@ -114,10 +114,6 @@ export default function GroupPolicyListView() {
 
   const [filters, setFilters] = useState(defaultFilters);
 
-  const { policy } = useGetPolicy();
-
-  const { grouppolicy } = useGetGroupPolicy();
-
   const { chinhanh } = useGetChinhanh();
 
   const { nhompb } = useGetNhomPb();
@@ -166,7 +162,6 @@ export default function GroupPolicyListView() {
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     if (dataSelect) {
-      // Update the corresponding field in `dataSelect`
       setDataSelect({
         ...dataSelect,
         [name]: value,

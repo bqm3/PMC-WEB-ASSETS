@@ -2,12 +2,12 @@
 import Container from '@mui/material/Container';
 // routes
 import { paths } from 'src/routes/paths';
-import { useGetDetailPhieuNX } from 'src/api/taisan';
+import { useGetDetailPhieuNX, useGetDetailSuaChuaTS } from 'src/api/taisan';
 // components
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 //
-import PhieuNXNewForm from '../suachua-ts-new-form';
+import SuaChuaTsEditForm from '../suachua-ts-edit-form ';
 
 
 // ----------------------------------------------------------------------
@@ -17,10 +17,10 @@ type Props = {
 };
 
 
-export default function PhieuNXEditView({ id }: Props) {
+export default function SuaChuaTsEditView({ id }: Props) {
   const settings = useSettingsContext();
 
-  const { phieunx: currentPhieuNX, mutate } = useGetDetailPhieuNX(id);
+  const { suachuats: currentSuaChuaTs, mutate } = useGetDetailSuaChuaTS(id);
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
@@ -39,7 +39,7 @@ export default function PhieuNXEditView({ id }: Props) {
         }}
       />
 
-      {/* <PhieuNXNewForm currentPhieuNX={currentPhieuNX} mutate={mutate}/> */}
+      <SuaChuaTsEditForm currentSuaChuaTs={currentSuaChuaTs} mutate={mutate}/>
     </Container>
   );
 }

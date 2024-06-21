@@ -71,17 +71,17 @@ import {
   ITaisanTableFilters,
 } from 'src/types/taisan';
 //
-import GroupPolicyTableRow from '../tai-san-table-row';
-import GiamsatTableToolbar from '../tai-san-table-toolbar';
-import GiamsatTableFiltersResult from '../tai-san-table-filters-result';
+import GroupPolicyTableRow from '../tai-san-qr-table-row';
+import GiamsatTableToolbar from '../tai-san-qr-table-toolbar';
+import GiamsatTableFiltersResult from '../tai-san-qr-table-filters-result';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'ID_TaisanQr', label: 'Mã', width: 60 },
+  { id: 'ID_TaisanQr', label: 'Mã', width: 100 },
   { id: 'ID_Taisan', label: 'Tên tài sản', width: 200 },
   { id: 'Ngaykhoitao', label: 'Ngày', width: 200 },
-  { id: 'MaQrCode', label: 'Mã Qr', width: 150 },
+  { id: 'MaQrCode', label: 'Mã Qr Code', width: 150 },
   { id: 'Giatri', label: 'Giá trị', width: 150 },
   { id: 'iTinhTrang', label: 'Tình trạng', width: 150 },
   { id: 'ID_PhongBan', label: 'Phòng ban', width: 150 },
@@ -100,7 +100,7 @@ const STORAGE_KEY = 'accessToken';
 // ----------------------------------------------------------------------
 
 export default function GroupPolicyListView() {
-  const table = useTable({ defaultOrderBy: 'ID_TaisanQr' });
+  const table = useTable({ defaultOrderBy: 'Ngaykhoitao' });
 
   const settings = useSettingsContext();
 
@@ -116,7 +116,6 @@ export default function GroupPolicyListView() {
 
   const [filters, setFilters] = useState(defaultFilters);
 
-  const { taisan, mutateTaisan } = useGetTaisan();
   const { taisanqr, mutateTaisanQr } = useGetTaisanQrCode();
 
   const { nhomts } = useGetNhomts();
@@ -127,7 +126,13 @@ export default function GroupPolicyListView() {
 
   const [dataSelect, setDataSelect] = useState<ITaisanQrCode>();
 
-  console.log(tableData)
+  const [STATUS_OPTIONS, set_STATUS_OPTIONS] = useState([
+    { value: 'all', label: 'Tất cả' },
+    { value: '0', label: 'Sử dụng' },
+    { value: '1', label: 'Sửa chữa' },
+    { value: '2', label: 'Thanh lý' },
+  ]);
+
   useEffect(() => {
     if (taisanqr?.length > 0) {
       setTableData(taisanqr);
@@ -181,23 +186,9 @@ export default function GroupPolicyListView() {
     [table]
   );
 
-  const GroupPolicySchema = Yup.object().shape({
-    // Tents: Yup.string().required('Không được để trống'),
-    // ID_Nhomts: Yup.string().required('Không được để trống'),
-    // ID_Donvi: Yup.string().required('Không được để trống'),
-  });
+  const GroupPolicySchema = Yup.object().shape({});
 
-  const defaultValues = useMemo(
-    () => ({
-      // ID_Nhomts: dataSelect?.ID_Nhomts || '',
-      // ID_Donvi: dataSelect?.ID_Donvi || '',
-      // Mats: dataSelect?.Mats || '',
-      // Tents: dataSelect?.Tents || '',
-      // Thongso: dataSelect?.Thongso || '',
-      // Ghichu: dataSelect?.Ghichu || '',
-    }),
-    []
-  );
+  const defaultValues = useMemo(() => ({}), []);
 
   const methods = useForm({
     resolver: yupResolver(GroupPolicySchema),
@@ -315,6 +306,12 @@ export default function GroupPolicyListView() {
     [accessToken, enqueueSnackbar, reset, confirm, dataSelect, popover, mutateTaisanQr] // Add accessToken and enqueueSnackbar as dependencies
   );
 
+  const handleFilterStatus = useCallback(
+    (event: React.SyntheticEvent, newValue: string) => {
+      handleFilters('status', newValue);
+    },
+    [handleFilters]
+  );
 
   return (
     <>
@@ -334,6 +331,46 @@ export default function GroupPolicyListView() {
         />
 
         <Card>
+          <Tabs
+            value={filters.status}
+            onChange={handleFilterStatus}
+            sx={{
+              px: 2.5,
+              boxShadow: (theme) => `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
+            }}
+          >
+            {STATUS_OPTIONS.map((tab) => (
+              <Tab
+                key={tab.value}
+                iconPosition="end"
+                value={tab.value}
+                label={tab.label}
+                icon={
+                  <Label
+                    variant={
+                      ((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'
+                    }
+                    color={
+                      (tab.value === '0' && 'success') ||
+                      (tab.value === '1' && 'warning') ||
+                      'default'
+                    }
+                  >
+                    {tab.value === 'all' && taisanqr?.length}
+                    {tab.value === '0' &&
+                      taisanqr?.filter((item) => `${item.iTinhtrang}` === '0').length}
+
+                    {tab.value === '1' &&
+                      taisanqr?.filter((item) => `${item.iTinhtrang}` === '1').length}
+
+                    {tab.value === '2' &&
+                      taisanqr?.filter((item) => `${item.iTinhtrang}` === '2').length}
+                  </Label>
+                }
+              />
+            ))}
+          </Tabs>
+
           <GiamsatTableToolbar
             filters={filters}
             onFilters={handleFilters}
@@ -496,8 +533,13 @@ function applyFilter({
         order?.ent_phongbanda?.Mapb.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         order.MaQrCode.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         order.ent_taisan.Tents.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.ent_connguoi.Hoten.toLowerCase().indexOf(name.toLowerCase()) !== -1
+        order.ent_connguoi.Hoten.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        order.Giatri.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
+  }
+
+  if (status !== 'all') {
+    inputData = inputData?.filter((order) => `${order?.iTinhtrang}` === status);
   }
 
   return inputData;
@@ -540,65 +582,9 @@ function GroupPolicyDialog({
 
         <DialogContent dividers={scroll === 'paper'}>
           <Stack spacing={3} sx={{ p: 3 }}>
-            <Stack style={{ display: 'flex', flexDirection: 'row', gap: 30 }} spacing={3}>
-              {/* {nhomts?.length > 0 && (
-                <FormControl fullWidth>
-                  <InputLabel id="demo-simple-select-label">Tài sản</InputLabel>
-                  <Select
-                    name="ID_Nhomts"
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={dataSelect?.ID_Nhomts}
-                    onChange={handleSelectChange}
-                  >
-                    {nhomts?.map((item) => (
-                      <MenuItem key={item?.ID_Nhomts} value={item?.ID_Nhomts}>
-                        {item?.Loaits}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              )} */}
-
-              {donvi?.length > 0 && (
-                <FormControl fullWidth>
-                  <InputLabel id="demo-simple-select-label">Đơn vị</InputLabel>
-                  <Select
-                    name="ID_Donvi"
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={dataSelect?.ID_Donvi}
-                    onChange={handleSelectChange}
-                  >
-                    {donvi?.map((item) => (
-                      <MenuItem key={item?.ID_Donvi} value={item?.ID_Donvi}>
-                        {item?.Donvi}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              )}
-            </Stack>
-            {/* <TextField
-              name="Tents"
-              label="Tên tài sản" // Vietnamese for "Category Name"
-              value={dataSelect?.Tents}
-              onChange={onChange} // Update local state and notify parent
-              fullWidth
-              onBlur={onBlur}
-            />
-            <RHFEditor
-              simple
-              name="Thongso"
-              value={dataSelect?.Thongso}
-              onChange={(value, delta, source, editor) => {
-                // Xử lý thay đổi giá trị
-                setDataSelect((prevData: any) => ({
-                  ...prevData,
-                  Thongso: value,
-                }));
-              }}
-            /> */}
+            {/* <Stack style={{ display: 'flex', flexDirection: 'row', gap: 30 }} spacing={3}>
+              
+            </Stack> */}
 
             <TextField
               name="Ghichu"

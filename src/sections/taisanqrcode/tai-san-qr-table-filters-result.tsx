@@ -53,25 +53,18 @@ export default function OrderTableFiltersResult({
 
       <Stack flexGrow={1} spacing={1} direction="row" flexWrap="wrap" alignItems="center">
         {filters.status !== 'all' && (
-          <Block label="Khối làm việc:">
-            <Chip
-              size="small"
-              label={
-                (`${filters.status}` === '1' && 'Khối làm sạch') ||
-                (`${filters.status}` === '2' && 'Khối kỹ thuật') ||
-                (`${filters.status}` === '3' && 'Khối bảo vệ') ||
-                (`${filters.status}` === '4' && 'Khối dự án') 
-              }
-              onDelete={handleRemoveStatus}
-            />
-          </Block>
+          <Block label="Trạng thái:">
+          <Chip
+            size="small"
+            label={
+              (`${filters.status}` === '0' && 'Sử dụng') ||
+              (`${filters.status}` === '1' && 'Sửa chữa') ||
+              (`${filters.status}` === '2' && 'Thanh lý') 
+            }
+            onDelete={handleRemoveStatus}
+          />
+        </Block>
         )}
-
-        {/* {filters.startDate && filters.endDate && (
-          <Block label="Date:">
-            <Chip size="small" label={shortLabel} onDelete={handleRemoveDate} />
-          </Block>
-        )} */}
 
         <Button
           color="error"

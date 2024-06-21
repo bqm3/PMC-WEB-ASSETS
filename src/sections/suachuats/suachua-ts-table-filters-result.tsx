@@ -37,10 +37,7 @@ export default function OrderTableFiltersResult({
     onFilters('status', 'all');
   };
 
-  const handleRemoveDate = () => {
-    onFilters('startDate', null);
-    onFilters('endDate', null);
-  };
+ 
 
   return (
     <Stack spacing={1.5} {...other}>
@@ -53,25 +50,18 @@ export default function OrderTableFiltersResult({
 
       <Stack flexGrow={1} spacing={1} direction="row" flexWrap="wrap" alignItems="center">
         {filters.status !== 'all' && (
-          <Block label="Khối làm việc:">
+          <Block label="Trạng thái:">
             <Chip
               size="small"
               label={
-                (`${filters.status}` === '1' && 'Khối làm sạch') ||
-                (`${filters.status}` === '2' && 'Khối kỹ thuật') ||
-                (`${filters.status}` === '3' && 'Khối bảo vệ') ||
-                (`${filters.status}` === '4' && 'Khối dự án') 
+                (`${filters.status}` === '0' && 'Mở') ||
+                (`${filters.status}` === '1' && 'Khóa') 
               }
               onDelete={handleRemoveStatus}
             />
           </Block>
         )}
 
-        {/* {filters.startDate && filters.endDate && (
-          <Block label="Date:">
-            <Chip size="small" label={shortLabel} onDelete={handleRemoveDate} />
-          </Block>
-        )} */}
 
         <Button
           color="error"

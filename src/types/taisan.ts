@@ -153,6 +153,17 @@ export type IPhieuNX = {
   tb_phieunxct: IPhieuNXCT;
 }
 
+export type ISuaChuaCT = {
+  ID_PhieuSCCT: string;
+  ID_SuachuaTS: string;
+  ID_TaisanQr: string;
+  Ngaynhan: string;
+  Sotien: string;
+  Ghichu: string;
+  isDelete: string;
+  tb_taisanqr: ITaisanQrCode;
+}
+
 export type ISuachuaTS = {
   ID_Suachua: string;
   Ngaygiao: string;
@@ -160,4 +171,5 @@ export type ISuachuaTS = {
   Nguoitheodoi: string;
   iTinhtrang: string;
   isDelete: string;
+  tb_suachuact: ISuaChuaCT;
 }

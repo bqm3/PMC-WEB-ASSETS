@@ -75,6 +75,18 @@ export default function CalvTableRow({
       <TableCell sx={{alignItems: 'center' }}>
         {Nguoitheodoi}
       </TableCell>
+      <TableCell>
+        <Label
+          variant="soft"
+          color={
+            (`${iTinhtrang}` === '1' && 'default') ||
+            (`${iTinhtrang}` === '0' && 'success') || 'default'
+          }
+        >
+          {`${iTinhtrang}` === '1'  && 'Khóa'}
+          {`${iTinhtrang}` === '0'  && 'Mở'}
+        </Label>
+        </TableCell>
 
       <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
         <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>

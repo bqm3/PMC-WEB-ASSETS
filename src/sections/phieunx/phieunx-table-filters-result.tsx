@@ -59,14 +59,12 @@ export default function InvoiceTableFiltersResult({
        
 
         {filters.status !== 'all' && (
-          <Block label="Khối làm việc:">
+          <Block label="Trạng thái:">
             <Chip
               size="small"
               label={
-                (`${filters.status}` === '1' && 'Khối làm sạch') ||
-                (`${filters.status}` === '2' && 'Khối kỹ thuật') ||
-                (`${filters.status}` === '3' && 'Khối bảo vệ')  ||
-                (`${filters.status}` === '4' && 'Khối dự án')  
+                (`${filters.status}` === '0' && 'Mở') ||
+                (`${filters.status}` === '1' && 'Khóa')
               }
               onDelete={handleRemoveStatus}
             />

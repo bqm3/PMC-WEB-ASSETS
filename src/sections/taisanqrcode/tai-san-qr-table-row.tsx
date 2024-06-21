@@ -17,8 +17,7 @@ import { useBoolean } from 'src/hooks/use-boolean';
 // utils
 import { fCurrency } from 'src/utils/format-number';
 // types
-import { IOrderItem } from 'src/types/order';
-import { IKhuvuc, IHangMuc, ICalv, IGiamsat, IUser } from 'src/types/khuvuc';
+import { IGroupPolicy, IPolicy, ITaisan, ITaisanQrCode } from 'src/types/taisan';
 // components
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
@@ -29,22 +28,37 @@ import moment from 'moment';
 // ----------------------------------------------------------------------
 
 type Props = {
-  row: IUser;
+  row: ITaisanQrCode;
   selected: boolean;
   onViewRow: VoidFunction;
-//   onSelectRow: VoidFunction;
-//   onDeleteRow: VoidFunction;
+  onSelectRow: VoidFunction;
+  onDeleteRow: VoidFunction;
 };
 
 export default function CalvTableRow({
   row,
   selected,
   onViewRow,
-//   onSelectRow,
-//   onDeleteRow,
+  onSelectRow,
+  onDeleteRow,
 }: Props) {
-  const { ID_Duan, ID_User, ID_KhoiCV, isDelete, ent_chucvu, ent_khoicv, UserName, Emails } = row;
+  const {
+    ID_TaisanQr,
+    ID_Taisan,
+    Ngaykhoitao,
+    ID_Donvi,
+    MaQrCode,
+    Giatri,
+    iTinhtrang,
+    Ghichu,
+    ID_Phongban,
+    ID_Connguoi,
+    ent_phongbanda,
+    ent_connguoi,
+    ent_taisan,
+  } = row;
 
+  console.log(row);
   const confirm = useBoolean();
 
   const collapse = useBoolean();
@@ -53,7 +67,6 @@ export default function CalvTableRow({
 
   const renderPrimary = (
     <TableRow hover selected={selected}>
-      
       <TableCell>
         <Box
           onClick={onViewRow}
@@ -64,37 +77,30 @@ export default function CalvTableRow({
             },
           }}
         >
-          GS-{ID_User}
+          TS-{ID_Taisan}
         </Box>
       </TableCell>
+      <TableCell> {ent_taisan.Tents} </TableCell>
 
-      <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-        <ListItemText
-          primary={UserName}
-          // secondary={ent_khoicv?.KhoiCV}
-          primaryTypographyProps={{ typography: 'body2' }}
-          secondaryTypographyProps={{
-            component: 'span',
-            color: 'text.disabled',
-          }}
-        />
-      </TableCell>
-      <TableCell align="center"> {Emails} </TableCell>
-      <TableCell align="center"> {ent_chucvu?.Chucvu}</TableCell>
-
-      <TableCell align="center">
+      <TableCell> {Ngaykhoitao} </TableCell>
+      <TableCell> {MaQrCode} </TableCell>
+      <TableCell> {fCurrency(Giatri) || ''} </TableCell>
+      <TableCell>
         <Label
           variant="soft"
           color={
-            (`${ID_KhoiCV}` === '1' && 'success') ||
-            (`${ID_KhoiCV}` === '2' && 'warning') ||
-            (`${ID_KhoiCV}` === '3' && 'error') ||
-            'default'
+            (`${iTinhtrang}` === '1' && 'warning') ||
+            (`${iTinhtrang}` === '0' && 'success') || 'default'
           }
         >
-          {ent_khoicv.KhoiCV}
+          {`${iTinhtrang}` === '1'  && 'Sửa chữa'}
+          {`${iTinhtrang}` === '0'  && 'Sử dụng'}
+          {`${iTinhtrang}` === '2'  && 'Thanh lý'}
         </Label>
-      </TableCell>
+        </TableCell>
+      <TableCell> {ent_phongbanda?.Tenphongban} </TableCell>
+      <TableCell> {ent_connguoi?.Hoten} </TableCell>
+
       <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
         <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
           <Iconify icon="eva:more-vertical-fill" />
@@ -122,29 +128,10 @@ export default function CalvTableRow({
           <Iconify icon="solar:eye-bold" />
           Xem
         </MenuItem>
-        {/* <MenuItem
-          onClick={() => {
-            confirm.onTrue();
-            popover.onClose();
-          }}
-          sx={{ color: 'error.main' }}
-        >
-          <Iconify icon="solar:trash-bin-trash-bold" />
-          Xóa
-        </MenuItem> */}
+       
       </CustomPopover>
 
-      {/* <ConfirmDialog
-        open={confirm.value}
-        onClose={confirm.onFalse}
-        title="PMC thông báo"
-        content="Bạn có thực sự muốn xóa không?"
-        action={
-          <Button variant="contained" color="error" onClick={onDeleteRow}>
-            Xóa
-          </Button>
-        }
-      /> */}
+    
     </>
   );
 }

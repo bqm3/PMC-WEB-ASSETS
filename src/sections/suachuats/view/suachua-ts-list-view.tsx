@@ -51,9 +51,9 @@ import { IKhuvucTableFilters, IKhuvucTableFilterValue } from 'src/types/khuvuc';
 
 import { INhomts, ISuachuaTS, ITaisanTableFilterValue, ITaisanTableFilters } from 'src/types/taisan';
 //
-import GroupPolicyTableRow from '../suachua-ts-table-row';
-import GiamsatTableToolbar from '../suachua-ts-table-toolbar';
-import GiamsatTableFiltersResult from '../suachua-ts-table-filters-result';
+import SuaChuaTSTableRow from '../suachua-ts-table-row';
+import SuaChuaTSTableToolbar from '../suachua-ts-table-toolbar';
+import SuaChuaTSTableFiltersResult from '../suachua-ts-table-filters-result';
 
 // ----------------------------------------------------------------------
 
@@ -121,6 +121,12 @@ export default function GroupPolicyListView() {
 
   const notFound = (!dataFiltered?.length && canReset) || !dataFiltered?.length;
 
+  const [STATUS_OPTIONS, set_STATUS_OPTIONS] = useState([
+    { value: 'all', label: 'Tất cả' },
+    { value: '0', label: 'Mở' },
+    { value: '1', label: 'Khóa' },
+  ]);
+
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     if (dataSelect) {
@@ -144,11 +150,9 @@ export default function GroupPolicyListView() {
   );
 
   const GroupPolicySchema = Yup.object().shape({
-    GroupPolicy: Yup.string().required('Không được để trống'),
   });
 
   const defaultValues = {
-    GroupPolicy: '',
   };
 
   const methods = useForm({
@@ -215,68 +219,12 @@ export default function GroupPolicyListView() {
   }, []);
 
   const handleViewRow = useCallback(
-    (data: ISuachuaTS) => {
-      confirm.onTrue();
-      popover.onClose();
-      setDataSelect(data);
+    (id: string) => {
+      router.push(paths.dashboard.suachuats.detail(id));
     },
-    [confirm, popover]
+    [router]
   );
 
-  const handleUpdate = useCallback(
-    async (id: string) => {
-      await axios
-        .put(
-          `https://checklist.pmcweb.vn/pmc-assets/api/tb_suachuats/update/${id}`,
-          // {
-          //   Manhom: dataSelect?.Manhom,
-          //   Loaits: dataSelect?.Loaits,
-          // },
-          {
-            headers: {
-              Accept: 'application/json',
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        )
-        .then(async (res) => {
-          reset();
-          confirm.onFalse();
-          popover.onClose();
-          await mutateSuachuaTS();
-
-          enqueueSnackbar({
-            variant: 'success',
-            autoHideDuration: 2000,
-            message: 'Cập nhật thành công',
-          });
-        })
-        .catch((error) => {
-          if (error.response) {
-            enqueueSnackbar({
-              variant: 'error',
-              autoHideDuration: 2000,
-              message: `${error.response.data.message}`,
-            });
-          } else if (error.request) {
-            // Lỗi không nhận được phản hồi từ server
-            enqueueSnackbar({
-              variant: 'error',
-              autoHideDuration: 2000,
-              message: `Không nhận được phản hồi từ máy chủ`,
-            });
-          } else {
-            // Lỗi khi cấu hình request
-            enqueueSnackbar({
-              variant: 'error',
-              autoHideDuration: 2000,
-              message: `Lỗi gửi yêu cầu`,
-            });
-          }
-        });
-    },
-    [accessToken, enqueueSnackbar, reset, confirm, popover, mutateSuachuaTS] // Add accessToken and enqueueSnackbar as dependencies
-  );
 
   const handleFilterStatus = useCallback(
     (event: React.SyntheticEvent, newValue: string) => {
@@ -286,146 +234,149 @@ export default function GroupPolicyListView() {
   );
 
   return (
-    <>
-      <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-        <CustomBreadcrumbs
-          heading="Danh sách phân loại tài sản"
-          links={[
-            {
-              name: 'Dashboard',
-              href: paths.dashboard.root,
-            },
-            { name: 'Danh sách' },
-          ]}
-          sx={{
-            mb: { xs: 3, md: 5 },
-          }}
-        />
+    <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+    <CustomBreadcrumbs
+      heading="Danh sách tài sản sửa chữa"
+      links={[
+        {
+          name: 'Dashboard',
+          href: paths.dashboard.root,
+        },
+        { name: 'Danh sách' },
+      ]}
+      sx={{
+        mb: { xs: 3, md: 5 },
+      }}
+    />
 
-        <Card>
-          <GiamsatTableToolbar
-            filters={filters}
-            onFilters={handleFilters}
-            //
-            canReset={canReset}
-            onResetFilters={handleResetFilters}
+    <Card>
+    <Tabs
+        value={filters.status}
+        onChange={handleFilterStatus}
+        sx={{
+          px: 2.5,
+          boxShadow: (theme) => `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
+        }}
+      >
+        {STATUS_OPTIONS.map((tab) => (
+          <Tab
+            key={tab.value}
+            iconPosition="end"
+            value={tab.value}
+            label={tab.label}
+            icon={
+              <Label
+                variant={
+                  ((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'
+                }
+                color={
+                  (tab.value === '0' && 'success') ||
+                  (tab.value === '1' && 'default') ||
+                  'default'
+                }
+              >
+                {tab.value === 'all' && suachuats?.length}
+                {tab.value === '0' &&
+                  suachuats?.filter((item) => `${item.iTinhtrang}` === '0').length}
+
+                {tab.value === '1' &&
+                  suachuats?.filter((item) => `${item.iTinhtrang}` === '1').length}
+              </Label>
+            }
           />
-
-          {canReset && (
-            <GiamsatTableFiltersResult
-              filters={filters}
-              onFilters={handleFilters}
-              //
-              onResetFilters={handleResetFilters}
-              //
-              results={dataFiltered?.length}
-              sx={{ p: 2.5, pt: 0 }}
-            />
-          )}
-
-          <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
-            <TableSelectedAction
-              dense={table.dense}
-              numSelected={table.selected.length}
-              rowCount={tableData?.length}
-              onSelectAllRows={(checked) =>
-                table.onSelectAllRows(checked, tableData?.map((row) => row?.ID_Suachua))
-              }
-              action={
-                <Tooltip title="Delete">
-                  <IconButton color="primary" onClick={confirm.onTrue}>
-                    <Iconify icon="solar:trash-bin-trash-bold" />
-                  </IconButton>
-                </Tooltip>
-              }
-            />
-
-            <Scrollbar>
-              <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 960 }}>
-                <TableHeadCustom
-                  order={table.order}
-                  orderBy={table.orderBy}
-                  headLabel={TABLE_HEAD}
-                  rowCount={tableData?.length}
-                  numSelected={table.selected.length}
-                  onSort={table.onSort}
-                  // onSelectAllRows={(checked) =>
-                  //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_Suachua))
-                  // }
-                />
-
-                <TableBody>
-                  {dataFiltered
-                    .slice(
-                      table.page * table.rowsPerPage,
-                      table.page * table.rowsPerPage + table.rowsPerPage
-                    )
-                    .map((row) => (
-                      <GroupPolicyTableRow
-                        key={row.ID_Suachua}
-                        row={row}
-                        selected={table.selected.includes(row.ID_Suachua)}
-                        onSelectRow={() => table.onSelectRow(row.ID_Suachua)}
-                        onDeleteRow={() => handleDeleteRow(row.ID_Suachua)}
-                        onViewRow={() => handleViewRow(row)}
-                      />
-                    ))}
-
-                  <TableEmptyRows
-                    height={denseHeight}
-                    emptyRows={emptyRows(table.page, table.rowsPerPage, tableData?.length)}
-                  />
-
-                  <TableNoData notFound={notFound} />
-                </TableBody>
-              </Table>
-            </Scrollbar>
-          </TableContainer>
-
-          <TablePaginationCustom
-            count={dataFiltered?.length}
-            page={table.page}
-            rowsPerPage={table.rowsPerPage}
-            onPageChange={table.onChangePage}
-            onRowsPerPageChange={table.onChangeRowsPerPage}
-            //
-            dense={table.dense}
-            onChangeDense={table.onChangeDense}
-          />
-        </Card>
-      </Container>
-
-      <GroupPolicyDialog
-        open={confirm.value}
-        dataSelect={dataSelect}
-        onClose={confirm.onFalse}
-        onChange={handleInputChange}
-        handleUpdate={handleUpdate}
+        ))}
+      </Tabs>
+      <SuaChuaTSTableToolbar
+        filters={filters}
+        onFilters={handleFilters}
+        //
+        canReset={canReset}
+        onResetFilters={handleResetFilters}
       />
 
-      {/* <ConfirmDialog
-        open={confirm.value}
-        onClose={confirm.onFalse}
-        title="Delete"
-        content={
-          <>
-            Are you sure want to delete <strong> {table.selected.length} </strong> items?
-          </>
-        }
-        action={
-          <Button
-            variant="contained"
-            color="error"
-            onClick={() => {
-              handleDeleteRows();
-              confirm.onFalse();
-            }}
-          >
-            Delete
-          </Button>
-        }
-      /> */}
-    </>
+      {canReset && (
+        <SuaChuaTSTableFiltersResult
+          filters={filters}
+          onFilters={handleFilters}
+          //
+          onResetFilters={handleResetFilters}
+          //
+          results={dataFiltered?.length}
+          sx={{ p: 2.5, pt: 0 }}
+        />
+      )}
+
+      <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
+        <TableSelectedAction
+          dense={table.dense}
+          numSelected={table.selected.length}
+          rowCount={tableData?.length}
+          onSelectAllRows={(checked) =>
+            table.onSelectAllRows(checked, tableData?.map((row) => row?.ID_Suachua))
+          }
+          action={
+            <Tooltip title="Xóa">
+              <IconButton color="primary" onClick={confirm.onTrue}>
+                <Iconify icon="solar:trash-bin-trash-bold" />
+              </IconButton>
+            </Tooltip>
+          }
+        />
+
+        <Scrollbar>
+          <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 960 }}>
+            <TableHeadCustom
+              order={table.order}
+              orderBy={table.orderBy}
+              headLabel={TABLE_HEAD}
+              rowCount={tableData?.length}
+              numSelected={table.selected.length}
+              onSort={table.onSort}
+              // onSelectAllRows={(checked) =>
+              //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_Suachua))
+              // }
+            />
+
+            <TableBody>
+              {dataFiltered
+                .slice(
+                  table.page * table.rowsPerPage,
+                  table.page * table.rowsPerPage + table.rowsPerPage
+                )
+                .map((row) => (
+                  <SuaChuaTSTableRow
+                    key={row.ID_Suachua}
+                    row={row}
+                    selected={table.selected.includes(row.ID_Suachua)}
+                    onSelectRow={() => table.onSelectRow(row.ID_Suachua)}
+                    onDeleteRow={() => handleDeleteRow(row.ID_Suachua)}
+                    onViewRow={() => handleViewRow(row.ID_Suachua)}
+                  />
+                ))}
+
+              <TableEmptyRows
+                height={denseHeight}
+                emptyRows={emptyRows(table.page, table.rowsPerPage, tableData?.length)}
+              />
+
+              <TableNoData notFound={notFound} />
+            </TableBody>
+          </Table>
+        </Scrollbar>
+      </TableContainer>
+
+      <TablePaginationCustom
+        count={dataFiltered?.length}
+        page={table.page}
+        rowsPerPage={table.rowsPerPage}
+        onPageChange={table.onChangePage}
+        onRowsPerPageChange={table.onChangeRowsPerPage}
+        //
+        dense={table.dense}
+        onChangeDense={table.onChangeDense}
+      />
+    </Card>
+  </Container>
   );
 }
 
@@ -461,67 +412,10 @@ function applyFilter({
     );
   }
 
+  if (status !== 'all') {
+    inputData = inputData?.filter((order) => `${order?.iTinhtrang}` === status);
+  }
+
   return inputData;
 }
 
-interface ConfirmTransferDialogProps {
-  open: boolean;
-  dataSelect?: ISuachuaTS;
-  onClose: VoidFunction;
-  handleUpdate: (id: string) => void;
-  onChange: (event: React.FocusEvent<HTMLInputElement>) => void;
-  onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
-}
-
-function GroupPolicyDialog({
-  open,
-  dataSelect,
-  onChange,
-  onClose,
-  onBlur,
-  handleUpdate,
-}: ConfirmTransferDialogProps) {
-  const idGroupPolicy = dataSelect?.ID_Suachua;
-
-  return (
-    <Dialog open={open} fullWidth maxWidth="xs" onClose={onClose}>
-      <DialogTitle>Cập nhật</DialogTitle>
-
-      <Stack spacing={3} sx={{ px: 3 }}>
-        {/* <TextField
-          name="Manhom"
-          label="Mã nhóm" // Vietnamese for "Category Name"
-          value={dataSelect?.Manhom}
-          onChange={onChange} // Update local state and notify parent
-          fullWidth
-          onBlur={onBlur}
-        />
-
-        <TextField
-          name="Loaits"
-          label="Loại tài sản" // Vietnamese for "Category Name"
-          value={dataSelect?.Loaits}
-          onChange={onChange} // Update local state and notify parent
-          fullWidth
-          onBlur={onBlur}
-        /> */}
-      </Stack>
-
-      <DialogActions>
-        <Button onClick={onClose}>Hủy</Button>
-
-        <Button
-          variant="contained"
-          color="info"
-          onClick={() => {
-            if (idGroupPolicy) {
-              handleUpdate(idGroupPolicy);
-            }
-          }}
-        >
-          Cập nhật
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
-}

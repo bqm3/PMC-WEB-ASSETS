@@ -72,7 +72,7 @@ import GiamsatTableFiltersResult from '../create-user-filters-result';
 
 const TABLE_HEAD = [
   { id: 'ID_Connguoi', label: 'Mã', width: 100 },
-  { id: 'MaPMC', label: 'Mã PMC', width: 150 },
+  { id: 'MaPMC', label: 'Mã truy cập', width: 150 },
   { id: 'Hoten', label: 'Họ tên', width: 150 },
   { id: 'Gioitinh', label: 'Giới tính', width: 150 },
   { id: 'Diachi', label: 'Địa chỉ', width: 180 },

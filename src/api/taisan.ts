@@ -425,6 +425,35 @@ export function useGetDetailPhieuNX(id: string) {
   return memoizedValue;
 }
 
+export function useGetDetailSuaChuaTS(id: string) {
+  const accessToken = localStorage.getItem(STORAGE_KEY);
+  const URL = `https://checklist.pmcweb.vn/pmc-assets/api/tb_suachuats/${id}`;
+  const fetCher = (url: string) =>
+    fetch(url, {
+      method: 'get',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }).then((res) => res.json());
+  const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetCher);
+
+  const memoizedValue = useMemo(
+    () => ({
+      suachuats: (data?.data as ISuachuaTS) || [],
+      suachuatsLoading: isLoading,
+      suachuatsError: error,
+      suachuatsValidating: isValidating,
+      suachuatsEmpty: !isLoading && !data.length,
+      mutate
+    }),
+    [data, error, isLoading, isValidating, mutate]
+  );
+
+  return memoizedValue;
+}
+
+
 export function useGetSuachuaTs() {
   const accessToken = localStorage.getItem(STORAGE_KEY);
   const URL = 'https://checklist.pmcweb.vn/pmc-assets/api/tb_suachuats/all';
@@ -452,3 +481,4 @@ export function useGetSuachuaTs() {
 
   return memoizedValue;
 }
+

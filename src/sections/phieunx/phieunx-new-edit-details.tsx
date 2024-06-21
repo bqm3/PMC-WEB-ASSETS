@@ -45,15 +45,16 @@ export default function InvoiceNewEditDetails() {
 
   const handleAdd = () => {
     append({
-      ID_Taisan: '',
+      ID_Taisan: null,
       Soluong: 0,
       Dongia: 0,
       Tong: 0,
+      isDelete: 0
     });
   };
 
   const handleRemove = (index: number) => {
-    remove(index);
+    setValue(`phieunxct[${index}].isDelete`, 1);
   };
 
 

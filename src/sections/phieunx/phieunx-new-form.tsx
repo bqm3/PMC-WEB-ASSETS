@@ -38,7 +38,7 @@ import PhieuNXNewEditDetails from './phieunx-new-edit-details';
 
 const STORAGE_KEY = 'accessToken';
 
-export default function GroupPolicyNewForm() {
+export default function SuaChuaTSNewForm() {
   const router = useRouter();
 
   const settings = useSettingsContext();
@@ -56,10 +56,6 @@ export default function GroupPolicyNewForm() {
   const { phongbanda } = useGetPhongBanDa();
 
   const { nghiepvu } = useGetNghiepvu();
-
-  const { nam } = useGetNam();
-
-  const { thang } = useGetThang();
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -80,9 +76,10 @@ export default function GroupPolicyNewForm() {
       phieunxct: [
         {
           ID_Taisan: '',
-          Dongia: '',
-          Soluong: '',
-          Tong: 0
+          Dongia: 0,
+          Soluong: 0,
+          Tong: 0,
+          isDelete: 0
         },
       ],
     }),

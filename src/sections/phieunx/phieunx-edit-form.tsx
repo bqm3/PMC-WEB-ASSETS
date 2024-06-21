@@ -83,9 +83,10 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
       phieunxct: currentPhieuNX?.tb_phieunxct || [
         {
           ID_Taisan: null,
-          Dongia: '',
-          Soluong: '',
+          Dongia: 0,
+          Soluong: 0,
           Tong: 0,
+          isDelete: 0,
         },
       ],
     }),

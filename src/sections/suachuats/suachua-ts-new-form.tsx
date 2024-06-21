@@ -7,6 +7,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Unstable_Grid2';
+import MenuItem from '@mui/material/MenuItem';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
@@ -18,41 +19,56 @@ import { useRouter } from 'src/routes/hooks';
 import { useResponsive } from 'src/hooks/use-responsive';
 // _mock
 import { _tags, _roles, USER_GENDER_OPTIONS } from 'src/_mock';
+import FormProvider, { RHFSelect, RHFTextField } from 'src/components/hook-form';
+// types
 // api
+import { useGetNghiepvu, useGetPhongBanDa, useGetNam, useGetThang } from 'src/api/taisan';
 // components
 import { useSnackbar } from 'src/components/snackbar';
 // types
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 // components
 import { useSettingsContext } from 'src/components/settings';
 import axios from 'axios';
-import FormProvider, { RHFTextField } from 'src/components/hook-form';
+import { useBoolean } from 'src/hooks/use-boolean';
+
+import SuaChuaTSNewEditDetails from './suachua-ts-new-detail';
 
 // ----------------------------------------------------------------------
 
 const STORAGE_KEY = 'accessToken';
 
-export default function GroupPolicyNewForm() {
+export default function SuachuatsNewForm() {
   const router = useRouter();
 
-  const settings = useSettingsContext();
+  const loadingSend = useBoolean();
 
   const [loading, setLoading] = useState<Boolean | any>(false);
 
   const accessToken = localStorage.getItem(STORAGE_KEY);
 
-  const mdUp = useResponsive('up', 'md');
-
   const { enqueueSnackbar } = useSnackbar();
 
   const NewProductSchema = Yup.object().shape({
-    Manhom: Yup.string().required('Không được để trống'),
-    Loaits: Yup.string().required('Không được để trống'),
+    Sophieu: Yup.string().required('Không được để trống'),
+    Ngaygiao: Yup.mixed<any>().nullable().required('Phải có ngày giao'),
   });
 
   const defaultValues = useMemo(
     () => ({
-      Manhom: '',
-      Loaits: '',
+      Sophieu: '',
+      Ngaygiao: new Date(),
+      Nguoitheodoi: '',
+      suachuact: [
+        {
+          ID_TaisanQr: null,
+          ID_Taisan: null,
+          Ngaynhan: new Date(),
+          Sotien: 0,
+          isDelete: 0,
+          Ghichu: '',
+        },
+      ],
     }),
     []
   );
@@ -76,7 +92,7 @@ export default function GroupPolicyNewForm() {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`https://checklist.pmcweb.vn/pmc-assets/api/ent_nhomts/create`, data, {
+      .post(`https://checklist.pmcweb.vn/pmc-assets/api/tb_suachuats/create`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -118,58 +134,54 @@ export default function GroupPolicyNewForm() {
   });
 
   const renderDetails = (
-    <>
-      {mdUp && (
-        <Grid md={4}>
-          <Typography variant="h6" sx={{ mb: 0.5 }}>
-            Chi tiết
-          </Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Thông tin...
-          </Typography>
-        </Grid>
-      )}
-
-      <Grid xs={12} md={8}>
-        <Card>
-          <Stack spacing={2} sx={{ p: 1.5 }}>
-            <RHFTextField name="Manhom" label="Mã nhóm" />
-          </Stack>
-          <Stack spacing={2} sx={{ p: 1.5 }}>
-            <RHFTextField name="Loaits" label="Loại tài sản" />
-          </Stack>
-        </Card>
-      </Grid>
-    </>
-  );
-
-  const renderActions = (
-    <>
-      {mdUp && <Grid md={4} />}
-      <Grid
-        xs={12}
-        md={8}
-        sx={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'column-reverse' }}
-      >
-        <LoadingButton
-          type="submit"
-          onClick={onSubmit}
-          variant="contained"
-          size="large"
-          loading={loading}
-        >
-          Tạo mới
-        </LoadingButton>
-      </Grid>
-    </>
+    <Grid xs={12} md={12}>
+      <Card>
+        <Stack spacing={3} sx={{ p: 2, display: 'flex', flexDirection: 'row' }}>
+          <RHFTextField name="Sophieu" label="Số phiếu" />
+          <Controller
+            name="Ngaygiao"
+            control={control}
+            render={({ field, fieldState: { error } }) => (
+              <DatePicker
+                label="Ngày giao"
+                value={field.value}
+                onChange={(newValue) => {
+                  field.onChange(newValue);
+                }}
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                    error: !!error,
+                    helperText: error?.message,
+                  },
+                }}
+              />
+            )}
+          />
+          <RHFTextField name="Nguoitheodoi" label="Người theo dõi" />
+        </Stack>
+      </Card>
+    </Grid>
   );
 
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
-      <Grid container spacing={3}>
-        {renderDetails}
-        {renderActions}
-      </Grid>
+      {renderDetails}
+      <Card sx={{ mt: 3 }}>
+        <SuaChuaTSNewEditDetails />
+      </Card>
+
+      <Stack justifyContent="flex-end" direction="row" spacing={2} sx={{ mt: 3 }}>
+        <LoadingButton
+          type="submit"
+          size="large"
+          variant="contained"
+          loading={loadingSend.value && isSubmitting}
+          // onClick={handleCreateAndSend}
+        >
+          Tạo mới
+        </LoadingButton>
+      </Stack>
     </FormProvider>
   );
 }

@@ -200,8 +200,8 @@ export const dashboardRoutes = [
           { element: <SuaChuaTSListsPage />, index: true },
           { path: 'list', element: <SuaChuaTSListsPage /> },
           { path: 'new', element: <SuaChuaTSNewPage /> },
-          { path: ':id/edit', element: <ServiceEditPage /> },
-          { path: ':id', element: <ServiceEditPage /> },
+          { path: ':id/edit', element: <SuaChuaTSEditPage /> },
+          { path: ':id', element: <SuaChuaTSEditPage /> },
         ],
       },
       {

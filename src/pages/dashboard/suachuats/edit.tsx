@@ -14,7 +14,7 @@ export default function SuaChuaTSEditPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Cập nhật phiếu</title>
+        <title> Dashboard: Sửa chữa tài sản</title>
       </Helmet>
 
       <SuaChuaTSEditView id={`${id}`} />

@@ -168,7 +168,7 @@ export default function CreateUserNewForm() {
           </Stack>
 
           <Stack spacing={3} sx={{ p: 1.5 }}>
-            <RHFTextField name="MaPMC" label="Mã phòng ban" />
+            <RHFTextField name="MaPMC" label="Mã truy cập" />
           </Stack>
           <Stack spacing={3} sx={{ p: 1.5 }}>
             <RHFTextField name="Hoten" label="Họ tên" />
