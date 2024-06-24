@@ -65,7 +65,8 @@ export default function GroupPolicyNewForm() {
     Mapb: Yup.string().required('Không được để trống'),
     Tenphongban: Yup.string().required('Không được để trống'),
     Diachi: Yup.string().required('Không được để trống'),
-    Thuoc: Yup.string()
+    Thuoc: Yup.string(),
+    ID_Nhompb: Yup.mixed<any>()
   });
 
   const defaultValues = useMemo(
@@ -141,6 +142,7 @@ export default function GroupPolicyNewForm() {
       });
   });
 
+
   const renderDetails = (
     <>
       {mdUp && (
@@ -193,10 +195,10 @@ export default function GroupPolicyNewForm() {
               <RHFRadioGroup row spacing={2} name="Thuoc" options={TAISAN_EXPERIENCE_OPTIONS} />
             </Stack>
           <Stack spacing={3} sx={{ p: 1.5 }}>
-            <RHFTextField name="Mapb" label="Mã phòng ban" />
+            <RHFTextField name="Mapb" label={`${values.ID_Nhompb}` === '101' ? 'Mã công ty' : 'Mã phòng ban'} />
           </Stack>
           <Stack spacing={3} sx={{ p: 1.5 }}>
-            <RHFTextField name="Tenphongban" label="Tên phòng ban" />
+            <RHFTextField name="Tenphongban" label={`${values.ID_Nhompb}` === '101' ? 'Tên công ty' : 'Tên phòng ban'}  />
           </Stack>
           <Stack spacing={3} sx={{ p: 1.5 }}>
             <RHFTextField name="Diachi" label="Địa chỉ" />

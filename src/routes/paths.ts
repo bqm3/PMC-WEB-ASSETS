@@ -173,12 +173,8 @@ export const paths = {
       edit: (id: string) => `${ROOTS.DASHBOARD}/quan-ly-giam-sat/${id}/edit`,
     },
     userAdmin: {
-      root: `${ROOTS.DASHBOARD}/user/`,
-      profile: `${ROOTS.DASHBOARD}/user/`,
-    },
-    
-    accountEmployee: {
-      root: `${ROOTS.DASHBOARD}/account-employee`,
+      root: `${ROOTS.DASHBOARD}/profile/`,
+      profile: `${ROOTS.DASHBOARD}/profile/`,
     },
     
     user: {

@@ -110,6 +110,10 @@ const SuaChuaTSNewPage = lazy(() => import('src/pages/dashboard/suachuats/new'))
 const SuaChuaTSEditPage = lazy(() => import('src/pages/dashboard/suachuats/edit'));
 
 const TaiSanQrCodeListsPage = lazy(() => import('src/pages/dashboard/taisanqrcode/list'));
+
+const ProfilePage = lazy(() => import('src/pages/dashboard/userAdmin/profile'));
+
+
 // -----------------------------------------
 
 export const dashboardRoutes = [
@@ -212,12 +216,20 @@ export const dashboardRoutes = [
         ],
       },
       {
-        path: 'account-employee',
-        children: [{ element: <EmployeeAccountPage />, index: true }],
+        path: 'profile',
+        children: [{ element: <ProfilePage />, index: true }],
       },
      
       {
         path: 'quan-ly-giam-sat',
+        children: [
+          { element: <QuanlyGiamsatListsPage />, index: true },
+          { path: 'list', element: <QuanlyGiamsatListsPage /> },
+          { path: ':id/edit', element: <QuanlyGiamsatEditPage /> },
+        ],
+      },
+      {
+        path: 'profile',
         children: [
           { element: <QuanlyGiamsatListsPage />, index: true },
           { path: 'list', element: <QuanlyGiamsatListsPage /> },

@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 // @mui
@@ -35,13 +35,22 @@ export default function AccountGeneral() {
 
   const UpdateUserSchema = Yup.object().shape({});
 
-  const defaultValues = {
-    UserName: user?.UserName,
-    Emails: user?.Emails,
-    ent_duan: user?.ent_duan?.Duan || '',
+  const defaultValues = useMemo(
+    () => ({
+    Hoten: user?.Hoten,
+    Email: user?.Email,
+    Diachi: user?.Diachi,
+    Gioitinh: user?.Gioitinh,
+    MaPMC: user?.MaPMC,
+    Sodienthoai: user?.Sodienthoai,
+    ent_chinhanh: user?.ent_chinhanh?.Tenchinhanh || '',
     ent_chucvu: user?.ent_chucvu?.Chucvu || '',
-    ent_khoicv: user?.ent_khoicv?.KhoiCV || null,
-  };
+    ent_nhompb: user?.ent_nhompb?.Nhompb || '',
+}),
+[user]
+);
+
+
 
   const methods = useForm({
     resolver: yupResolver(UpdateUserSchema),
@@ -50,22 +59,20 @@ export default function AccountGeneral() {
 
   const {
     setValue,
+    reset,
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
 
-  const onSubmit = handleSubmit(async (data) => {
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      enqueueSnackbar('Update success!');
-      console.info('DATA', data);
-    } catch (error) {
-      console.error(error);
+  useEffect(() => {
+    if (user) {
+      reset(defaultValues);
     }
-  });
+  }, [user, defaultValues,reset ]);
+
 
   return (
-    <FormProvider methods={methods} onSubmit={onSubmit}>
+    <FormProvider methods={methods}>
       <Grid container spacing={3}>
         <Grid xs={12} md={12}>
           <Card sx={{ p: 3 }}>
@@ -74,15 +81,18 @@ export default function AccountGeneral() {
               columnGap={2}
               display="grid"
               gridTemplateColumns={{
-                xs: 'repeat(1, 1fr)',
-                sm: 'repeat(2, 1fr)',
+                xs: 'repeat(2, 1fr)',
+                sm: 'repeat(3, 1fr)',
               }}
             >
-              <RHFTextField name="UserName" label="Tài khoản" disabled />
-              <RHFTextField name="Emails" label="Email" disabled />
-              <RHFTextField name="ent_duan" label="Dự án" disabled />
+              <RHFTextField name="Hoten" label="Họ tên" disabled />
+              <RHFTextField name="Email" label="Email" disabled />
+              <RHFTextField name="Sodienthoai" label="Số điện thoại" disabled />
+              <RHFTextField name="Diachi" label="Địa chỉ" disabled />
+              <RHFTextField name="MaPMC" label="Mã PMC" disabled />
+              <RHFTextField name="ent_chinhanh" label="Chi nhánh" disabled />
               <RHFTextField name="ent_chucvu" label="Chức vụ" disabled />
-              <RHFTextField name="ent_khoicv" label="Khối công việc" disabled />
+              <RHFTextField name="ent_nhompb" label="Phòng ban" disabled />
             </Box>
           </Card>
         </Grid>

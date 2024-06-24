@@ -231,7 +231,7 @@ export function useNavData() {
           ],
         },
         {
-          title: t('createauser'),
+          title: t('createuser'),
           path: paths.dashboard.createuser.root,
           icon: ICONS.user,
           children: [

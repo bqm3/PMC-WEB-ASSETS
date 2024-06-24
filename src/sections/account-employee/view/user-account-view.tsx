@@ -48,7 +48,7 @@ export default function AccountView() {
         heading="Account"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'User', href: paths.dashboard.accountEmployee.root },
+          // { name: 'User', href: paths.dashboard.accountEmployee.root },
           { name: 'Account' },
         ]}
         sx={{

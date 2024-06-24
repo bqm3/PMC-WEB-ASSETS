@@ -22,6 +22,7 @@ import { _tags, _roles, USER_GENDER_OPTIONS } from 'src/_mock';
 import FormProvider, { RHFSelect, RHFTextField } from 'src/components/hook-form';
 // types
 // api
+import { IPhongbanda } from 'src/types/taisan';
 import { useGetNghiepvu, useGetPhongBanDa, useGetNam, useGetThang } from 'src/api/taisan';
 // components
 import { useSnackbar } from 'src/components/snackbar';
@@ -33,6 +34,7 @@ import axios from 'axios';
 import { useBoolean } from 'src/hooks/use-boolean';
 
 import PhieuNXNewEditDetails from './phieunx-new-edit-details';
+
 
 // ----------------------------------------------------------------------
 
@@ -48,6 +50,9 @@ export default function SuaChuaTSNewForm() {
   const loadingSend = useBoolean();
 
   const [loading, setLoading] = useState<Boolean | any>(false);
+
+  const [noiXuat, setNoiXuat] = useState<IPhongbanda[]>([])
+  const [noiNhap, setNoiNhap] = useState<IPhongbanda[]>([])
 
   const accessToken = localStorage.getItem(STORAGE_KEY);
 
@@ -101,6 +106,17 @@ export default function SuaChuaTSNewForm() {
   } = methods;
 
   const values = watch();
+
+  useEffect(()=> {
+    if(`${values.ID_Nghiepvu}` === '2'){
+      const data = phongbanda.filter((item)=> `${item.Thuoc}` === 'Dự án ngoài');
+      setNoiXuat(data)
+    } else {
+      setNoiXuat(phongbanda)
+    }
+    const data = phongbanda.filter((item)=> `${item.Thuoc}` === 'PMC');
+    setNoiNhap(data)
+  }, [values.ID_Nghiepvu,phongbanda ])
 
   const onSubmit = handleSubmit(async (data) => {
 
@@ -165,28 +181,28 @@ export default function SuaChuaTSNewForm() {
               ))}
             </RHFSelect>
           )}
-          {phongbanda?.length > 0 && (
+          {noiNhap?.length > 0 && (
             <RHFSelect
               name="ID_NoiNhap"
               label="Nơi nhập"
               InputLabelProps={{ shrink: true }}
               PaperPropsSx={{ textTransform: 'capitalize' }}
             >
-              {phongbanda?.map((item) => (
+              {noiNhap?.map((item) => (
                 <MenuItem key={item?.ID_Phongban} value={item?.ID_Phongban}>
                   {item?.Tenphongban}
                 </MenuItem>
               ))}
             </RHFSelect>
           )}
-          {phongbanda?.length > 0 && (
+          {noiXuat?.length > 0 && (
             <RHFSelect
               name="ID_NoiXuat"
               label="Nơi xuất"
               InputLabelProps={{ shrink: true }}
               PaperPropsSx={{ textTransform: 'capitalize' }}
             >
-              {phongbanda?.map((item) => (
+              {noiXuat?.map((item) => (
                 <MenuItem key={item?.ID_Phongban} value={item?.ID_Phongban}>
                   {item?.Tenphongban}
                 </MenuItem>

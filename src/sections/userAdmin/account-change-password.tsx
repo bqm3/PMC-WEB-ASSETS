@@ -66,7 +66,13 @@ export default function AccountChangePassword() {
         })
         .then((res) => {
           reset();
-          enqueueSnackbar('Đổi mật khẩu thành công!');
+          enqueueSnackbar(
+            {
+              variant: 'success',
+              autoHideDuration: 2000,
+              message: "Đổi mật khẩu thành công",
+            }
+          );
         })
         .catch((error) => {
           if (error.response) {
