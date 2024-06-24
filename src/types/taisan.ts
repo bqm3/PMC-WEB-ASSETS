@@ -1,3 +1,4 @@
+import { IChucvu } from "./khuvuc";
 
 export type ITaisanTableFilterValue = string | Date| null;
 
@@ -26,7 +27,21 @@ export type INhompb = {
 }
 
 export type IUser = {
-  
+  ID_User: string;
+  ID_Nhompb: string;
+  ID_Chinhanh: string;
+  ID_Chucvu: string;
+  MaPMC: string;
+  ID_Policy: string;
+  Hoten: string;
+  Gioitinh: string;
+  Diachi: string;
+  Sodienthoai: string;
+  Email: string;
+  Anh: string;
+  ent_nhompb: INhompb,
+  ent_chinhanh: IChinhanh,
+  ent_chucvu: IChucvu
 }
 
 export type IDonvi = {
@@ -102,7 +117,7 @@ export type ITaisanQrCode = {
   ID_Phongban: string;
   ID_Connguoi: string;
   ent_phongbanda: IPhongbanda;
-  ent_connguoi: IConnguoi;
+  ent_user: IUser,
   ent_taisan: ITaisan;
 }
 
@@ -149,7 +164,7 @@ export type IPhieuNX = {
   ent_nghiepvu: INghiepvu,
   ent_nam: INam,
   ent_thang: IThang,
-  ent_connguoi: IConnguoi
+  ent_user: IUser,
   tb_phieunxct: IPhieuNXCT;
 }
 

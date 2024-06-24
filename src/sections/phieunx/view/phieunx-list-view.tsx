@@ -79,10 +79,10 @@ const TABLE_HEAD = [
   { id: 'ID_PhieuNX', label: 'Mã', width: 100 },
   { id: 'ID_Nghiepvu', label: 'Nghiệp vụ', width: 180 },
   { id: 'Sophieu', label: 'Số phiếu', width: 100 },
+  { id: 'NgayNX', label: 'Ngày nhập', width: 120 },
   { id: 'ID_NoiNhap', label: 'Nơi nhập', width: 180 },
   { id: 'ID_NoiXuat', label: 'Nơi xuất', width: 180 },
   { id: 'ID_Connguoi', label: 'Người nhập', width: 150 },
-  { id: 'NgayNX', label: 'Ngày nhập', width: 120 },
   { id: 'iTinhtrang', label: 'Tình trạng', width: 100 },
   { id: '', width: 50 },
 ];
@@ -538,9 +538,9 @@ function applyFilter({
         item.NoiNhap.Mapb.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         item.NoiXuat.Tenphongban.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         item.NoiXuat.Mapb.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        item.ent_connguoi.Hoten.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        item.ent_connguoi.MaPMC.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        item.ent_connguoi.Sodienthoai.toLowerCase().indexOf(name.toLowerCase()) !== -1
+        item.ent_user.Hoten.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        item.ent_user.MaPMC.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        item.ent_user.Sodienthoai.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
 

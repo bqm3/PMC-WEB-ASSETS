@@ -6,19 +6,16 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
-import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Iconify from 'src/components/iconify';
 import Typography from '@mui/material/Typography';
 import Autocomplete from '@mui/material/Autocomplete';
-import Chip from '@mui/material/Chip';
-import { inputBaseClasses } from '@mui/material/InputBase';
-import InputAdornment from '@mui/material/InputAdornment';
 
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 // components
 import { RHFSelect, RHFTextField, RHFAutocomplete } from 'src/components/hook-form';
 import { useGetNhomts, useGetTaisan, useGetTaisanQrCode } from 'src/api/taisan';
+import { fCurrency } from 'src/utils/format-number';
 // ----------------------------------------------------------------------
 
 export default function InvoiceNewEditDetails() {
@@ -30,6 +27,10 @@ export default function InvoiceNewEditDetails() {
   });
 
   const values = watch();
+
+  const totalOnRow = values.suachuact.map((item: any) => item.Sotien);
+
+  const subTotal = sum(totalOnRow);
 
   const { taisanqr } = useGetTaisanQrCode();
 
@@ -79,6 +80,19 @@ export default function InvoiceNewEditDetails() {
       }
     },
     [setValue, taisanqr]
+  );
+
+  const renderTotal = (
+    <Stack
+      spacing={2}
+      alignItems="flex-end"
+      sx={{ mt: 3, textAlign: 'right', typography: 'body2' }}
+    >
+      <Stack direction="row" sx={{ typography: 'subtitle1' }}>
+        <Box>Tổng tiền</Box>
+        <Box sx={{ width: 160 }}>{fCurrency(subTotal) || '-'}</Box>
+      </Stack>
+    </Stack>
   );
 
   return (
@@ -189,6 +203,8 @@ export default function InvoiceNewEditDetails() {
           Thêm
         </Button>
       </Stack>
+
+      {renderTotal}
     </Box>
   );
 }

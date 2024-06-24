@@ -67,7 +67,7 @@ export default function CalvTableRow({
       </TableCell>
 
       <TableCell sx={{  alignItems: 'center' }}>
-        {Ngaygiao}
+        { moment(Ngaygiao).format('DD-MM-YYYY')} 
       </TableCell>
       <TableCell sx={{alignItems: 'center' }}>
         {Sophieu}

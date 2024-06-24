@@ -8,18 +8,20 @@ import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 // types
-import {IKhuvucTableFilters, IKhuvucTableFilterValue} from 'src/types/khuvuc'
+import { ITaisanTableFilters, ITaisanTableFilterValue } from 'src/types/taisan';
 // components
 import Iconify from 'src/components/iconify';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
+
 // ----------------------------------------------------------------------
 
 type Props = {
-  filters: IKhuvucTableFilters;
-  onFilters: (name: string, value: IKhuvucTableFilterValue) => void;
+  filters: ITaisanTableFilters;
+  onFilters: (name: string, value: ITaisanTableFilterValue) => void;
   //
   canReset: boolean;
+  dateError: boolean;
   onResetFilters: VoidFunction;
 };
 
@@ -28,6 +30,7 @@ export default function OrderTableToolbar({
   onFilters,
   //
   canReset,
+  dateError,
   onResetFilters,
 }: Props) {
   const popover = usePopover();
@@ -35,6 +38,20 @@ export default function OrderTableToolbar({
   const handleFilterName = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       onFilters('name', event.target.value);
+    },
+    [onFilters]
+  );
+
+  const handleFilterStartDate = useCallback(
+    (newValue: Date | null) => {
+      onFilters('startDate', newValue);
+    },
+    [onFilters]
+  );
+
+  const handleFilterEndDate = useCallback(
+    (newValue: Date | null) => {
+      onFilters('endDate', newValue);
     },
     [onFilters]
   );
@@ -53,7 +70,30 @@ export default function OrderTableToolbar({
           pr: { xs: 2.5, md: 1 },
         }}
       >
+        <DatePicker
+            label="Ngày bắt đầu"
+            value={filters.startDate}
+            onChange={handleFilterStartDate}
+            slotProps={{ textField: { fullWidth: true } }}
+            sx={{
+              maxWidth: { md: 180 },
+            }}
+          />
 
+          <DatePicker
+            label="Ngày kết thúc"
+            value={filters.endDate}
+            onChange={handleFilterEndDate}
+            slotProps={{
+              textField: {
+                fullWidth: true,
+                error: dateError,
+              },
+            }}
+            sx={{
+              maxWidth: { md: 180 },
+            }}
+          />
         <Stack direction="row" alignItems="center" spacing={2} flexGrow={1} sx={{ width: 1 }}>
           <TextField
             fullWidth

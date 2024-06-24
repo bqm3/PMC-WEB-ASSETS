@@ -59,7 +59,7 @@ export default function CalvTableRow({
     ent_nghiepvu,
     ent_nam,
     ent_thang,
-    ent_connguoi,
+    ent_user,
   } = row;
 
   const confirm = useBoolean();
@@ -84,12 +84,13 @@ export default function CalvTableRow({
         </Box>
       </TableCell>
 
-      <TableCell> {ent_nghiepvu.Nghiepvu} </TableCell>
+      <TableCell> {ent_nghiepvu?.Nghiepvu} </TableCell>
       <TableCell> {Sophieu} </TableCell>
+      <TableCell> { moment(NgayNX).format('DD-MM-YYYY')}  </TableCell>
       <TableCell sx={{ alignItems: 'center' }}>
         <ListItemText
-          primary={NoiNhap.Tenphongban}
-          secondary={NoiNhap.Mapb}
+          primary={NoiNhap?.Tenphongban}
+          secondary={NoiNhap?.Mapb}
           primaryTypographyProps={{ typography: 'body2' }}
           secondaryTypographyProps={{
             component: 'span',
@@ -99,8 +100,8 @@ export default function CalvTableRow({
       </TableCell>
       <TableCell sx={{ alignItems: 'center' }}>
         <ListItemText
-          primary={NoiXuat.Tenphongban}
-          secondary={NoiXuat.Mapb}
+          primary={NoiXuat?.Tenphongban}
+          secondary={NoiXuat?.Mapb}
           primaryTypographyProps={{ typography: 'body2' }}
           secondaryTypographyProps={{
             component: 'span',
@@ -108,8 +109,8 @@ export default function CalvTableRow({
           }}
         />
         </TableCell>
-      <TableCell> {ent_connguoi.Hoten} </TableCell>
-      <TableCell> {NgayNX} </TableCell>
+      <TableCell> {ent_user?.Hoten} </TableCell>
+    
       <TableCell>
         <Label
           variant="soft"

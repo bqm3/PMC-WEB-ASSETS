@@ -5,19 +5,19 @@ import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import Stack, { StackProps } from '@mui/material/Stack';
 // types
-import { IOrderTableFilters, IOrderTableFilterValue } from 'src/types/order';
-import { IKhuvucTableFilters, IKhuvucTableFilterValue } from 'src/types/khuvuc';
-// components
+import { ITaisanTableFilters, ITaisanTableFilterValue } from 'src/types/taisan';
 import Iconify from 'src/components/iconify';
 import { shortDateLabel } from 'src/components/custom-date-range-picker';
+
 
 // ----------------------------------------------------------------------
 
 type Props = StackProps & {
-  filters: IKhuvucTableFilters;
-  onFilters: (name: string, value: IKhuvucTableFilterValue) => void;
+  filters: ITaisanTableFilters;
+  onFilters: (name: string, value: ITaisanTableFilterValue) => void;
   //
   onResetFilters: VoidFunction;
+  dateError: boolean;
   //
   results: number;
 };
@@ -25,16 +25,21 @@ type Props = StackProps & {
 export default function OrderTableFiltersResult({
   filters,
   onFilters,
-  //
+  dateError,
   onResetFilters,
   //
   results,
   ...other
 }: Props) {
-  // const shortLabel = shortDateLabel(filters.startDate, filters.endDate);
+  const shortLabel = shortDateLabel(filters.startDate, filters.endDate);
 
   const handleRemoveStatus = () => {
     onFilters('status', 'all');
+  };
+
+  const handleRemoveDate = () => {
+    onFilters('startDate', null);
+    onFilters('endDate', null);
   };
 
  
@@ -59,6 +64,12 @@ export default function OrderTableFiltersResult({
               }
               onDelete={handleRemoveStatus}
             />
+          </Block>
+        )}
+
+         {filters.startDate && filters.endDate && (
+          <Block label="Date:">
+            <Chip size="small" label={shortLabel} onDelete={handleRemoveDate} />
           </Block>
         )}
 

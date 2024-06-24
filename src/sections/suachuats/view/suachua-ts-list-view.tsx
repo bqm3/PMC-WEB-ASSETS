@@ -45,6 +45,8 @@ import DialogActions from '@mui/material/DialogActions';
 import Dialog, { DialogProps } from '@mui/material/Dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
+import { fTimestamp } from 'src/utils/format-time';
+
 import { useSnackbar } from 'src/components/snackbar';
 // types
 import { IKhuvucTableFilters, IKhuvucTableFilterValue } from 'src/types/khuvuc';
@@ -54,6 +56,7 @@ import { INhomts, ISuachuaTS, ITaisanTableFilterValue, ITaisanTableFilters } fro
 import SuaChuaTSTableRow from '../suachua-ts-table-row';
 import SuaChuaTSTableToolbar from '../suachua-ts-table-toolbar';
 import SuaChuaTSTableFiltersResult from '../suachua-ts-table-filters-result';
+
 
 // ----------------------------------------------------------------------
 
@@ -69,7 +72,9 @@ const TABLE_HEAD = [
 
 const defaultFilters: ITaisanTableFilters= {
   name: '',
-  status: 'all',startDate: null, endDate: null
+  status: 'all',
+  startDate: null, 
+  endDate: null
 };
 
 const STORAGE_KEY = 'accessToken';
@@ -104,10 +109,16 @@ export default function GroupPolicyListView() {
     }
   }, [suachuats, mutateSuachuaTS]);
 
+  const dateError =
+    filters.startDate && filters.endDate
+      ? filters.startDate.getTime() > filters.endDate.getTime()
+      : false;
+
   const dataFiltered = applyFilter({
     inputData: tableData,
     comparator: getComparator(table.order, table.orderBy),
     filters,
+    dateError,
   });
 
   const dataInPage = dataFiltered?.slice(
@@ -139,7 +150,7 @@ export default function GroupPolicyListView() {
   };
 
   const handleFilters = useCallback(
-    (name: string, value: IKhuvucTableFilterValue) => {
+    (name: string, value: ITaisanTableFilterValue) => {
       table.onResetPage();
       setFilters((prevState) => ({
         ...prevState,
@@ -289,20 +300,21 @@ export default function GroupPolicyListView() {
       <SuaChuaTSTableToolbar
         filters={filters}
         onFilters={handleFilters}
-        //
+        dateError={dateError}
         canReset={canReset}
         onResetFilters={handleResetFilters}
       />
 
       {canReset && (
         <SuaChuaTSTableFiltersResult
-          filters={filters}
-          onFilters={handleFilters}
-          //
-          onResetFilters={handleResetFilters}
-          //
-          results={dataFiltered?.length}
-          sx={{ p: 2.5, pt: 0 }}
+        filters={filters}
+              onFilters={handleFilters}
+              //
+              dateError={dateError}
+              onResetFilters={handleResetFilters}
+              //
+              results={dataFiltered?.length}
+              sx={{ p: 2.5, pt: 0 }}
         />
       )}
 
@@ -385,14 +397,15 @@ export default function GroupPolicyListView() {
 function applyFilter({
   inputData,
   comparator,
-  filters, // dateError,
+  filters, // 
+  dateError,
 }: {
   inputData: ISuachuaTS[];
   comparator: (a: any, b: any) => number;
   filters: ITaisanTableFilters;
-  // dateError: boolean;
+  dateError: boolean;
 }) {
-  const { status, name } = filters;
+  const { status, name, startDate, endDate } = filters;
 
   const stabilizedThis = inputData?.map((el, index) => [el, index] as const);
 
@@ -410,6 +423,22 @@ function applyFilter({
         order.Sophieu.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         order.Nguoitheodoi.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
+  }
+
+  if (!dateError) {
+    if (startDate && endDate) {
+      // Đặt endDate vào cuối ngày
+      endDate.setHours(23);
+      endDate.setMinutes(59);
+      endDate.setSeconds(59);
+
+      const startTimestamp = fTimestamp(startDate);
+      const endTimestamp = fTimestamp(endDate);
+      inputData = inputData.filter((item) => {
+        const nxTimestamp = fTimestamp(item.Ngaygiao);
+        return nxTimestamp >= startTimestamp && nxTimestamp < endTimestamp;
+      });
+    }
   }
 
   if (status !== 'all') {

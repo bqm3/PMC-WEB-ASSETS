@@ -54,7 +54,7 @@ export default function CalvTableRow({
     ID_Phongban,
     ID_Connguoi,
     ent_phongbanda,
-    ent_connguoi,
+    ent_user,
     ent_taisan,
   } = row;
 
@@ -82,7 +82,7 @@ export default function CalvTableRow({
       </TableCell>
       <TableCell> {ent_taisan.Tents} </TableCell>
 
-      <TableCell> {Ngaykhoitao} </TableCell>
+      <TableCell> { moment(Ngaykhoitao).format('DD-MM-YYYY')} </TableCell>
       <TableCell> {MaQrCode} </TableCell>
       <TableCell> {fCurrency(Giatri) || ''} </TableCell>
       <TableCell>
@@ -99,7 +99,7 @@ export default function CalvTableRow({
         </Label>
         </TableCell>
       <TableCell> {ent_phongbanda?.Tenphongban} </TableCell>
-      <TableCell> {ent_connguoi?.Hoten} </TableCell>
+      <TableCell> {ent_user?.Hoten} </TableCell>
 
       <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
         <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>

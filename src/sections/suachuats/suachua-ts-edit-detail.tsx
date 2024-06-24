@@ -19,6 +19,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 // components
 import { RHFSelect, RHFTextField, RHFAutocomplete } from 'src/components/hook-form';
 import { useGetNhomts, useGetTaisan, useGetTaisanQrCode } from 'src/api/taisan';
+import { fCurrency } from 'src/utils/format-number';
 // ----------------------------------------------------------------------
 
 export default function SuaChuaTsEditDetails() {
@@ -30,6 +31,10 @@ export default function SuaChuaTsEditDetails() {
   });
 
   const values = watch();
+
+  const totalOnRow = values.suachuact.map((item: any) => item.Sotien);
+
+  const subTotal = sum(totalOnRow);
 
   const { taisanqr } = useGetTaisanQrCode();
 
@@ -69,6 +74,19 @@ export default function SuaChuaTsEditDetails() {
       setValue(`suachuact[${index}].ID_TaisanQr`, inputValue);
     },
     [setValue]
+  );
+
+  const renderTotal = (
+    <Stack
+      spacing={2}
+      alignItems="flex-end"
+      sx={{ mt: 3, textAlign: 'right', typography: 'body2' }}
+    >
+      <Stack direction="row" sx={{ typography: 'subtitle1' }}>
+        <Box>Tổng tiền</Box>
+        <Box sx={{ width: 160 }}>{fCurrency(subTotal) || '-'}</Box>
+      </Stack>
+    </Stack>
   );
 
   return (
@@ -125,7 +143,7 @@ export default function SuaChuaTsEditDetails() {
                   />
                 </Stack>
 
-                {(values.iTinhtrang === '0' || values.iTinhtrang === '') && (
+                {(`${values.iTinhtrang}` === '0' || `${values.iTinhtrang}` === '') && (
                   <Button
                     size="medium"
                     color="error"
@@ -141,7 +159,7 @@ export default function SuaChuaTsEditDetails() {
         ))}
       </Stack>
 
-      {(values.iTinhtrang === '0' || values.iTinhtrang === '') && (
+      {(`${values.iTinhtrang}` === '0' || `${values.iTinhtrang}` === '') && (
         <>
           <Divider sx={{ my: 3, borderStyle: 'dashed' }} />
 
@@ -162,6 +180,8 @@ export default function SuaChuaTsEditDetails() {
           </Stack>
         </>
       )}
+
+      {renderTotal}
     </Box>
   );
 }

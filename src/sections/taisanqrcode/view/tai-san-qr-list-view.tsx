@@ -58,6 +58,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
 import { useSnackbar } from 'src/components/snackbar';
+import { fTimestamp } from 'src/utils/format-time';
 // types
 import FormProvider, { RHFEditor } from 'src/components/hook-form';
 
@@ -74,6 +75,7 @@ import {
 import GroupPolicyTableRow from '../tai-san-qr-table-row';
 import GiamsatTableToolbar from '../tai-san-qr-table-toolbar';
 import GiamsatTableFiltersResult from '../tai-san-qr-table-filters-result';
+
 
 // ----------------------------------------------------------------------
 
@@ -139,10 +141,16 @@ export default function GroupPolicyListView() {
     }
   }, [taisanqr, mutateTaisanQr]);
 
+  const dateError =
+    filters.startDate && filters.endDate
+      ? filters.startDate.getTime() > filters.endDate.getTime()
+      : false;
+
   const dataFiltered = applyFilter({
     inputData: tableData,
     comparator: getComparator(table.order, table.orderBy),
     filters,
+    dateError,
   });
 
   const dataInPage = dataFiltered?.slice(
@@ -377,6 +385,7 @@ export default function GroupPolicyListView() {
             //
             canReset={canReset}
             onResetFilters={handleResetFilters}
+            dateError={dateError}
           />
 
           {canReset && (
@@ -508,13 +517,14 @@ function applyFilter({
   inputData,
   comparator,
   filters, // dateError,
+  dateError
 }: {
   inputData: ITaisanQrCode[];
   comparator: (a: any, b: any) => number;
   filters: ITaisanTableFilters;
-  // dateError: boolean;
+  dateError: boolean;
 }) {
-  const { status, name } = filters;
+  const { status, name, startDate, endDate } = filters;
 
   const stabilizedThis = inputData?.map((el, index) => [el, index] as const);
 
@@ -533,9 +543,25 @@ function applyFilter({
         order?.ent_phongbanda?.Mapb.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         order.MaQrCode.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         order.ent_taisan.Tents.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.ent_connguoi.Hoten.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        order.ent_user.Hoten.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         order.Giatri.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
+  }
+
+  if (!dateError) {
+    if (startDate && endDate) {
+      // Đặt endDate vào cuối ngày
+      endDate.setHours(23);
+      endDate.setMinutes(59);
+      endDate.setSeconds(59);
+
+      const startTimestamp = fTimestamp(startDate);
+      const endTimestamp = fTimestamp(endDate);
+      inputData = inputData.filter((item) => {
+        const nxTimestamp = fTimestamp(item.Ngaykhoitao);
+        return nxTimestamp >= startTimestamp && nxTimestamp < endTimestamp;
+      });
+    }
   }
 
   if (status !== 'all') {

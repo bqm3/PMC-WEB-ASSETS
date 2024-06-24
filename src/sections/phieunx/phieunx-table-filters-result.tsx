@@ -32,11 +32,6 @@ export default function InvoiceTableFiltersResult({
 }: Props) {
   const shortLabel = shortDateLabel(filters.startDate, filters.endDate);
 
-  //   const handleRemoveService = (inputValue: string) => {
-  //     const newValue = filters.service.filter((item) => item !== inputValue);
-  //     onFilters('service', newValue);
-  //   };
-
   const handleRemoveStatus = () => {
     onFilters('status', 'all');
   };
