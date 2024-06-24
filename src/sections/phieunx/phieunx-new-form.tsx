@@ -35,7 +35,6 @@ import { useBoolean } from 'src/hooks/use-boolean';
 
 import PhieuNXNewEditDetails from './phieunx-new-edit-details';
 
-
 // ----------------------------------------------------------------------
 
 const STORAGE_KEY = 'accessToken';
@@ -51,8 +50,8 @@ export default function SuaChuaTSNewForm() {
 
   const [loading, setLoading] = useState<Boolean | any>(false);
 
-  const [noiXuat, setNoiXuat] = useState<IPhongbanda[]>([])
-  const [noiNhap, setNoiNhap] = useState<IPhongbanda[]>([])
+  const [noiXuat, setNoiXuat] = useState<IPhongbanda[]>([]);
+  const [noiNhap, setNoiNhap] = useState<IPhongbanda[]>([]);
 
   const accessToken = localStorage.getItem(STORAGE_KEY);
 
@@ -68,6 +67,8 @@ export default function SuaChuaTSNewForm() {
     Sophieu: Yup.string().required('Không được để trống'),
     NgayNX: Yup.mixed<any>().nullable().required('Phải có ngày nhập xuất'),
     ID_Nghiepvu: Yup.string().required('Không được để trống'),
+    ID_NoiXuat: Yup.mixed<any>(),
+    ID_NoiNhap: Yup.mixed<any>(),
   });
 
   const defaultValues = useMemo(
@@ -84,7 +85,7 @@ export default function SuaChuaTSNewForm() {
           Dongia: 0,
           Soluong: 0,
           Tong: 0,
-          isDelete: 0
+          isDelete: 0,
         },
       ],
     }),
@@ -107,19 +108,32 @@ export default function SuaChuaTSNewForm() {
 
   const values = watch();
 
-  useEffect(()=> {
-    if(`${values.ID_Nghiepvu}` === '2'){
-      const data = phongbanda.filter((item)=> `${item.Thuoc}` === 'Dự án ngoài');
-      setNoiXuat(data)
+  useEffect(() => {
+    let dataNoiNhap = [];
+    let dataNoiXuat = [];
+  
+    if (`${values.ID_Nghiepvu}` === '2') {
+      dataNoiXuat = phongbanda.filter(item => item.Thuoc === 'Dự án ngoài');
+      dataNoiNhap = phongbanda.filter(item => item.Thuoc === 'PMC');
+    } else if (`${values.ID_Nghiepvu}` === '1' || `${values.ID_Nghiepvu}` === '7') {
+      dataNoiNhap = phongbanda?.filter(item => item.Thuoc === 'PMC');
+      dataNoiXuat = phongbanda?.filter(item => item.Thuoc === 'PMC');
+      setValue('ID_NoiXuat', values.ID_NoiNhap);
+    } else if (`${values.ID_Nghiepvu}` === '5') {
+      dataNoiNhap = phongbanda.filter(item => item.Thuoc === 'Dự án ngoài');
+      dataNoiXuat = phongbanda.filter(item => item.Thuoc === 'PMC');
     } else {
-      setNoiXuat(phongbanda)
+      dataNoiNhap = phongbanda.filter(item => item.Thuoc === 'PMC');
+      dataNoiXuat = dataNoiNhap.filter(item => item.ID_Phongban !== values.ID_NoiNhap);
     }
-    const data = phongbanda.filter((item)=> `${item.Thuoc}` === 'PMC');
-    setNoiNhap(data)
-  }, [values.ID_Nghiepvu,phongbanda ])
+  
+    setNoiNhap(dataNoiNhap);
+    setNoiXuat(dataNoiXuat);
+  
+  }, [values.ID_Nghiepvu, phongbanda, values.ID_NoiNhap, setValue]);
+  
 
   const onSubmit = handleSubmit(async (data) => {
-
     setLoading(true);
     await axios
       .post(`https://checklist.pmcweb.vn/pmc-assets/api/tb_phieunx/create`, data, {
@@ -249,7 +263,7 @@ export default function SuaChuaTSNewForm() {
 
       <Stack justifyContent="flex-end" direction="row" spacing={2} sx={{ mt: 3 }}>
         <LoadingButton
-        type='submit'
+          type="submit"
           size="large"
           variant="contained"
           loading={loadingSend.value && isSubmitting}

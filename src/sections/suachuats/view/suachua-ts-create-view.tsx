@@ -16,7 +16,7 @@ export default function NhomTsCreateView() {
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <CustomBreadcrumbs
-        heading="Tạo loại tài sản"
+        heading="Tạo phiếu sửa chữa tài sản"
         links={[
           {
             name: 'Dashboard',
@@ -34,3 +34,5 @@ export default function NhomTsCreateView() {
     </Container>
   );
 }
+
+

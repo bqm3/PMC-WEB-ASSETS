@@ -16,7 +16,7 @@ export default function PhieuNXCreateView() {
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <CustomBreadcrumbs
-        heading="Tạo chi tiết"
+        heading="Tạo phiếu nhập xuất"
         links={[
           {
             name: 'Dashboard',
