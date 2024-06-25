@@ -37,7 +37,12 @@ export default function PhieuNXNewEditDetails() {
 
   const values = watch();
 
-  const totalOnRow = values.phieunxct.map((item: any) => item.Soluong * item.Dongia);
+  const totalOnRow = values.phieunxct.map((item: any) => {
+    if (item.isDelete === 0) {
+      return item.Soluong * item.Dongia;
+    }
+    return 0; // Return 0 or whatever default value you prefer when isDelete is not 0
+  });
 
   const subTotal = sum(totalOnRow);
 
@@ -55,6 +60,7 @@ export default function PhieuNXNewEditDetails() {
 
   const handleRemove = (index: number) => {
     setValue(`phieunxct[${index}].isDelete`, 1);
+   
   };
 
   const handleChangeQuantity = useCallback(
@@ -266,7 +272,7 @@ export default function PhieuNXNewEditDetails() {
               onClick={handleAdd}
               sx={{ flexShrink: 0 }}
             >
-              Thêm phiếu
+              Thêm tài sản
             </Button>
           </Stack>
         </>

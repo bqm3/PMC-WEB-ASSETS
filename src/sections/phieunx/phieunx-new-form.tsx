@@ -81,7 +81,7 @@ export default function SuaChuaTSNewForm() {
       Ghichu: '',
       phieunxct: [
         {
-          ID_Taisan: '',
+          ID_Taisan: null,
           Dongia: 0,
           Soluong: 0,
           Tong: 0,
@@ -255,7 +255,7 @@ export default function SuaChuaTSNewForm() {
   );
 
   return (
-    <FormProvider methods={methods} onSubmit={onSubmit}>
+    <FormProvider methods={methods}>
       {renderDetails}
       <Card sx={{ mt: 3 }}>
         <PhieuNXNewEditDetails />
@@ -267,7 +267,7 @@ export default function SuaChuaTSNewForm() {
           size="large"
           variant="contained"
           loading={loadingSend.value && isSubmitting}
-          // onClick={handleCreateAndSend}
+          onClick={onSubmit}
         >
           Tạo mới
         </LoadingButton>

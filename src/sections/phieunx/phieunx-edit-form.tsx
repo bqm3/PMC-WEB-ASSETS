@@ -21,7 +21,7 @@ import { useResponsive } from 'src/hooks/use-responsive';
 import { _tags, _roles, USER_GENDER_OPTIONS } from 'src/_mock';
 import FormProvider, { RHFSelect, RHFTextField } from 'src/components/hook-form';
 // types
-import { IPhieuNX } from 'src/types/taisan';
+import { IPhieuNX, IPhongbanda } from 'src/types/taisan';
 // api
 import { useGetNghiepvu, useGetPhongBanDa, useGetNam, useGetThang } from 'src/api/taisan';
 // components
@@ -56,6 +56,9 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
 
   const accessToken = localStorage.getItem(STORAGE_KEY);
 
+  const [noiXuat, setNoiXuat] = useState<IPhongbanda[]>([]);
+  const [noiNhap, setNoiNhap] = useState<IPhongbanda[]>([]);
+
   const mdUp = useResponsive('up', 'md');
 
   const { phongbanda } = useGetPhongBanDa();
@@ -68,6 +71,8 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
     Sophieu: Yup.string().required('Không được để trống'),
     NgayNX: Yup.mixed<any>().nullable().required('Phải có ngày nhập xuất'),
     ID_Nghiepvu: Yup.string().required('Không được để trống'),
+    ID_NoiXuat: Yup.mixed<any>(),
+    ID_NoiNhap: Yup.mixed<any>(),
   });
 
   const defaultValues = useMemo(
@@ -114,6 +119,30 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
       reset(defaultValues);
     }
   }, [currentPhieuNX, defaultValues, reset]);
+
+  useEffect(() => {
+    let dataNoiNhap = [];
+    let dataNoiXuat = [];
+  
+    if (`${values.ID_Nghiepvu}` === '2') {
+      dataNoiXuat = phongbanda.filter(item => item.Thuoc === 'Dự án ngoài');
+      dataNoiNhap = phongbanda.filter(item => item.Thuoc === 'PMC');
+    } else if (`${values.ID_Nghiepvu}` === '1' || `${values.ID_Nghiepvu}` === '7') {
+      dataNoiNhap = phongbanda?.filter(item => item.Thuoc === 'PMC');
+      dataNoiXuat = phongbanda?.filter(item => item.Thuoc === 'PMC');
+      setValue('ID_NoiXuat', values.ID_NoiNhap);
+    } else if (`${values.ID_Nghiepvu}` === '5') {
+      dataNoiNhap = phongbanda.filter(item => item.Thuoc === 'Dự án ngoài');
+      dataNoiXuat = phongbanda.filter(item => item.Thuoc === 'PMC');
+    } else {
+      dataNoiNhap = phongbanda.filter(item => item.Thuoc === 'PMC');
+      dataNoiXuat = dataNoiNhap.filter(item => item.ID_Phongban !== values.ID_NoiNhap);
+    }
+  
+    setNoiNhap(dataNoiNhap);
+    setNoiXuat(dataNoiXuat);
+  
+  }, [values.ID_Nghiepvu, phongbanda, values.ID_NoiNhap, setValue]);
 
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
@@ -222,30 +251,28 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
               ))}
             </RHFSelect>
           )}
-          {phongbanda?.length > 0 && (
+            {noiNhap?.length > 0 && (
             <RHFSelect
               name="ID_NoiNhap"
-              defaultValue={defaultValues?.ID_NoiNhap}
               label="Nơi nhập"
               InputLabelProps={{ shrink: true }}
               PaperPropsSx={{ textTransform: 'capitalize' }}
             >
-              {phongbanda?.map((item) => (
+              {noiNhap?.map((item) => (
                 <MenuItem key={item?.ID_Phongban} value={item?.ID_Phongban}>
                   {item?.Tenphongban}
                 </MenuItem>
               ))}
             </RHFSelect>
           )}
-          {phongbanda?.length > 0 && (
+          {noiXuat?.length > 0 && (
             <RHFSelect
               name="ID_NoiXuat"
-              defaultValue={defaultValues?.ID_NoiXuat}
               label="Nơi xuất"
               InputLabelProps={{ shrink: true }}
               PaperPropsSx={{ textTransform: 'capitalize' }}
             >
-              {phongbanda?.map((item) => (
+              {noiXuat?.map((item) => (
                 <MenuItem key={item?.ID_Phongban} value={item?.ID_Phongban}>
                   {item?.Tenphongban}
                 </MenuItem>

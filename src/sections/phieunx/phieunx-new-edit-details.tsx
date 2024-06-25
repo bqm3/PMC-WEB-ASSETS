@@ -37,8 +37,12 @@ export default function InvoiceNewEditDetails() {
 
   const values = watch();
 
-  const totalOnRow = values.phieunxct.map((item: any) => item.Soluong * item.Dongia);
-
+  const totalOnRow = values.phieunxct.map((item: any) => {
+    if (item.isDelete === 0) {
+      return item.Soluong * item.Dongia;
+    }
+    return 0; // Return 0 or whatever default value you prefer when isDelete is not 0
+  });
   const subTotal = sum(totalOnRow);
 
   const { taisan } = useGetTaisan();
@@ -257,7 +261,7 @@ export default function InvoiceNewEditDetails() {
           onClick={handleAdd}
           sx={{ flexShrink: 0 }}
         >
-          Thêm phiếu
+          Thêm tài sản
         </Button>
       </Stack>
 
