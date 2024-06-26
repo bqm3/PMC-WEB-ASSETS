@@ -119,10 +119,7 @@ export default function SuaChuaTSNewForm() {
       dataNoiNhap = phongbanda?.filter((item) => item.Thuoc === 'PMC');
       dataNoiXuat = phongbanda?.filter((item) => item.Thuoc === 'PMC');
       setValue('ID_NoiXuat', values.ID_NoiNhap);
-    } else if (`${values.ID_Nghiepvu}` === '6') {
-      dataNoiNhap = phongbanda?.filter((item) => item.Thuoc === 'Dự án ngoài');
-      dataNoiXuat = phongbanda?.filter((item) => item.Thuoc === 'PMC');
-    } else if (`${values.ID_Nghiepvu}` === '5') {
+    } else if (`${values.ID_Nghiepvu}` === '5' || `${values.ID_Nghiepvu}` === '6') {
       dataNoiNhap = phongbanda.filter((item) => item.Thuoc === 'Dự án ngoài');
       dataNoiXuat = phongbanda.filter((item) => item.Thuoc === 'PMC');
     } else {

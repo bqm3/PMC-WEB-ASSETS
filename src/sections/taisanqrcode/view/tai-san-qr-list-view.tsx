@@ -658,7 +658,7 @@ function GroupPolicyDialog({
         </DialogContent>
 
         <DialogActions>
-          <Button onClick={onClose}>Hủy</Button>
+          
 
           <Button
             variant="contained"
@@ -671,6 +671,7 @@ function GroupPolicyDialog({
           >
             Cập nhật
           </Button>
+          <Button onClick={onClose}>Hủy</Button>
         </DialogActions>
       </Dialog>
     </FormProvider>

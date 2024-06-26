@@ -52,6 +52,7 @@ import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions';
 import Dialog, { DialogProps } from '@mui/material/Dialog';
 import InputLabel from '@mui/material/InputLabel';
@@ -580,7 +581,8 @@ function GroupPolicyDialog({
   return (
     <Dialog open={open} fullWidth maxWidth="md" onClose={onClose}>
       <DialogTitle>Cập nhật</DialogTitle>
-      <Stack spacing={3} sx={{ px: 3 }}>
+      <DialogContent>
+      <Stack spacing={3} sx={{ p: 3 }}>
         {chinhanh?.length > 0 && (
           <FormControl fullWidth>
             <InputLabel id="demo-simple-select-label-chi-nhanh">Thuộc chi nhánh</InputLabel>
@@ -664,9 +666,9 @@ function GroupPolicyDialog({
           label="Ghi chú"
         />
       </Stack>
+      </DialogContent>
 
       <DialogActions>
-        <Button onClick={onClose}>Hủy</Button>
 
         <Button
           variant="contained"
@@ -678,7 +680,7 @@ function GroupPolicyDialog({
           }}
         >
           Cập nhật
-        </Button>
+        </Button><Button onClick={onClose}>Hủy</Button>
       </DialogActions>
     </Dialog>
   );
