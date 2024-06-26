@@ -33,14 +33,16 @@ type Props = {
   onViewRow: VoidFunction;
   onSelectRow: VoidFunction;
   onDeleteRow: VoidFunction;
+  onCreateRow: VoidFunction;
 };
 
-export default function CalvTableRow({
+export default function TaiSanQrTableRow({
   row,
   selected,
   onViewRow,
   onSelectRow,
   onDeleteRow,
+  onCreateRow,
 }: Props) {
   const {
     ID_TaisanQr,
@@ -58,7 +60,6 @@ export default function CalvTableRow({
     ent_taisan,
   } = row;
 
-  console.log(row);
   const confirm = useBoolean();
 
   const collapse = useBoolean();
@@ -127,6 +128,16 @@ export default function CalvTableRow({
         >
           <Iconify icon="solar:eye-bold" />
           Xem
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => {
+            onCreateRow();
+            popover.onClose();
+          }}
+        >
+          <Iconify icon="mdi:qrcode" />
+          Ảnh Qr
         </MenuItem>
        
       </CustomPopover>

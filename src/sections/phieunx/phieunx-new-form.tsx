@@ -111,27 +111,28 @@ export default function SuaChuaTSNewForm() {
   useEffect(() => {
     let dataNoiNhap = [];
     let dataNoiXuat = [];
-  
+
     if (`${values.ID_Nghiepvu}` === '2') {
-      dataNoiXuat = phongbanda.filter(item => item.Thuoc === 'Dự án ngoài');
-      dataNoiNhap = phongbanda.filter(item => item.Thuoc === 'PMC');
+      dataNoiXuat = phongbanda.filter((item) => item.Thuoc === 'Dự án ngoài');
+      dataNoiNhap = phongbanda.filter((item) => item.Thuoc === 'PMC');
     } else if (`${values.ID_Nghiepvu}` === '1' || `${values.ID_Nghiepvu}` === '7') {
-      dataNoiNhap = phongbanda?.filter(item => item.Thuoc === 'PMC');
-      dataNoiXuat = phongbanda?.filter(item => item.Thuoc === 'PMC');
+      dataNoiNhap = phongbanda?.filter((item) => item.Thuoc === 'PMC');
+      dataNoiXuat = phongbanda?.filter((item) => item.Thuoc === 'PMC');
       setValue('ID_NoiXuat', values.ID_NoiNhap);
+    } else if (`${values.ID_Nghiepvu}` === '6') {
+      dataNoiNhap = phongbanda?.filter((item) => item.Thuoc === 'Dự án ngoài');
+      dataNoiXuat = phongbanda?.filter((item) => item.Thuoc === 'PMC');
     } else if (`${values.ID_Nghiepvu}` === '5') {
-      dataNoiNhap = phongbanda.filter(item => item.Thuoc === 'Dự án ngoài');
-      dataNoiXuat = phongbanda.filter(item => item.Thuoc === 'PMC');
+      dataNoiNhap = phongbanda.filter((item) => item.Thuoc === 'Dự án ngoài');
+      dataNoiXuat = phongbanda.filter((item) => item.Thuoc === 'PMC');
     } else {
-      dataNoiNhap = phongbanda.filter(item => item.Thuoc === 'PMC');
-      dataNoiXuat = dataNoiNhap.filter(item => item.ID_Phongban !== values.ID_NoiNhap);
+      dataNoiNhap = phongbanda.filter((item) => item.Thuoc === 'PMC');
+      dataNoiXuat = dataNoiNhap.filter((item) => item.ID_Phongban !== values.ID_NoiNhap);
     }
-  
+
     setNoiNhap(dataNoiNhap);
     setNoiXuat(dataNoiXuat);
-  
   }, [values.ID_Nghiepvu, phongbanda, values.ID_NoiNhap, setValue]);
-  
 
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);

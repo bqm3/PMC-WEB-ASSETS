@@ -131,6 +131,9 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
       dataNoiNhap = phongbanda?.filter(item => item.Thuoc === 'PMC');
       dataNoiXuat = phongbanda?.filter(item => item.Thuoc === 'PMC');
       setValue('ID_NoiXuat', values.ID_NoiNhap);
+    }else if (`${values.ID_Nghiepvu}` === '6') {
+      dataNoiNhap = phongbanda?.filter((item) => item.Thuoc === 'Dự án ngoài');
+      dataNoiXuat = phongbanda?.filter((item) => item.Thuoc === 'PMC');
     } else if (`${values.ID_Nghiepvu}` === '5') {
       dataNoiNhap = phongbanda.filter(item => item.Thuoc === 'Dự án ngoài');
       dataNoiXuat = phongbanda.filter(item => item.Thuoc === 'PMC');

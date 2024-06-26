@@ -14,6 +14,7 @@ import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
 import IconButton from '@mui/material/IconButton';
 import TableContainer from '@mui/material/TableContainer';
+
 // routes
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
@@ -29,6 +30,7 @@ import {
   useGetTaisanQrCode,
 } from 'src/api/taisan';
 // components
+import { ConfirmDialog } from 'src/components/custom-dialog';
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
@@ -51,6 +53,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import Dialog, { DialogProps } from '@mui/material/Dialog';
+import Image from 'src/components/image';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
@@ -75,7 +78,6 @@ import {
 import GroupPolicyTableRow from '../tai-san-qr-table-row';
 import GiamsatTableToolbar from '../tai-san-qr-table-toolbar';
 import GiamsatTableFiltersResult from '../tai-san-qr-table-filters-result';
-
 
 // ----------------------------------------------------------------------
 
@@ -112,6 +114,8 @@ export default function GroupPolicyListView() {
 
   const confirm = useBoolean();
 
+  const confirmQr = useBoolean();
+
   const { enqueueSnackbar } = useSnackbar();
 
   const accessToken = localStorage.getItem(STORAGE_KEY);
@@ -125,6 +129,8 @@ export default function GroupPolicyListView() {
   const { donvi } = useGetDonvi();
 
   const [tableData, setTableData] = useState<ITaisanQrCode[]>([]);
+
+  const [qrCodeUrl, setQrCodeUrl] = useState('');
 
   const [dataSelect, setDataSelect] = useState<ITaisanQrCode>();
 
@@ -257,6 +263,15 @@ export default function GroupPolicyListView() {
     setFilters(defaultFilters);
   }, []);
 
+  const handleCreateRow = useCallback(
+    (data: ITaisanQrCode) => {
+      confirmQr.onTrue();
+      popover.onClose();
+      setDataSelect(data);
+    },
+    [confirmQr, popover]
+  );
+
   const handleViewRow = useCallback(
     (data: ITaisanQrCode) => {
       confirm.onTrue();
@@ -266,15 +281,33 @@ export default function GroupPolicyListView() {
     [confirm, popover]
   );
 
+  const handleDownloadImage = async () => {
+    const originalImage = `https://api.qrserver.com/v1/create-qr-code/?data=${dataSelect?.MaQrCode}`;
+    const image = await fetch(originalImage);
+    const imageBlog = await image.blob()
+    const imageURL = URL.createObjectURL(imageBlog)
+    const link = document.createElement('a')
+    link.href = imageURL;
+    link.download = `${dataSelect?.MaQrCode}`;
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  };
+  
+
   const handleUpdate = useCallback(
     async (id: string) => {
       await axios
-        .put(`https://checklist.pmcweb.vn/pmc-assets/api/tb_taisanqrcode/update/${id}`, dataSelect, {
-          headers: {
-            Accept: 'application/json',
-            Authorization: `Bearer ${accessToken}`,
-          },
-        })
+        .put(
+          `https://checklist.pmcweb.vn/pmc-assets/api/tb_taisanqrcode/update/${id}`,
+          dataSelect,
+          {
+            headers: {
+              Accept: 'application/json',
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        )
         .then(async (res) => {
           reset();
           confirm.onFalse();
@@ -444,6 +477,7 @@ export default function GroupPolicyListView() {
                         selected={table.selected.includes(row.ID_TaisanQr)}
                         onSelectRow={() => table.onSelectRow(row.ID_TaisanQr)}
                         onDeleteRow={() => handleDeleteRow(row.ID_TaisanQr)}
+                        onCreateRow={() => handleCreateRow(row)}
                         onViewRow={() => handleViewRow(row)}
                       />
                     ))}
@@ -485,28 +519,26 @@ export default function GroupPolicyListView() {
         setDataSelect={setDataSelect}
       />
 
-      {/* <ConfirmDialog
-        open={confirm.value}
-        onClose={confirm.onFalse}
-        title="Delete"
-        content={
-          <>
-            Are you sure want to delete <strong> {table.selected.length} </strong> items?
-          </>
-        }
-        action={
-          <Button
-            variant="contained"
-            color="error"
-            onClick={() => {
-              handleDeleteRows();
-              confirm.onFalse();
-            }}
-          >
-            Delete
+      <Dialog open={confirmQr.value} onClose={confirmQr.onFalse} maxWidth="sm">
+        <DialogTitle sx={{ pb: 2 }}>Ảnh Qr Code</DialogTitle>
+
+        <DialogContent>
+          <Card>
+            <Image
+              src={`https://api.qrserver.com/v1/create-qr-code/?data=${dataSelect?.MaQrCode}&amp;size=300x300`}
+              alt=""
+              title=""
+            />
+          </Card>
+        </DialogContent>
+
+        <DialogActions>
+          <Button variant="contained" color='success' onClick={handleDownloadImage}>Download</Button>
+          <Button variant="outlined" color="inherit" onClick={confirmQr.onFalse}>
+            Cancel
           </Button>
-        }
-      /> */}
+        </DialogActions>
+      </Dialog>
     </>
   );
 }
@@ -517,7 +549,7 @@ function applyFilter({
   inputData,
   comparator,
   filters, // dateError,
-  dateError
+  dateError,
 }: {
   inputData: ITaisanQrCode[];
   comparator: (a: any, b: any) => number;
