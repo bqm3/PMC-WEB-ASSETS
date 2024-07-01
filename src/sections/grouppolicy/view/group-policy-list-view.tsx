@@ -64,11 +64,12 @@ const TABLE_HEAD = [
   { id: '', width: 88 },
 ];
 
-const defaultFilters: ITaisanTableFilters= {
+const defaultFilters: ITaisanTableFilters = {
   name: '',
-  status: 'all',startDate: null, endDate: null
+  status: 'all',
+  startDate: null,
+  endDate: null,
 };
-
 
 const STORAGE_KEY = 'accessToken';
 // ----------------------------------------------------------------------
@@ -101,8 +102,6 @@ export default function GroupPolicyListView() {
       setTableData(grouppolicy);
     }
   }, [grouppolicy]);
-
-
 
   const dataFiltered = applyFilter({
     inputData: tableData,
@@ -257,7 +256,6 @@ export default function GroupPolicyListView() {
             autoHideDuration: 2000,
             message: 'Cập nhật thành công',
           });
-          
         })
         .catch((error) => {
           if (error.response) {
@@ -547,8 +545,6 @@ function GroupPolicyDialog({
       </Stack>
 
       <DialogActions>
-        
-
         <Button
           variant="contained"
           color="info"
@@ -559,8 +555,8 @@ function GroupPolicyDialog({
           }}
         >
           Cập nhật
-        </Button><Button onClick={onClose}>Hủy</Button>
-        
+        </Button>
+        <Button onClick={onClose}>Hủy</Button>
       </DialogActions>
     </Dialog>
   );

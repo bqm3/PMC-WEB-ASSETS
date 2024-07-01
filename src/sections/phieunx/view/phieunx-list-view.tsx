@@ -98,7 +98,7 @@ const STORAGE_KEY = 'accessToken';
 // ----------------------------------------------------------------------
 
 export default function GroupPolicyListView() {
-  const table = useTable({ defaultOrderBy: 'ID_PhieuNX' });
+  const table = useTable({ defaultOrderBy: 'NgayNX' });
 
   const settings = useSettingsContext();
 
@@ -316,8 +316,6 @@ export default function GroupPolicyListView() {
     },
     [handleFilters]
   );
-
-
 
   return (
     <>
@@ -669,8 +667,6 @@ function GroupPolicyDialog({
       </Stack>
 
       <DialogActions>
-        
-
         <Button
           variant="contained"
           color="info"
@@ -681,7 +677,8 @@ function GroupPolicyDialog({
           }}
         >
           Cập nhật
-        </Button><Button onClick={onClose}>Hủy</Button>
+        </Button>
+        <Button onClick={onClose}>Hủy</Button>
       </DialogActions>
     </Dialog>
   );
