@@ -173,11 +173,11 @@ export default function GroupPolicyListView() {
   );
 
   const GroupPolicySchema = Yup.object().shape({
-    GroupPolicy: Yup.string().required('Không được để trống'),
+    Policy: Yup.string().required('Không được để trống'),
   });
 
   const defaultValues = {
-    GroupPolicy: '',
+    Policy: '',
   };
 
   const methods = useForm({
@@ -535,7 +535,8 @@ function applyFilter({
 
   if (name) {
     inputData = inputData?.filter(
-      (order) => order.GroupPolicy.toLowerCase().indexOf(name.toLowerCase()) !== -1
+      (order) => order.GroupPolicy.toLowerCase().indexOf(name.toLowerCase()) !== -1  ||
+      order.Policy.toLowerCase().indexOf(name.toLowerCase()) !== -1 
     );
   }
 
@@ -581,7 +582,7 @@ function GroupPolicyDialog({
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             value={dataSelect?.ID_GroupPolicy}
-            label="Age"
+            label="Thuộc danh mục"
             onChange={handleSelectChange}
           >
             {grouppolicy?.map((item) => (
