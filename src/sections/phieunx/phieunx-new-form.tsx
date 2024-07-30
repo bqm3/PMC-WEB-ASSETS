@@ -37,6 +37,27 @@ import PhieuNXNewEditDetails from './phieunx-new-edit-details';
 
 // ----------------------------------------------------------------------
 
+const QUARTY = [
+  {
+    value: 1,
+    label: "Quý I"
+  },
+  {
+    value: 2,
+    label: "Quý II"
+  },
+  {
+    value: 3,
+    label: "Quý III"
+  },
+  {
+    value: 4,
+    label: "Quý IV"
+  }
+]
+
+
+
 const STORAGE_KEY = 'accessToken';
 
 export default function SuaChuaTSNewForm() {
@@ -51,6 +72,7 @@ export default function SuaChuaTSNewForm() {
   const [loading, setLoading] = useState<Boolean | any>(false);
 
   const [noiXuat, setNoiXuat] = useState<IPhongbanda[]>([]);
+
   const [noiNhap, setNoiNhap] = useState<IPhongbanda[]>([]);
 
   const accessToken = localStorage.getItem(STORAGE_KEY);
@@ -79,12 +101,14 @@ export default function SuaChuaTSNewForm() {
       ID_NoiXuat: null,
       NgayNX: new Date(),
       Ghichu: '',
+      ThuocQuy: '',
       phieunxct: [
         {
           ID_Taisan: null,
           Dongia: 0,
           Soluong: 0,
           Tong: 0,
+          Namsx: 0,
           isDelete: 0,
         },
       ],
@@ -223,7 +247,7 @@ export default function SuaChuaTSNewForm() {
           )}
         </Stack>
         <Stack spacing={3} sx={{ p: 2, display: 'flex', flexDirection: 'row' }}>
-          <RHFTextField name="Sophieu" label="Số phiếu" />
+          <RHFTextField name="Sophieu" label="Mã số phiếu" />
           <Controller
             name="NgayNX"
             control={control}
@@ -244,7 +268,19 @@ export default function SuaChuaTSNewForm() {
               />
             )}
           />
-        </Stack>
+          <RHFSelect
+              name="ThuocQuy"
+              label="Quý"
+              InputLabelProps={{ shrink: true }}
+              PaperPropsSx={{ textTransform: 'capitalize' }}
+            >
+              {QUARTY?.map((item) => (
+                <MenuItem key={item?.value} value={item?.value}>
+                  {item?.label}
+                </MenuItem>
+              ))}
+            </RHFSelect>
+          </Stack>
         <Stack spacing={3} sx={{ p: 1.5 }}>
           <RHFTextField name="Ghichu" multiline rows={3} label="Ghi chú" />
         </Stack>

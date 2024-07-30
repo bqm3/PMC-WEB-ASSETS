@@ -51,6 +51,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import Dialog, { DialogProps } from '@mui/material/Dialog';
 import InputLabel from '@mui/material/InputLabel';
+import { Autocomplete } from '@mui/material';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
@@ -69,6 +70,7 @@ import {
   ITaisanTableFilters,
 } from 'src/types/taisan';
 //
+import { list_country } from 'src/_mock/map/countries';
 import GroupPolicyTableRow from '../tai-san-table-row';
 import GiamsatTableToolbar from '../tai-san-table-toolbar';
 import GiamsatTableFiltersResult from '../tai-san-table-filters-result';
@@ -80,6 +82,7 @@ const TABLE_HEAD = [
   { id: 'Tents', label: 'Tên tài sản', width: 150 },
   { id: 'ID_Donvi', label: 'Đơn vị', width: 150 },
   { id: 'Mats', label: 'Mã tài sản', width: 150 },
+  { id: 'Nuocsx', label: 'Nước sản xuất', width: 150 },
   { id: '', width: 88 },
 ];
 
@@ -490,11 +493,12 @@ function applyFilter({
   if (name) {
     inputData = inputData?.filter(
       (order) =>
-        order.ent_nhomts.Manhom.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order?.ent_nhomts?.Loaits.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.Mats.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.Tents.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.Thongso.toLowerCase().indexOf(name.toLowerCase()) !== -1
+        `${order.ent_nhomts.Manhom}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        `${order?.ent_nhomts?.Loaits}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        `${order.Mats}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        `${order.Nuocsx}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        `${order.Tents}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        `${order.Thongso}`.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
 
@@ -576,6 +580,25 @@ function GroupPolicyDialog({
                   </Select>
                 </FormControl>
               )}
+
+              <Autocomplete
+                freeSolo
+                id="free-solo-2-demo"
+                fullWidth
+                disableClearable
+                value={dataSelect?.Nuocsx}
+                options={list_country.map((option) => option.name)}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Nước sản xuất"
+                    InputProps={{
+                      ...params.InputProps,
+                      type: 'search',
+                    }}
+                  />
+                )}
+              />
             </Stack>
             <TextField
               name="Tents"
@@ -612,8 +635,6 @@ function GroupPolicyDialog({
         </DialogContent>
 
         <DialogActions>
-          
-
           <Button
             variant="contained"
             color="info"

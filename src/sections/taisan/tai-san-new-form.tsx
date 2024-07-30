@@ -37,6 +37,7 @@ import { useSnackbar } from 'src/components/snackbar';
 // components
 import { useSettingsContext } from 'src/components/settings';
 import axios from 'axios';
+import { list_country } from 'src/_mock/map/countries';
 
 // ----------------------------------------------------------------------
 
@@ -70,6 +71,7 @@ export default function GroupPolicyNewForm() {
       ID_Nhomts: '',
       ID_Donvi: '',
       Mats: '',
+      Nuocsx: '',
       Tents: '',
       Thongso: '',
       Ghichu: '',
@@ -140,7 +142,7 @@ export default function GroupPolicyNewForm() {
   const renderDetails = (
     <>
       {mdUp && (
-        <Grid md={4}>
+        <Grid md={3}>
           <Typography variant="h6" sx={{ mb: 0.5 }}>
             Chi tiết
           </Typography>
@@ -150,15 +152,19 @@ export default function GroupPolicyNewForm() {
         </Grid>
       )}
 
-      <Grid xs={12} md={8}>
+      <Grid xs={12} md={9}>
         <Card>
-          <Stack spacing={3} sx={{ p: 2, display: 'flex', flexDirection: 'row' }}>
+          <Stack
+            spacing={3}
+            sx={{ p: 2, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
+          >
             {nhomts?.length > 0 && (
               <RHFSelect
                 name="ID_Nhomts"
                 label="Nhóm tài sản"
                 InputLabelProps={{ shrink: true }}
                 PaperPropsSx={{ textTransform: 'capitalize' }}
+                sx={{ flexGrow: 1 }}
               >
                 {nhomts?.map((item) => (
                   <MenuItem key={item?.ID_Nhomts} value={item?.ID_Nhomts}>
@@ -167,12 +173,40 @@ export default function GroupPolicyNewForm() {
                 ))}
               </RHFSelect>
             )}
+
+            <Stack sx={{flexGrow: 1}}>
+            <RHFAutocomplete
+                name="Nuocsx"
+                label="Nước sản xuất"
+                freeSolo
+                sx={{ flexGrow: 1, width: '100%', minWidth: 240 }}
+                options={list_country.map((country) => country.name)}
+                getOptionLabel={(option) => option}
+                renderOption={(props, option) => {
+                  const { code, name } = list_country.filter(
+                    (country) => country.name === option
+                  )[0];
+
+                  if (!name) {
+                    return null;
+                  }
+
+                  return (
+                    <li {...props} key={name}>
+                      {name}
+                    </li>
+                  );
+                }}
+              />
+            </Stack>
+              
             {donvi?.length > 0 && (
               <RHFSelect
                 name="ID_Donvi"
                 label="Đơn vị"
                 InputLabelProps={{ shrink: true }}
                 PaperPropsSx={{ textTransform: 'capitalize' }}
+                sx={{ flexGrow: 1 }}
               >
                 {donvi?.map((item) => (
                   <MenuItem key={item?.ID_Donvi} value={item?.ID_Donvi}>
@@ -181,7 +215,11 @@ export default function GroupPolicyNewForm() {
                 ))}
               </RHFSelect>
             )}
-          </Stack>
+
+            {/* <Stack spacing={1.5} sx={{ flexGrow: 1 }}> */}
+              
+            </Stack>
+          {/* </Stack> */}
 
           <Stack spacing={3} sx={{ p: 2 }}>
             <RHFTextField name="Tents" label="Tên tài sản" />

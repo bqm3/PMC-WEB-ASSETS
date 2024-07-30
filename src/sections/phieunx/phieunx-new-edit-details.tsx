@@ -53,6 +53,7 @@ export default function InvoiceNewEditDetails() {
       Soluong: 0,
       Dongia: 0,
       Tong: 0,
+      Namsx: 0,
       isDelete: 0
     });
   };
@@ -85,6 +86,14 @@ export default function InvoiceNewEditDetails() {
       );
     },
     [setValue, values.phieunxct]
+  );
+
+  const handleChangeYear = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, index: number) => {
+      const inputValue = event.target.value;
+      setValue(`phieunxct[${index}].Namsx`, Number(inputValue));
+    },
+    [setValue]
   );
 
   const handleTaiSanChange = useCallback(
@@ -172,6 +181,17 @@ export default function InvoiceNewEditDetails() {
                     )}
                   />
                 )}
+              />
+
+<RHFTextField
+                size="medium"
+                type="number"
+                name={`phieunxct[${index}].Namsx`}
+                label="Năm sản xuất"
+                placeholder="0"
+                onChange={(event) => handleChangeYear(event, index)}
+                InputLabelProps={{ shrink: true }}
+                // sx={{ maxWidth: { md: 96 } }}
               />
 
               <RHFTextField

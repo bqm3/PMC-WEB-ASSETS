@@ -53,6 +53,7 @@ export default function PhieuNXNewEditDetails() {
       ID_Taisan: null,
       Soluong: 0,
       Dongia: 0,
+      Namsx: 0,
       Tong: 0,
       isDelete: 0,
     });
@@ -60,7 +61,6 @@ export default function PhieuNXNewEditDetails() {
 
   const handleRemove = (index: number) => {
     setValue(`phieunxct[${index}].isDelete`, 1);
-   
   };
 
   const handleChangeQuantity = useCallback(
@@ -86,6 +86,14 @@ export default function PhieuNXNewEditDetails() {
       );
     },
     [setValue, values.phieunxct]
+  );
+
+  const handleChangeYear = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, index: number) => {
+      const inputValue = event.target.value;
+      setValue(`phieunxct[${index}].Namsx`, Number(inputValue));
+    },
+    [setValue]
   );
 
   const handleTaiSanChange = useCallback(
@@ -177,6 +185,17 @@ export default function PhieuNXNewEditDetails() {
                         )}
                       />
                     )}
+                  />
+
+                  <RHFTextField
+                    size="medium"
+                    type="number"
+                    name={`phieunxct[${index}].Namsx`}
+                    label="Năm sản xuất"
+                    placeholder="0"
+                    onChange={(event) => handleChangeYear(event, index)}
+                    InputLabelProps={{ shrink: true }}
+                    // sx={{ maxWidth: { md: 96 } }}
                   />
 
                   <RHFTextField

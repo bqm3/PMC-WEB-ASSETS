@@ -42,9 +42,20 @@ export default function CalvTableRow({
   onSelectRow,
   onDeleteRow,
 }: Props) {
-  const { ID_Taisan, ID_Nhomts, ID_Donvi, Mats, Tents, Thongso, Ghichu, ent_donvi, ent_nhomts } = row;
+  const {
+    ID_Taisan,
+    ID_Nhomts,
+    ID_Donvi,
+    Mats,
+    Tents,
+    Thongso,
+    Ghichu,
+    ent_donvi,
+    ent_nhomts,
+    Nuocsx,
+  } = row;
 
-  console.log(row)
+  console.log(row);
   const confirm = useBoolean();
 
   const collapse = useBoolean();
@@ -68,7 +79,6 @@ export default function CalvTableRow({
       </TableCell>
       <TableCell> {Tents} </TableCell>
       <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-     
         <ListItemText
           primary={ent_nhomts?.Loaits}
           secondary={ent_donvi.Donvi}
@@ -80,8 +90,7 @@ export default function CalvTableRow({
         />
       </TableCell>
       <TableCell> {Mats} </TableCell>
-     
-      
+      <TableCell>{Nuocsx}</TableCell>
 
       <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
         <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>

@@ -157,7 +157,7 @@ export default function GroupPolicyListView() {
     const { value } = event.target;
     setDataSelect((prev: any) => ({
       ...prev,
-      ID_GroupPolicy: `${value}`
+      ID_GroupPolicy: `${value}`,
     }));
   };
 
@@ -194,15 +194,12 @@ export default function GroupPolicyListView() {
   const handleDeleteRow = useCallback(
     async (id: string) => {
       await axios
-        .put(
-          `https://checklist.pmcweb.vn/pmc-assets/api/ent_policy/delete/${id}`,
-          {
-            headers: {
-              Accept: 'application/json',
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        )
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/ent_policy/delete/${id}`, {
+          headers: {
+            Accept: 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
         .then((res) => {
           // reset();
           const deleteRow = tableData?.filter((row) => row.ID_Policy !== id);
@@ -253,7 +250,7 @@ export default function GroupPolicyListView() {
 
   const handleUpdate = useCallback(
     async (id: string) => {
-      console.log('dataSelect', dataSelect)
+      console.log('dataSelect', dataSelect);
       await axios
         .put(
           `https://checklist.pmcweb.vn/pmc-assets/api/ent_policy/update/${id}`,
@@ -280,8 +277,7 @@ export default function GroupPolicyListView() {
           //       : row
           //   )
           // );
-          await mutatePolicy()
-          
+          await mutatePolicy();
 
           enqueueSnackbar({
             variant: 'success',
@@ -313,7 +309,7 @@ export default function GroupPolicyListView() {
           }
         });
     },
-    [accessToken, enqueueSnackbar, dataSelect, reset, confirm, popover, mutatePolicy ] // Add accessToken and enqueueSnackbar as dependencies
+    [accessToken, enqueueSnackbar, dataSelect, reset, confirm, popover, mutatePolicy] // Add accessToken and enqueueSnackbar as dependencies
   );
 
   const handleFilterStatus = useCallback(
@@ -535,8 +531,9 @@ function applyFilter({
 
   if (name) {
     inputData = inputData?.filter(
-      (order) => order.GroupPolicy.toLowerCase().indexOf(name.toLowerCase()) !== -1  ||
-      order.Policy.toLowerCase().indexOf(name.toLowerCase()) !== -1 
+      (order) =>
+        order.GroupPolicy.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        order.Policy.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
 
@@ -574,25 +571,25 @@ function GroupPolicyDialog({
     <Dialog open={open} fullWidth maxWidth="md" onClose={onClose}>
       <DialogTitle>Cập nhật</DialogTitle>
       <Stack spacing={3} sx={{ px: 3 }}>
-      {grouppolicy?.length > 0 && (
-        <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-label">Thuộc danh mục</InputLabel>
-          <Select
-            name="ID_GroupPolicy"
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={dataSelect?.ID_GroupPolicy}
-            label="Thuộc danh mục"
-            onChange={handleSelectChange}
-          >
-            {grouppolicy?.map((item) => (
-              <MenuItem key={item?.ID_GroupPolicy} value={item?.ID_GroupPolicy}>
-                {item?.GroupPolicy}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      )}
+        {grouppolicy?.length > 0 && (
+          <FormControl fullWidth>
+            <InputLabel id="demo-simple-select-label">Thuộc danh mục</InputLabel>
+            <Select
+              name="ID_GroupPolicy"
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={dataSelect?.ID_GroupPolicy}
+              label="Thuộc danh mục"
+              onChange={handleSelectChange}
+            >
+              {grouppolicy?.map((item) => (
+                <MenuItem key={item?.ID_GroupPolicy} value={item?.ID_GroupPolicy}>
+                  {item?.GroupPolicy}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
 
         <TextField
           name="Policy"
@@ -613,8 +610,6 @@ function GroupPolicyDialog({
       </Stack>
 
       <DialogActions>
-        
-
         <Button
           variant="contained"
           color="info"
@@ -625,7 +620,8 @@ function GroupPolicyDialog({
           }}
         >
           Cập nhật
-        </Button><Button onClick={onClose}>Hủy</Button>
+        </Button>
+        <Button onClick={onClose}>Hủy</Button>
       </DialogActions>
     </Dialog>
   );

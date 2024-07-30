@@ -38,6 +38,25 @@ import PhieuNXEditDetails from './phieunx-edit-details';
 
 // ----------------------------------------------------------------------
 
+const QUARTY = [
+  {
+    value: 1,
+    label: "Quý I"
+  },
+  {
+    value: 2,
+    label: "Quý II"
+  },
+  {
+    value: 3,
+    label: "Quý III"
+  },
+  {
+    value: 4,
+    label: "Quý IV"
+  }
+]
+
 const STORAGE_KEY = 'accessToken';
 
 type Props = {
@@ -85,11 +104,13 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
       iTinhtrang: currentPhieuNX?.iTinhtrang || '',
       NgayNX: currentPhieuNX?.NgayNX || new Date(),
       Ghichu: currentPhieuNX?.Ghichu || '',
+      ThuocQuy: currentPhieuNX?.ThuocQuy || '',
       phieunxct: currentPhieuNX?.tb_phieunxct || [
         {
           ID_Taisan: null,
           Dongia: 0,
           Soluong: 0,
+          Namsx: 0,
           Tong: 0,
           isDelete: 0,
         },
@@ -302,6 +323,23 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
             />
           </Stack>
           <Stack width="100%">
+          <RHFSelect
+              name="ThuocQuy"
+              label="Quý"
+              InputLabelProps={{ shrink: true }}
+              PaperPropsSx={{ textTransform: 'capitalize' }}
+            >
+              {QUARTY?.map((item) => (
+                <MenuItem key={item?.value} value={item?.value}>
+                  {item?.label}
+                </MenuItem>
+              ))}
+            </RHFSelect>
+          </Stack>
+         
+        </Stack>
+        <Stack spacing={3}  sx={{ p: 2, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+        <Stack width="100%" >
             <RHFTextField
               name="Ghichu"
               multiline
@@ -311,6 +349,7 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
             />
           </Stack>
         </Stack>
+        
       </Card>
     </Grid>
   );

@@ -99,6 +99,7 @@ export type ITaisan = {
   Mats: string;
   Tents: string;
   Thongso: string;
+  Nuocsx: string;
   Ghichu: string;
   ent_nhomts: INhomts;
   ent_donvi: IDonvi;
@@ -156,6 +157,7 @@ export type IPhieuNX = {
   ID_Connguoi: string;
   NgayNX: string;
   Ghichu: string;
+  ThuocQuy: string;
   ID_Nam: string;
   ID_Thang: string;
   iTinhtrang: string;
