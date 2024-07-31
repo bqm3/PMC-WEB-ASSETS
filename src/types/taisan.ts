@@ -118,6 +118,8 @@ export type ITaisanQrCode = {
   ID_Phongban: string;
   ID_Connguoi: string;
   ent_phongbanda: IPhongbanda;
+  Namsx: string;
+  Nambdsd: string;
   ent_user: IUser,
   ent_taisan: ITaisan;
 }

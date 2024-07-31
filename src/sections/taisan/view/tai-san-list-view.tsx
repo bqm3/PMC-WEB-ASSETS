@@ -159,6 +159,7 @@ export default function GroupPolicyListView() {
 
   const handleSelectChange = (event: SelectChangeEvent) => {
     const { name, value } = event.target;
+    console.log('name, value', name, value);
     setDataSelect((prev: any) => ({
       ...prev,
       [name]: `${value}`,
@@ -189,6 +190,7 @@ export default function GroupPolicyListView() {
       Mats: dataSelect?.Mats || '',
       Tents: dataSelect?.Tents || '',
       Thongso: dataSelect?.Thongso || '',
+      Nuocsx: dataSelect?.Nuocsx || '',
       Ghichu: dataSelect?.Ghichu || '',
     }),
     [dataSelect]
@@ -264,6 +266,7 @@ export default function GroupPolicyListView() {
 
   const handleUpdate = useCallback(
     async (id: string) => {
+      console.log('dataSelect', dataSelect);
       await axios
         .put(`https://checklist.pmcweb.vn/pmc-assets/api/ent_taisan/update/${id}`, dataSelect, {
           headers: {
@@ -542,7 +545,7 @@ function GroupPolicyDialog({
 
         <DialogContent dividers={scroll === 'paper'}>
           <Stack spacing={3} sx={{ p: 3 }}>
-            <Stack style={{ display: 'flex', flexDirection: 'row', gap: 30 }} spacing={3}>
+            <Stack style={{ display: 'flex', flexDirection: 'row' }} spacing={3}>
               {nhomts?.length > 0 && (
                 <FormControl fullWidth>
                   <InputLabel id="demo-simple-select-label">Tài sản</InputLabel>
@@ -586,8 +589,15 @@ function GroupPolicyDialog({
                 id="free-solo-2-demo"
                 fullWidth
                 disableClearable
-                value={dataSelect?.Nuocsx}
+                value={dataSelect?.Nuocsx || ''}
                 options={list_country.map((option) => option.name)}
+                onChange={(event, newValue) => {
+                  // Handle the change event and update state
+                  setDataSelect((prevData: any) => ({
+                    ...prevData,
+                    Nuocsx: newValue,
+                  }));
+                }}
                 renderInput={(params) => (
                   <TextField
                     {...params}

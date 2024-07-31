@@ -55,7 +55,6 @@ export default function CalvTableRow({
     Nuocsx,
   } = row;
 
-  console.log(row);
   const confirm = useBoolean();
 
   const collapse = useBoolean();

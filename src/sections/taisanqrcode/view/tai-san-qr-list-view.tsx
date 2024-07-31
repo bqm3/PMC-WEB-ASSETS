@@ -3,7 +3,8 @@ import axios from 'axios';
 // @mui
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useForm } from 'react-hook-form';
+import { useForm, useFormContext, useFieldArray, Controller } from 'react-hook-form';
+import Autocomplete from '@mui/material/Autocomplete';
 import { alpha } from '@mui/material/styles';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
@@ -273,41 +274,45 @@ export default function GroupPolicyListView() {
   );
 
   const handleViewRow = useCallback(
-    (data: ITaisanQrCode) => {
+    async (data: ITaisanQrCode) => {
       confirm.onTrue();
       popover.onClose();
-      setDataSelect(data);
+      await axios
+        .get(`https://checklist.pmcweb.vn/pmc-assets/api/tb_taisanqrcode/${data.ID_TaisanQr}`, {
+          headers: {
+            Accept: 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
+        .then((res) => {
+          setDataSelect(res.data.data);
+        });
     },
-    [confirm, popover]
+    [confirm, popover, accessToken]
   );
 
   const handleDownloadImage = async () => {
     const originalImage = `https://api.qrserver.com/v1/create-qr-code/?data=${dataSelect?.MaQrCode}`;
     const image = await fetch(originalImage);
-    const imageBlog = await image.blob()
-    const imageURL = URL.createObjectURL(imageBlog)
-    const link = document.createElement('a')
+    const imageBlog = await image.blob();
+    const imageURL = URL.createObjectURL(imageBlog);
+    const link = document.createElement('a');
     link.href = imageURL;
     link.download = `${dataSelect?.MaQrCode}`;
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
-  
 
   const handleUpdate = useCallback(
     async (id: string) => {
       await axios
-        .put(
-          `https://checklist.pmcweb.vn/pmc-assets/api/tb_taisanqrcode/update/${id}`,
-          dataSelect,
-          {
-            headers: {
-              Accept: 'application/json',
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        )
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/tb_taisanqrcode/update/${id}`, dataSelect, {
+          headers: {
+            Accept: 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
         .then(async (res) => {
           reset();
           confirm.onFalse();
@@ -356,7 +361,7 @@ export default function GroupPolicyListView() {
 
   return (
     <>
-      <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+      <Container maxWidth={settings.themeStretch ? false : 'xl'}>
         <CustomBreadcrumbs
           heading="Danh sách tài sản"
           links={[
@@ -533,7 +538,9 @@ export default function GroupPolicyListView() {
         </DialogContent>
 
         <DialogActions>
-          <Button variant="contained" color='success' onClick={handleDownloadImage}>Download</Button>
+          <Button variant="contained" color="success" onClick={handleDownloadImage}>
+            Download
+          </Button>
           <Button variant="outlined" color="inherit" onClick={confirmQr.onFalse}>
             Cancel
           </Button>
@@ -631,35 +638,79 @@ function GroupPolicyDialog({
   setDataSelect,
 }: ConfirmTransferDialogProps) {
   const idPolicy = dataSelect?.ID_TaisanQr;
+  const { taisan } = useGetTaisan();
   const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
 
   return (
     <FormProvider methods={methods}>
-      <Dialog open={open} fullWidth maxWidth="lg" onClose={onClose}>
+      <Dialog open={open} fullWidth maxWidth="md" onClose={onClose}>
         <DialogTitle>Cập nhật</DialogTitle>
 
         <DialogContent dividers={scroll === 'paper'}>
           <Stack spacing={3} sx={{ p: 3 }}>
-            {/* <Stack style={{ display: 'flex', flexDirection: 'row', gap: 30 }} spacing={3}>
-              
-            </Stack> */}
+            <Stack style={{ display: 'flex', flexDirection: 'row' }} spacing={3}>
+              <Autocomplete
+                freeSolo
+                id="free-solo-2-demo"
+                fullWidth
+                disableClearable
+                value={dataSelect?.ent_taisan.Tents || ''}
+                options={taisan.map((option) => option.Tents)}
+                onChange={(event, newValue) => {
+                  // Find the selected option in the list
+                  const selectedOption = taisan.find((option) => option.Tents === newValue);
+                  // Update the state with the selected ID_Taisan
+                  setDataSelect((prevData: any) => ({
+                    ...prevData,
+                    ID_Taisan: selectedOption ? selectedOption.ID_Taisan : '',
+                  }));
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Tên tài sản"
+                    InputProps={{
+                      ...params.InputProps,
+                      type: 'search',
+                    }}
+                  />
+                )}
+              />
 
+              <TextField
+                type="number"
+                InputLabelProps={{ shrink: true }}
+                name="Nambdsd"
+                label="Năm sử dụng"
+                value={dataSelect?.Nambdsd}
+                fullWidth
+              />
+              <TextField
+                type="number"
+                name="Namsx"
+                InputLabelProps={{ shrink: true }}
+                label="Năm sản xuất"
+                value={dataSelect?.Namsx}
+                fullWidth
+              />
+            </Stack>
+
+            <Stack style={{ display: 'flex', flexDirection: 'row' }} spacing={3}>
             <TextField
               name="Ghichu"
-              label="Ghi chú" // Vietnamese for "Category Name"
+              label="Ghi chú"
               value={dataSelect?.Ghichu}
-              onChange={onChange} // Update local state and notify parent
+              onChange={onChange}
               fullWidth
               multiline
               rows={3}
               onBlur={onBlur}
             />
+            </Stack>
           </Stack>
         </DialogContent>
 
         <DialogActions>
-          
-
           <Button
             variant="contained"
             color="info"
