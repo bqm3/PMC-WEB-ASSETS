@@ -33,7 +33,7 @@ type Props = {
   selected: boolean;
   onViewRow: VoidFunction;
 //   onSelectRow: VoidFunction;
-//   onDeleteRow: VoidFunction;
+  onDeleteRow: VoidFunction;
 };
 
 export default function CalvTableRow({
@@ -41,7 +41,7 @@ export default function CalvTableRow({
   selected,
   onViewRow,
 //   onSelectRow,
-//   onDeleteRow,
+  onDeleteRow,
 }: Props) {
   const { ID_Duan, ID_User, ID_KhoiCV, isDelete, ent_chucvu, ent_khoicv, UserName, Emails } = row;
 

@@ -328,7 +328,7 @@ export default function GroupPolicyListView() {
 
   return (
     <>
-      <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+      <Container maxWidth={settings.themeStretch ? false : 'xl'}>
         <CustomBreadcrumbs
           heading="Danh sách chính sách"
           links={[

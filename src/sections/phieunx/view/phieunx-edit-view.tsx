@@ -23,7 +23,7 @@ export default function PhieuNXEditView({ id }: Props) {
   const { phieunx: currentPhieuNX, mutate } = useGetDetailPhieuNX(id);
 
   return (
-    <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+    <Container maxWidth={settings.themeStretch ? false : 'xl'}>
       <CustomBreadcrumbs
         heading="Cập nhật"
         links={[

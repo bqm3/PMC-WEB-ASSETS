@@ -40,23 +40,21 @@ import PhieuNXNewEditDetails from './phieunx-new-edit-details';
 const QUARTY = [
   {
     value: 1,
-    label: "Quý I"
+    label: 'Quý I',
   },
   {
     value: 2,
-    label: "Quý II"
+    label: 'Quý II',
   },
   {
     value: 3,
-    label: "Quý III"
+    label: 'Quý III',
   },
   {
     value: 4,
-    label: "Quý IV"
-  }
-]
-
-
+    label: 'Quý IV',
+  },
+];
 
 const STORAGE_KEY = 'accessToken';
 
@@ -269,18 +267,18 @@ export default function SuaChuaTSNewForm() {
             )}
           />
           <RHFSelect
-              name="ThuocQuy"
-              label="Quý"
-              InputLabelProps={{ shrink: true }}
-              PaperPropsSx={{ textTransform: 'capitalize' }}
-            >
-              {QUARTY?.map((item) => (
-                <MenuItem key={item?.value} value={item?.value}>
-                  {item?.label}
-                </MenuItem>
-              ))}
-            </RHFSelect>
-          </Stack>
+            name="ThuocQuy"
+            label="Quý"
+            InputLabelProps={{ shrink: true }}
+            PaperPropsSx={{ textTransform: 'capitalize' }}
+          >
+            {QUARTY?.map((item) => (
+              <MenuItem key={item?.value} value={item?.value}>
+                {item?.label}
+              </MenuItem>
+            ))}
+          </RHFSelect>
+        </Stack>
         <Stack spacing={3} sx={{ p: 1.5 }}>
           <RHFTextField name="Ghichu" multiline rows={3} label="Ghi chú" />
         </Stack>

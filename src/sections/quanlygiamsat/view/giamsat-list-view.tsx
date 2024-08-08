@@ -200,7 +200,7 @@ export default function GiamsatListView() {
 
   return (
     <>
-      <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+      <Container maxWidth={settings.themeStretch ? false : 'xl'}>
         <CustomBreadcrumbs
           heading="Danh sách tài khoản giám sát"
           links={[

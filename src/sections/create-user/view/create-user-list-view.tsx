@@ -58,11 +58,7 @@ import { useSnackbar } from 'src/components/snackbar';
 // types
 import { IKhuvucTableFilters, IKhuvucTableFilterValue } from 'src/types/khuvuc';
 
-import {
-  IConnguoi,
-  INhompb,
-  ITaisanTableFilters,
-} from 'src/types/taisan';
+import { IConnguoi, INhompb, ITaisanTableFilters } from 'src/types/taisan';
 //
 import CreateUserTableRow from '../create-user-table-row';
 import GiamsatTableToolbar from '../create-user-table-toolbar';
@@ -80,9 +76,11 @@ const TABLE_HEAD = [
   { id: '', width: 88 },
 ];
 
-const defaultFilters: ITaisanTableFilters= {
+const defaultFilters: ITaisanTableFilters = {
   name: '',
-  status: 'all',startDate: null, endDate: null
+  status: 'all',
+  startDate: null,
+  endDate: null,
 };
 
 const STORAGE_KEY = 'accessToken';
@@ -190,7 +188,7 @@ export default function GroupPolicyListView() {
       await axios
         .put(
           `https://checklist.pmcweb.vn/pmc-assets/api/ent_connguoi/delete/${id}`,
-
+          [],
           {
             headers: {
               Accept: 'application/json',
@@ -303,7 +301,7 @@ export default function GroupPolicyListView() {
 
   return (
     <>
-      <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+      <Container maxWidth={settings.themeStretch ? false : 'xl'}>
         <CustomBreadcrumbs
           heading="Danh sách tài khoản"
           links={[
@@ -319,7 +317,6 @@ export default function GroupPolicyListView() {
         />
 
         <Card>
-          
           <GiamsatTableToolbar
             filters={filters}
             onFilters={handleFilters}
@@ -589,8 +586,6 @@ function GroupPolicyDialog({
       </DialogContent>
 
       <DialogActions>
-        
-
         <Button
           variant="contained"
           color="info"
@@ -601,7 +596,8 @@ function GroupPolicyDialog({
           }}
         >
           Cập nhật
-        </Button><Button onClick={onClose}>Hủy</Button>
+        </Button>
+        <Button onClick={onClose}>Hủy</Button>
       </DialogActions>
     </Dialog>
   );

@@ -118,7 +118,7 @@ export default function InvoiceNewEditDetails() {
                     renderInput={(params) => (
                       <TextField
                         {...params}
-                        label="Tài sản Qr"
+                        label="Tài sản Qr Code"
                         variant="outlined"
                         size="medium"
                         sx={{ minWidth: { md: 400, xs: 250 } }}

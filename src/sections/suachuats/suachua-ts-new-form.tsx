@@ -137,7 +137,7 @@ export default function SuachuatsNewForm() {
     <Grid xs={12} md={12}>
       <Card>
         <Stack spacing={3} sx={{ p: 2, display: 'flex', flexDirection: 'row' }}>
-          <RHFTextField name="Sophieu" label="Số phiếu" />
+          <RHFTextField name="Sophieu" label="Mã số phiếu" />
           <Controller
             name="Ngaygiao"
             control={control}

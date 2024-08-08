@@ -209,8 +209,9 @@ export default function GroupPolicyListView() {
 
   const handleDeleteRow = useCallback(
     async (id: string) => {
+      console.log('accessToken',accessToken)
       await axios
-        .put(`https://checklist.pmcweb.vn/pmc-assets/api/ent_taisan/delete/${id}`, {
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/ent_taisan/delete/${id}`, [] ,{
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -322,7 +323,7 @@ export default function GroupPolicyListView() {
 
   return (
     <>
-      <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+      <Container maxWidth={settings.themeStretch ? false : 'xl'}>
         <CustomBreadcrumbs
           heading="Danh sách tài sản"
           links={[

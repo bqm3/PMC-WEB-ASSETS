@@ -130,7 +130,7 @@ export default function CalvTableRow({
         </MenuItem>
       </CustomPopover>
 
-      {/* <ConfirmDialog
+      <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
         title="PMC thông báo"
@@ -140,7 +140,7 @@ export default function CalvTableRow({
             Xóa
           </Button>
         }
-      /> */}
+      />
     </>
   );
 }
