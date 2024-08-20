@@ -41,21 +41,21 @@ import PhieuNXEditDetails from './phieunx-edit-details';
 const QUARTY = [
   {
     value: 1,
-    label: "Quý I"
+    label: 'Quý I',
   },
   {
     value: 2,
-    label: "Quý II"
+    label: 'Quý II',
   },
   {
     value: 3,
-    label: "Quý III"
+    label: 'Quý III',
   },
   {
     value: 4,
-    label: "Quý IV"
-  }
-]
+    label: 'Quý IV',
+  },
+];
 
 const STORAGE_KEY = 'accessToken';
 
@@ -104,7 +104,7 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
       iTinhtrang: currentPhieuNX?.iTinhtrang || '',
       NgayNX: currentPhieuNX?.NgayNX || new Date(),
       Ghichu: currentPhieuNX?.Ghichu || '',
-      ThuocQuy: currentPhieuNX?.ThuocQuy || '',
+      ID_Quy: currentPhieuNX?.ID_Quy || '',
       phieunxct: currentPhieuNX?.tb_phieunxct || [
         {
           ID_Taisan: null,
@@ -323,8 +323,8 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
             />
           </Stack>
           <Stack width="100%">
-          <RHFSelect
-              name="ThuocQuy"
+            <RHFSelect
+              name="ID_Quy"
               label="Quý"
               InputLabelProps={{ shrink: true }}
               PaperPropsSx={{ textTransform: 'capitalize' }}
@@ -336,10 +336,12 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
               ))}
             </RHFSelect>
           </Stack>
-         
         </Stack>
-        <Stack spacing={3}  sx={{ p: 2, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-        <Stack width="100%" >
+        <Stack
+          spacing={3}
+          sx={{ p: 2, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
+        >
+          <Stack width="100%">
             <RHFTextField
               name="Ghichu"
               multiline
@@ -349,7 +351,6 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
             />
           </Stack>
         </Stack>
-        
       </Card>
     </Grid>
   );

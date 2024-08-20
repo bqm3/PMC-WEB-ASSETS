@@ -99,7 +99,7 @@ export default function SuaChuaTSNewForm() {
       ID_NoiXuat: null,
       NgayNX: new Date(),
       Ghichu: '',
-      ThuocQuy: '',
+      ID_Quy: null,
       phieunxct: [
         {
           ID_Taisan: null,
@@ -267,7 +267,7 @@ export default function SuaChuaTSNewForm() {
             )}
           />
           <RHFSelect
-            name="ThuocQuy"
+            name="ID_Quy"
             label="Quý"
             InputLabelProps={{ shrink: true }}
             PaperPropsSx={{ textTransform: 'capitalize' }}

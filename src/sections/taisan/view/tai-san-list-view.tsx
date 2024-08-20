@@ -209,7 +209,6 @@ export default function GroupPolicyListView() {
 
   const handleDeleteRow = useCallback(
     async (id: string) => {
-      console.log('accessToken',accessToken)
       await axios
         .put(`https://checklist.pmcweb.vn/pmc-assets/api/ent_taisan/delete/${id}`, [] ,{
           headers: {

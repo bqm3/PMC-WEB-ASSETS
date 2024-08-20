@@ -159,7 +159,7 @@ export type IPhieuNX = {
   ID_Connguoi: string;
   NgayNX: string;
   Ghichu: string;
-  ThuocQuy: string;
+  ID_Quy: string;
   ID_Nam: string;
   ID_Thang: string;
   iTinhtrang: string;
