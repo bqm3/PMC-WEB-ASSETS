@@ -71,7 +71,7 @@ import {
   IPhongbanda,
   IPolicy,
   ITaisanTableFilterValue,
-  ITaisanTableFilters,
+  IPhongBanTableFilters,
 } from 'src/types/taisan';
 //
 import PhongBanTableRow from '../phong-ban-table-row';
@@ -92,11 +92,12 @@ const TABLE_HEAD = [
   { id: '', width: 50 },
 ];
 
-const defaultFilters: ITaisanTableFilters = {
+const defaultFilters: IPhongBanTableFilters = {
   name: '',
   status: 'all',
   startDate: null,
   endDate: null,
+  publish: [],
 };
 
 const STORAGE_KEY = 'accessToken';
@@ -139,16 +140,16 @@ export default function GroupPolicyListView() {
     }
   }, [phongbanda, mutatePhongBanDa]);
 
-  const [STATUS_OPTIONS, set_STATUS_OPTIONS] = useState([{ value: 'all', label: 'Tất cả' }]);
+  const [STATUS_OPTIONS, set_STATUS_OPTIONS] = useState<any>([]);
 
-  useEffect(() => {
-    grouppolicy.forEach((data) => {
-      set_STATUS_OPTIONS((prevOptions) => [
-        ...prevOptions,
-        { value: data.ID_GroupPolicy.toString(), label: data.GroupPolicy },
-      ]);
-    });
-  }, [grouppolicy]);
+useEffect(() => {
+  if (chinhanh) {
+    set_STATUS_OPTIONS(chinhanh.map((data) => ({
+      value: data.Tenchinhanh,
+      label: data.Tenchinhanh
+    })));
+  }
+}, [chinhanh]);
 
   const dataFiltered = applyFilter({
     inputData: tableData,
@@ -348,45 +349,13 @@ export default function GroupPolicyListView() {
         />
 
         <Card>
-          {/* <Tabs
-            value={filters.status}
-            onChange={handleFilterStatus}
-            sx={{
-              px: 2.5,
-              boxShadow: (theme) => `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
-            }}
-          >
-            {STATUS_OPTIONS.map((tab) => (
-              <Tab
-                key={tab.value}
-                iconPosition="end"
-                value={tab.value}
-                label={tab.label}
-                icon={
-                  <Label
-                    variant={
-                      ((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'
-                    }
-                    color={
-                      (tab.value === '1' && 'success') ||
-                      (tab.value === '2' && 'warning') ||
-                      (tab.value === '3' && 'error') ||
-                      'default'
-                    }
-                  >
-                    {getPolicyCount(tab.value)}
-                  </Label>
-                }
-              />
-            ))}
-          </Tabs> */}
-
           <PhongBanTableToolbar
             filters={filters}
             onFilters={handleFilters}
             //
             canReset={canReset}
             onResetFilters={handleResetFilters}
+            statusOptions={STATUS_OPTIONS}
           />
 
           {canReset && (
@@ -519,10 +488,10 @@ function applyFilter({
 }: {
   inputData: IPhongbanda[];
   comparator: (a: any, b: any) => number;
-  filters: ITaisanTableFilters;
+  filters: IPhongBanTableFilters;
   // dateError: boolean;
 }) {
-  const { status, name } = filters;
+  const { status, name , publish} = filters;
 
   const stabilizedThis = inputData?.map((el, index) => [el, index] as const);
 
@@ -544,6 +513,10 @@ function applyFilter({
         order.ent_chinhanh.Tenchinhanh.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         order.ent_nhompb.Nhompb.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
+  }
+
+  if (publish.length) {
+    inputData = inputData.filter((product) => publish.includes(product.ent_chinhanh.Tenchinhanh));
   }
 
   // if (status !== 'all') {

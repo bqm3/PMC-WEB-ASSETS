@@ -98,7 +98,7 @@ const defaultFilters: ITaisanTableFilters = {
   name: '',
   status: 'all',
   startDate: null,
-  endDate: null,
+  endDate: null
 };
 
 const STORAGE_KEY = 'accessToken';

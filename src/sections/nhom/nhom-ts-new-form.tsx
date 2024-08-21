@@ -25,11 +25,23 @@ import { useSnackbar } from 'src/components/snackbar';
 // components
 import { useSettingsContext } from 'src/components/settings';
 import axios from 'axios';
-import FormProvider, { RHFTextField } from 'src/components/hook-form';
+import FormProvider, { RHFSelect, RHFTextField } from 'src/components/hook-form';
+import { MenuItem } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
 const STORAGE_KEY = 'accessToken';
+
+const loaiNhom = [
+  {
+    ID_LoaiNhom: 1,
+    Loainhom: "Tài sản cố định"
+  },
+  {
+    ID_LoaiNhom: 2,
+    Loainhom: "Công cụ, dụng cụ"
+  }
+]
 
 export default function GroupPolicyNewForm() {
   const router = useRouter();
@@ -47,12 +59,14 @@ export default function GroupPolicyNewForm() {
   const NewProductSchema = Yup.object().shape({
     Manhom: Yup.string().required('Không được để trống'),
     Loaits: Yup.string().required('Không được để trống'),
+    ID_LoaiNhom: Yup.string().required('Không được để trống'),
   });
 
   const defaultValues = useMemo(
     () => ({
       Manhom: '',
       Loaits: '',
+      ID_LoaiNhom: null || '',
     }),
     []
   );
@@ -132,6 +146,22 @@ export default function GroupPolicyNewForm() {
 
       <Grid xs={12} md={8}>
         <Card>
+        <Stack spacing={3} sx={{ p: 1.5 }}>
+            {loaiNhom?.length > 0 && (
+              <RHFSelect
+                name="ID_LoaiNhom"
+                label="Loại Nhóm"
+                InputLabelProps={{ shrink: true }}
+                PaperPropsSx={{ textTransform: 'capitalize' }}
+              >
+                {loaiNhom?.map((item) => (
+                  <MenuItem key={item?.ID_LoaiNhom} value={item?.ID_LoaiNhom}>
+                    {item?.Loainhom}
+                  </MenuItem>
+                ))}
+              </RHFSelect>
+            )}
+          </Stack>
           <Stack spacing={2} sx={{ p: 1.5 }}>
             <RHFTextField name="Manhom" label="Mã nhóm" />
           </Stack>

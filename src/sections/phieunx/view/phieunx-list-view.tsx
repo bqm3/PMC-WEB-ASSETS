@@ -97,8 +97,8 @@ const defaultFilters: ITaisanTableFilters = {
 const STORAGE_KEY = 'accessToken';
 // ----------------------------------------------------------------------
 
-export default function GroupPolicyListView() {
-  const table = useTable({ defaultOrderBy: 'NgayNX' });
+export default function PhieuNXListView() {
+  const table = useTable();
 
   const settings = useSettingsContext();
 
@@ -210,7 +210,7 @@ export default function GroupPolicyListView() {
   const handleDeleteRow = useCallback(
     async (id: string) => {
       await axios
-        .put(`https://checklist.pmcweb.vn/pmc-assets/api/tb_phieunx/delete/${id}`, {
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/tb_phieunx/delete/${id}`,[], {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -249,6 +249,53 @@ export default function GroupPolicyListView() {
         });
     },
     [accessToken, enqueueSnackbar, dataInPage.length, table, tableData] // Add accessToken and enqueueSnackbar as dependencies
+  );
+
+  const handleCloseRow = useCallback(
+    async (id: string) => {
+      await axios
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/tb_phieunx/close-fast/${id}`,[], {
+          headers: {
+            Accept: 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
+        .then((res) => {
+          // reset();
+          const updatedTableData = tableData?.map((row) =>
+            row.ID_PhieuNX === id ? { ...row, iTinhtrang: '1' } : row
+          );
+          confirm.onFalse()
+          setTableData(updatedTableData);
+
+          table.onUpdatePageDeleteRow(dataInPage.length);
+          enqueueSnackbar('Khóa phiếu thành công!');
+        })
+        .catch((error) => {
+          if (error.response) {
+            enqueueSnackbar({
+              variant: 'error',
+              autoHideDuration: 2000,
+              message: `${error.response.data.message}`,
+            });
+          } else if (error.request) {
+            // Lỗi không nhận được phản hồi từ server
+            enqueueSnackbar({
+              variant: 'error',
+              autoHideDuration: 2000,
+              message: `Không nhận được phản hồi từ máy chủ`,
+            });
+          } else {
+            // Lỗi khi cấu hình request
+            enqueueSnackbar({
+              variant: 'error',
+              autoHideDuration: 2000,
+              message: `Lỗi gửi yêu cầu`,
+            });
+          }
+        });
+    },
+    [accessToken, enqueueSnackbar, dataInPage.length, table, tableData,confirm] // Add accessToken and enqueueSnackbar as dependencies
   );
 
   const handleResetFilters = useCallback(() => {
@@ -438,6 +485,7 @@ export default function GroupPolicyListView() {
                         onSelectRow={() => table.onSelectRow(row.ID_PhieuNX)}
                         onDeleteRow={() => handleDeleteRow(row.ID_PhieuNX)}
                         onViewRow={() => handleViewRow(row.ID_PhieuNX)}
+                        onCloseRow={()=>handleCloseRow(row.ID_PhieuNX)}
                       />
                     ))}
 

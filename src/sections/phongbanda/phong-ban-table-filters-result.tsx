@@ -6,7 +6,7 @@ import Button from '@mui/material/Button';
 import Stack, { StackProps } from '@mui/material/Stack';
 // types
 import { IOrderTableFilters, IOrderTableFilterValue } from 'src/types/order';
-import { IKhuvucTableFilters, IKhuvucTableFilterValue } from 'src/types/khuvuc';
+import { IPhongBanTableFilters, IPhongBanTableFilterValue } from 'src/types/taisan';
 // components
 import Iconify from 'src/components/iconify';
 import { shortDateLabel } from 'src/components/custom-date-range-picker';
@@ -14,8 +14,8 @@ import { shortDateLabel } from 'src/components/custom-date-range-picker';
 // ----------------------------------------------------------------------
 
 type Props = StackProps & {
-  filters: IKhuvucTableFilters;
-  onFilters: (name: string, value: IKhuvucTableFilterValue) => void;
+  filters: IPhongBanTableFilters;
+  onFilters: (name: string, value: IPhongBanTableFilterValue) => void;
   //
   onResetFilters: VoidFunction;
   //
@@ -37,10 +37,6 @@ export default function OrderTableFiltersResult({
     onFilters('status', 'all');
   };
 
-  const handleRemoveDate = () => {
-    onFilters('startDate', null);
-    onFilters('endDate', null);
-  };
 
   return (
     <Stack spacing={1.5} {...other}>

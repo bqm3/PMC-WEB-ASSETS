@@ -1,6 +1,14 @@
 import { IChucvu } from "./khuvuc";
 
-export type ITaisanTableFilterValue = string | Date| null;
+export type ITaisanTableFilterValue = string | Date| null | string[];
+
+export type IPhongBanTableFilters = {
+  name: string;
+  status: string;
+  startDate: Date | null;
+  endDate: Date | null;
+  publish: string[] ; 
+};
 
 export type ITaisanTableFilters = {
   name: string;
@@ -10,6 +18,7 @@ export type ITaisanTableFilters = {
 };
 
 export type ITbTaisanTableFilterValue = string | Date | null;
+export type IPhongBanTableFilterValue = string | Date | null | string[];
 
 export type IGroupPolicy = {
     ID_GroupPolicy: string;
@@ -49,6 +58,11 @@ export type IDonvi = {
   Donvi: string;
 }
 
+export type ILoaiNhom = {
+  ID_LoaiNhom: string;
+  Loainhom: string;
+}
+
 export type INam = {
   ID_Nam: string;
   Nam: string;
@@ -63,8 +77,10 @@ export type IThang = {
 
 export type INhomts = {
   ID_Nhomts: string;
+  ID_LoaiNhom: string;
   Manhom: string;
   Loaits: string;
+  ent_loainhom: ILoaiNhom;
 }
 
 export type IPolicy = {

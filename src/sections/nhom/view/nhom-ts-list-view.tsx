@@ -43,6 +43,12 @@ import TextField from '@mui/material/TextField';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import Dialog, { DialogProps } from '@mui/material/Dialog';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
 import { useSnackbar } from 'src/components/snackbar';
@@ -51,7 +57,7 @@ import { IKhuvucTableFilters, IKhuvucTableFilterValue } from 'src/types/khuvuc';
 
 import { INhomts, ITaisanTableFilterValue, ITaisanTableFilters } from 'src/types/taisan';
 //
-import GroupPolicyTableRow from '../nhom-ts-policy-table-row';
+import NhomTsTableRow from '../nhom-ts-table-row';
 import GiamsatTableToolbar from '../nhom-ts-table-toolbar';
 import GiamsatTableFiltersResult from '../nhom-ts-table-filters-result';
 
@@ -61,9 +67,20 @@ const TABLE_HEAD = [
   { id: 'ID_Nhomts', label: 'Mã', width: 140 },
   { id: 'Manhom', label: 'Mã tài sản', width: 200 },
   { id: 'Loaits', label: 'Loại tài sản', width: 200 },
-
+  { id: 'ID_LoaiNhom', label: 'Loại nhóm', width: 200 },
   { id: '', width: 88 },
 ];
+
+const loaiNhom = [
+  {
+    ID_LoaiNhom: 1,
+    Loainhom: "Tài sản cố định"
+  },
+  {
+    ID_LoaiNhom: 2,
+    Loainhom: "Công cụ, dụng cụ"
+  }
+]
 
 const defaultFilters: ITaisanTableFilters= {
   name: '',
@@ -128,6 +145,14 @@ export default function GroupPolicyListView() {
         [name]: value,
       });
     }
+  };
+
+  const handleSelectChange = (event: SelectChangeEvent) => {
+    const { name, value } = event.target;
+    setDataSelect((prev: any) => ({
+      ...prev,
+      [name]: `${value}`,
+    }));
   };
 
   const handleFilters = useCallback(
@@ -229,6 +254,7 @@ export default function GroupPolicyListView() {
           {
             Manhom: dataSelect?.Manhom,
             Loaits: dataSelect?.Loaits,
+            ID_LoaiNhom: dataSelect?.ID_LoaiNhom,
           },
           {
             headers: {
@@ -359,7 +385,7 @@ export default function GroupPolicyListView() {
                       table.page * table.rowsPerPage + table.rowsPerPage
                     )
                     .map((row) => (
-                      <GroupPolicyTableRow
+                      <NhomTsTableRow
                         key={row.ID_Nhomts}
                         row={row}
                         selected={table.selected.includes(row.ID_Nhomts)}
@@ -386,19 +412,19 @@ export default function GroupPolicyListView() {
             rowsPerPage={table.rowsPerPage}
             onPageChange={table.onChangePage}
             onRowsPerPageChange={table.onChangeRowsPerPage}
-            //
             dense={table.dense}
             onChangeDense={table.onChangeDense}
           />
         </Card>
       </Container>
 
-      <GroupPolicyDialog
+      <NhomTSDialog
         open={confirm.value}
         dataSelect={dataSelect}
         onClose={confirm.onFalse}
         onChange={handleInputChange}
         handleUpdate={handleUpdate}
+        handleSelectChange={handleSelectChange}
       />
 
       {/* <ConfirmDialog
@@ -467,17 +493,19 @@ interface ConfirmTransferDialogProps {
   dataSelect?: INhomts;
   onClose: VoidFunction;
   handleUpdate: (id: string) => void;
+  handleSelectChange: any;
   onChange: (event: React.FocusEvent<HTMLInputElement>) => void;
   onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
 }
 
-function GroupPolicyDialog({
+function NhomTSDialog({
   open,
   dataSelect,
   onChange,
   onClose,
   onBlur,
   handleUpdate,
+  handleSelectChange
 }: ConfirmTransferDialogProps) {
   const idGroupPolicy = dataSelect?.ID_Nhomts;
 
@@ -486,6 +514,27 @@ function GroupPolicyDialog({
       <DialogTitle>Cập nhật</DialogTitle>
 
       <Stack spacing={3} sx={{ px: 3 }}>
+
+      {loaiNhom?.length > 0 && (
+          <FormControl fullWidth>
+            <InputLabel id="demo-simple-select-label-phong-ban">Loại nhóm</InputLabel>
+            <Select
+              name="ID_LoaiNhom"
+              labelId="demo-simple-select-label-phong-ban"
+              id="demo-simple-select"
+              value={dataSelect?.ID_LoaiNhom}
+              label="Loại nhóm"
+              onChange={handleSelectChange}
+            >
+              {loaiNhom?.map((item) => (
+                <MenuItem key={item?.ID_LoaiNhom} value={item?.ID_LoaiNhom}>
+                  {item?.Loainhom}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
+
         <TextField
           name="Manhom"
           label="Mã nhóm" // Vietnamese for "Category Name"

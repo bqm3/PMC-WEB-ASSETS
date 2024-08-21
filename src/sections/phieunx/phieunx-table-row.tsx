@@ -33,6 +33,7 @@ type Props = {
   onViewRow: VoidFunction;
   onSelectRow: VoidFunction;
   onDeleteRow: VoidFunction;
+  onCloseRow: VoidFunction;
 };
 
 export default function CalvTableRow({
@@ -41,6 +42,7 @@ export default function CalvTableRow({
   onViewRow,
   onSelectRow,
   onDeleteRow,
+  onCloseRow,
 }: Props) {
   const {
     ID_PhieuNX,
@@ -62,11 +64,13 @@ export default function CalvTableRow({
     ent_user,
   } = row;
 
-  const confirm = useBoolean();
+  const confirm1 = useBoolean();
+  const confirm2 = useBoolean();
 
   const collapse = useBoolean();
 
-  const popover = usePopover();
+  const popover1 = usePopover();
+  const popover2 = usePopover();
 
   const renderPrimary = (
     <TableRow hover selected={selected}>
@@ -86,7 +90,7 @@ export default function CalvTableRow({
 
       <TableCell> {ent_nghiepvu?.Nghiepvu} </TableCell>
       <TableCell> {Sophieu} </TableCell>
-      <TableCell> { moment(NgayNX).format('DD-MM-YYYY')}  </TableCell>
+      <TableCell> {moment(NgayNX).format('DD-MM-YYYY')} </TableCell>
       <TableCell sx={{ alignItems: 'center' }}>
         <ListItemText
           primary={NoiNhap?.Tenphongban}
@@ -108,24 +112,25 @@ export default function CalvTableRow({
             color: 'text.disabled',
           }}
         />
-        </TableCell>
+      </TableCell>
       <TableCell> {ent_user?.Hoten} </TableCell>
-    
+
       <TableCell>
         <Label
           variant="soft"
           color={
             (`${iTinhtrang}` === '1' && 'default') ||
-            (`${iTinhtrang}` === '0' && 'success') || 'default'
+            (`${iTinhtrang}` === '0' && 'success') ||
+            'default'
           }
         >
-          {`${iTinhtrang}` === '1'  && 'Khóa'}
-          {`${iTinhtrang}` === '0'  && 'Mở'}
+          {`${iTinhtrang}` === '1' && 'Khóa'}
+          {`${iTinhtrang}` === '0' && 'Mở'}
         </Label>
-        </TableCell>
+      </TableCell>
 
       <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
-        <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
+        <IconButton color={popover1.open ? 'inherit' : 'default'} onClick={popover1.onOpen}>
           <Iconify icon="eva:more-vertical-fill" />
         </IconButton>
       </TableCell>
@@ -137,24 +142,35 @@ export default function CalvTableRow({
       {renderPrimary}
 
       <CustomPopover
-        open={popover.open}
-        onClose={popover.onClose}
+        open={popover1.open || popover2.open}
+        onClose={popover1.onClose || popover2.onClose}
         arrow="right-top"
         sx={{ width: 140 }}
       >
         <MenuItem
           onClick={() => {
             onViewRow();
-            popover.onClose();
+            popover1.onClose();
           }}
         >
           <Iconify icon="solar:eye-bold" />
           Xem
         </MenuItem>
+        {`${iTinhtrang}` === '0' && (
+          <MenuItem
+            onClick={() => {
+              confirm2.onTrue();
+              popover1.onClose();
+            }}
+          >
+            <Iconify icon="solar:lock-keyhole-bold-duotone" style={{ color: 'black' }} />
+            Khóa
+          </MenuItem>
+        )}
         <MenuItem
           onClick={() => {
-            confirm.onTrue();
-            popover.onClose();
+            confirm1.onTrue();
+            popover1.onClose();
           }}
           sx={{ color: 'error.main' }}
         >
@@ -163,9 +179,9 @@ export default function CalvTableRow({
         </MenuItem>
       </CustomPopover>
 
-      {/* <ConfirmDialog
-        open={confirm.value}
-        onClose={confirm.onFalse}
+      <ConfirmDialog
+        open={confirm1.value}
+        onClose={confirm1.onFalse}
         title="PMC thông báo"
         content="Bạn có thực sự muốn xóa không?"
         action={
@@ -173,7 +189,21 @@ export default function CalvTableRow({
             Xóa
           </Button>
         }
-      /> */}
+      />
+
+      <ConfirmDialog
+        open={confirm2.value}
+        onClose={confirm2.onFalse}
+        onSubmit={confirm2.onFalse}
+        onClick={confirm2.onFalse}
+        title="PMC thông báo"
+        content="Bạn có thực sự muốn đóng phiếu không?"
+        action={
+          <Button variant="contained" color="warning" onClick={onCloseRow}>
+            Đồng ý
+          </Button>
+        }
+      />
     </>
   );
 }

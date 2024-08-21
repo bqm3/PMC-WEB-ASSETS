@@ -1,26 +1,34 @@
 import { useCallback } from 'react';
 // @mui
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
+import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
+import InputLabel from '@mui/material/InputLabel';
 import IconButton from '@mui/material/IconButton';
+import FormControl from '@mui/material/FormControl';
+import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 // types
-import {IKhuvucTableFilters, IKhuvucTableFilterValue} from 'src/types/khuvuc'
+import { IPhongBanTableFilters, IPhongBanTableFilterValue } from 'src/types/taisan';
 // components
 import Iconify from 'src/components/iconify';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { Button } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  filters: IKhuvucTableFilters;
-  onFilters: (name: string, value: IKhuvucTableFilterValue) => void;
+  filters: IPhongBanTableFilters;
+  onFilters: (name: string, value: IPhongBanTableFilterValue) => void;
   //
   canReset: boolean;
   onResetFilters: VoidFunction;
+  statusOptions: {
+    value: string | null;
+    label: string | null;
+  }[];
 };
 
 export default function OrderTableToolbar({
@@ -29,12 +37,23 @@ export default function OrderTableToolbar({
   //
   canReset,
   onResetFilters,
+  statusOptions,
 }: Props) {
   const popover = usePopover();
 
   const handleFilterName = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       onFilters('name', event.target.value);
+    },
+    [onFilters]
+  );
+
+  const handleFilterPublish = useCallback(
+    (event: SelectChangeEvent<string[]>) => {
+      onFilters(
+        'publish',
+        typeof event.target.value === 'string' ? event.target.value.split(',') : event.target.value
+      );
     },
     [onFilters]
   );
@@ -53,7 +72,37 @@ export default function OrderTableToolbar({
           pr: { xs: 2.5, md: 1 },
         }}
       >
+        {
+          statusOptions && statusOptions.length > 0 && 
+          <FormControl
+          sx={{
+            flexShrink: 0,
+            width: { xs: 1, md: 200 },
+          }}
+        >
+          <InputLabel>Chi nhánh</InputLabel>
 
+          <Select
+            multiple
+            value={filters.publish}
+            onChange={handleFilterPublish}
+            input={<OutlinedInput label="Publish" />}
+            renderValue={(selected) => selected.map((value) => value).join(', ')}
+            sx={{ textTransform: 'capitalize' }}
+          >
+            {statusOptions?.map((option: any) => (
+              <MenuItem key={option?.value} value={option?.value}>
+                <Checkbox
+                  disableRipple
+                  size="small"
+                  checked={filters.publish.includes(option?.value)}
+                />
+                {option?.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        }
         <Stack direction="row" alignItems="center" spacing={2} flexGrow={1} sx={{ width: 1 }}>
           <TextField
             fullWidth
