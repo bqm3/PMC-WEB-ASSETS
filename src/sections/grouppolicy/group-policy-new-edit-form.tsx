@@ -74,7 +74,7 @@ export default function GroupPolicyNewForm() {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`https://checklist.pmcweb.vn/pmc-assets/api/ent_grouppolicy/create`, data, {
+      .post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_grouppolicy/create`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -88,6 +88,7 @@ export default function GroupPolicyNewForm() {
           autoHideDuration: 2000,
           message: 'Tạo mới thành công',
         });
+        window.location.reload();
       })
       .catch((error) => {
         setLoading(false);
@@ -144,7 +145,7 @@ export default function GroupPolicyNewForm() {
       <Grid
         xs={12}
         md={8}
-        sx={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'column-reverse' }}
+        sx={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'column-reverse', mb: 2 }}
       >
         <LoadingButton
           type="submit"

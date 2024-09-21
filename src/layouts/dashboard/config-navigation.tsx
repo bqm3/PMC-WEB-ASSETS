@@ -177,6 +177,15 @@ export function useNavData() {
           ],
         },
         {
+          title: t('createuser'),
+          path: paths.dashboard.createuser.root,
+          icon: ICONS.user,
+          children: [
+            { title: t('list'), path: paths.dashboard.createuser.root },
+            { title: t('create'), path: paths.dashboard.createuser.new },  
+          ],
+        },
+        {
           title: t('phongbanda'),
           path: paths.dashboard.phongbanda.root,
           icon: ICONS.banking,
@@ -230,15 +239,7 @@ export function useNavData() {
             { title: t('list'), path: paths.dashboard.taisanqrcode.root },
           ],
         },
-        {
-          title: t('createuser'),
-          path: paths.dashboard.createuser.root,
-          icon: ICONS.user,
-          children: [
-            { title: t('list'), path: paths.dashboard.createuser.root },
-            { title: t('create'), path: paths.dashboard.createuser.new },  
-          ],
-        },
+        
         
       );
     }

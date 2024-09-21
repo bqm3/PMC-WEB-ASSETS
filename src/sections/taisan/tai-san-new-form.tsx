@@ -98,7 +98,7 @@ export default function GroupPolicyNewForm() {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`https://checklist.pmcweb.vn/pmc-assets/api/ent_taisan/create`, data, {
+      .post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_taisan/create`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -168,7 +168,7 @@ export default function GroupPolicyNewForm() {
               >
                 {nhomts?.map((item) => (
                   <MenuItem key={item?.ID_Nhomts} value={item?.ID_Nhomts}>
-                    {item?.Loaits}
+                    {item?.Tennhom}
                   </MenuItem>
                 ))}
               </RHFSelect>

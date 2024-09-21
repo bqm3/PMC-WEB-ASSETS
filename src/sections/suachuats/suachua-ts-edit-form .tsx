@@ -54,7 +54,7 @@ export default function SuachuatsNewForm({ currentSuaChuaTs, mutate }: Props) {
 
   const defaultValues = useMemo(
     () => ({
-      ID_Suachua: currentSuaChuaTs?.ID_Suachua || '',
+      ID_SuachuaTS: currentSuaChuaTs?.ID_SuachuaTS || '',
       Sophieu: currentSuaChuaTs?.Sophieu || '',
       Ngaygiao: currentSuaChuaTs?.Ngaygiao || new Date(),
       Nguoitheodoi: currentSuaChuaTs?.Nguoitheodoi || '',
@@ -98,7 +98,7 @@ export default function SuachuatsNewForm({ currentSuaChuaTs, mutate }: Props) {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .put(`https://checklist.pmcweb.vn/pmc-assets/api/tb_suachuats/update/${currentSuaChuaTs?.ID_Suachua}`, data, {
+      .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_suachuats/update/${currentSuaChuaTs?.ID_SuachuaTS}`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -142,7 +142,7 @@ export default function SuachuatsNewForm({ currentSuaChuaTs, mutate }: Props) {
   const handleClose = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .put(`https://checklist.pmcweb.vn/pmc-assets/api/tb_suachuats/close/${currentSuaChuaTs?.ID_Suachua}`, data, {
+      .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_suachuats/close/${currentSuaChuaTs?.ID_SuachuaTS}`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,

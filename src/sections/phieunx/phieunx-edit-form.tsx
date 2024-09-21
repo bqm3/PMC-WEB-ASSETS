@@ -168,7 +168,7 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
     setLoading(true);
     await axios
       .put(
-        `https://checklist.pmcweb.vn/pmc-assets/api/tb_phieunx/update/${currentPhieuNX?.ID_PhieuNX}`,
+        `https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieunx/update/${currentPhieuNX?.ID_PhieuNX}`,
         data,
         {
           headers: {
@@ -216,7 +216,7 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
     setLoading(true);
     await axios
       .post(
-        `https://checklist.pmcweb.vn/pmc-assets/api/tb_phieunx/close/${currentPhieuNX?.ID_PhieuNX}`,
+        `https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieunx/close/${currentPhieuNX?.ID_PhieuNX}`,
         data,
         {
           headers: {

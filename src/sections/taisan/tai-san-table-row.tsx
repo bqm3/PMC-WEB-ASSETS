@@ -79,7 +79,7 @@ export default function CalvTableRow({
       <TableCell> {Tents} </TableCell>
       <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
         <ListItemText
-          primary={ent_nhomts?.Loaits}
+          primary={ent_nhomts?.Tennhom}
           secondary={ent_donvi.Donvi}
           primaryTypographyProps={{ typography: 'body2' }}
           secondaryTypographyProps={{

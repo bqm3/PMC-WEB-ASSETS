@@ -39,11 +39,14 @@ import {
 } from 'src/components/table';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Dialog, { DialogProps } from '@mui/material/Dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { LoadingButton } from '@mui/lab';
 
 import { useSnackbar } from 'src/components/snackbar';
 // types
@@ -54,6 +57,7 @@ import { IGroupPolicy, ITaisanTableFilterValue, ITaisanTableFilters } from 'src/
 import GroupPolicyTableRow from '../group-policy-table-row';
 import GiamsatTableToolbar from '../giamsat-table-toolbar';
 import GiamsatTableFiltersResult from '../giamsat-table-filters-result';
+import GroupPolicyNewEditForm from '../group-policy-new-edit-form';
 
 // ----------------------------------------------------------------------
 
@@ -82,8 +86,10 @@ export default function GroupPolicyListView() {
   const router = useRouter();
 
   const popover = usePopover();
+  const popoverAdd = usePopover();
 
   const confirm = useBoolean();
+  const confirmAdd = useBoolean();
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -165,7 +171,7 @@ export default function GroupPolicyListView() {
     async (id: string) => {
       await axios
         .put(
-          `https://checklist.pmcweb.vn/pmc-assets/api/ent_grouppolicy/delete/${id}`,
+          `https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_grouppolicy/delete/${id}`,
           {
             GroupPolicy: dataSelect?.GroupPolicy,
           },
@@ -224,11 +230,16 @@ export default function GroupPolicyListView() {
     [confirm, popover]
   );
 
+  const handleViewAdd = useCallback(() => {
+    confirmAdd.onTrue();
+    popoverAdd.onClose();
+  }, [popoverAdd, confirmAdd]);
+
   const handleUpdate = useCallback(
     async (id: string) => {
       await axios
         .put(
-          `https://checklist.pmcweb.vn/pmc-assets/api/ent_grouppolicy/update/${id}`,
+          `https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_grouppolicy/update/${id}`,
           {
             GroupPolicy: dataSelect?.GroupPolicy,
           },
@@ -294,63 +305,30 @@ export default function GroupPolicyListView() {
   return (
     <>
       <Container maxWidth={settings.themeStretch ? false : 'xl'}>
-        <CustomBreadcrumbs
-          heading="Danh sách chính sách"
-          links={[
-            {
-              name: 'Dashboard',
-              href: paths.dashboard.root,
-            },
-            { name: 'Danh sách' },
-          ]}
-          sx={{
-            mb: { xs: 3, md: 5 },
-          }}
-        />
+        <Stack direction="row" alignItems="center" justifyContent="space-between">
+          <CustomBreadcrumbs
+            heading="Chính sách nhóm"
+            links={[
+              {
+                name: 'Dashboard',
+                href: paths.dashboard.root,
+              },
+              { name: 'Danh sách' },
+            ]}
+            sx={{
+              mb: { xs: 3, md: 5 },
+            }}
+          />
+          <LoadingButton
+            variant="contained"
+            startIcon={<Iconify icon="eva:add-upload-fill" />}
+            onClick={handleViewAdd}
+          >
+            Thêm mới
+          </LoadingButton>
+        </Stack>
 
         <Card>
-          {/* <Tabs
-            value={filters.status}
-            onChange={handleFilterStatus}
-            sx={{
-              px: 2.5,
-              boxShadow: (theme) => `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
-            }}
-          >
-            {STATUS_OPTIONS.map((tab) => (
-              <Tab
-                key={tab.value}
-                iconPosition="end"
-                value={tab.value}
-                label={tab.label}
-                icon={
-                  <Label
-                    variant={
-                      ((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'
-                    }
-                    color={
-                      (tab.value === '1' && 'success') ||
-                      (tab.value === '2' && 'warning') ||
-                      (tab.value === '3' && 'error') ||
-                      'default'
-                    }
-                  >
-                    {tab.value === 'all' && user?.length}
-                    {tab.value === '1' &&
-                      user?.filter((item) => `${item.ID_KhoiCV}` === '1').length}
-
-                    {tab.value === '2' &&
-                      user?.filter((item) => `${item.ID_KhoiCV}` === '2').length}
-                    {tab.value === '3' &&
-                      user?.filter((item) => `${item.ID_KhoiCV}` === '3').length}
-                    {tab.value === '4' &&
-                      user?.filter((item) => `${item.ID_KhoiCV}` === '4').length}
-                  </Label>
-                }
-              />
-            ))}
-          </Tabs> */}
-
           <GiamsatTableToolbar
             filters={filters}
             onFilters={handleFilters}
@@ -449,6 +427,13 @@ export default function GroupPolicyListView() {
         onClose={confirm.onFalse}
         onChange={handleInputChange}
         handleUpdate={handleUpdate}
+      />
+
+      <GroupPolicyDialogAdd
+        open={confirmAdd.value}
+        onClose={confirmAdd.onFalse}
+        // onChange={handleInputChange}
+        // handleUpdate={handleUpdate}
       />
 
       {/* <ConfirmDialog
@@ -558,6 +543,20 @@ function GroupPolicyDialog({
         </Button>
         <Button onClick={onClose}>Hủy</Button>
       </DialogActions>
+    </Dialog>
+  );
+}
+
+function GroupPolicyDialogAdd({ open, onClose }: any) {
+  return (
+    <Dialog open={open} fullWidth maxWidth="md" onClose={onClose}>
+      <DialogTitle>Thêm mới</DialogTitle>
+
+      <DialogContent sx={{ overflow: 'hidden', height: 'auto' }}>
+        <Grid spacing={3}>
+          <GroupPolicyNewEditForm />
+        </Grid>
+      </DialogContent>
     </Dialog>
   );
 }

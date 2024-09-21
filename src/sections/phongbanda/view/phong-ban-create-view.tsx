@@ -16,7 +16,7 @@ export default function PolicyCreateView() {
   return (
     <Container maxWidth={settings.themeStretch ? false : 'xl'}>
       <CustomBreadcrumbs
-        heading="Tạo chi tiết quyền"
+        heading="Tạo phòng ban dự án"
         links={[
           {
             name: 'Dashboard',

@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 // sections
-import { FaqsView } from 'src/sections/faqs/view';
+// import { FaqsView } from 'src/sections/faqs/view';
 
 // ----------------------------------------------------------------------
 
@@ -11,7 +11,7 @@ export default function FaqsPage() {
         <title> Faqs</title>
       </Helmet>
 
-      <FaqsView />
+      {/* <FaqsView /> */}
     </>
   );
 }

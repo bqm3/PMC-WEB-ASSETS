@@ -4,10 +4,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, Controller } from 'react-hook-form';
 // @mui
 import LoadingButton from '@mui/lab/LoadingButton';
-import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Unstable_Grid2';
-import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 // routes
 import { paths } from 'src/routes/paths';
@@ -26,12 +24,11 @@ import FormProvider, {
   RHFMultiCheckbox,
   RHFRadioGroup,
 } from 'src/components/hook-form';
-// types
 // api
 import { useGetGroupPolicy, useGetChinhanh, useGetNhomPb } from 'src/api/taisan';
 // components
 import { useSnackbar } from 'src/components/snackbar';
-// types
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 // components
 import { useSettingsContext } from 'src/components/settings';
 import axios from 'axios';
@@ -59,6 +56,7 @@ export default function CreateUserNewForm() {
     MaPMC: Yup.string().required('Không được để trống'),
     Hoten: Yup.string().required('Không được để trống'),
     Diachi: Yup.string().required('Không được để trống'),
+    NgayGhinhan: Yup.mixed<any>().nullable().required('Phải có ngày ghi nhận'),
   });
 
   const defaultValues = useMemo(
@@ -67,9 +65,9 @@ export default function CreateUserNewForm() {
       Hoten: '',
       Diachi: '',
       Gioitinh: '',
-      ID_Nhompb: null,
       Sodienthoai: '',
       Ghichu: '',
+      NgayGhinhan: '' || new Date() || null,
     }),
     []
   );
@@ -91,10 +89,9 @@ export default function CreateUserNewForm() {
   const values = watch();
 
   const onSubmit = handleSubmit(async (data) => {
-    console.log('dasta', data);
     setLoading(true);
     await axios
-      .post(`https://checklist.pmcweb.vn/pmc-assets/api/ent_connguoi/create`, data, {
+      .post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_connguoi/create`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -103,6 +100,7 @@ export default function CreateUserNewForm() {
       .then((res) => {
         setLoading(false);
         reset();
+        window.location.reload();
         enqueueSnackbar({
           variant: 'success',
           autoHideDuration: 2000,
@@ -136,59 +134,48 @@ export default function CreateUserNewForm() {
   });
 
   const renderDetails = (
-    <>
-      {mdUp && (
-        <Grid md={4}>
-          <Typography variant="h6" sx={{ mb: 0.5 }}>
-            Chi tiết
-          </Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Thông tin...
-          </Typography>
+      <Grid container xs={12} md={12} spacing={2}>
+        <Grid xs={4}>
+          <Stack spacing={3}>
+            <RHFTextField name="MaPMC" label="Mã PMC" />
+          </Stack>
         </Grid>
-      )}
-
-      <Grid xs={12} md={8}>
-        <Card>
-          <Stack spacing={3} sx={{ p: 1.5 }}>
-            {nhompb?.length > 0 && (
-              <RHFSelect
-                name="ID_Nhompb"
-                label="Phòng ban"
-                InputLabelProps={{ shrink: true }}
-                PaperPropsSx={{ textTransform: 'capitalize' }}
-              >
-                {nhompb?.map((item) => (
-                  <MenuItem key={item?.ID_Nhompb} value={item?.ID_Nhompb}>
-                    {item?.Nhompb}
-                  </MenuItem>
-                ))}
-              </RHFSelect>
-            )}
-          </Stack>
-
-          <Stack spacing={3} sx={{ p: 1.5 }}>
-            <RHFTextField name="MaPMC" label="Mã truy cập" />
-          </Stack>
-          <Stack spacing={3} sx={{ p: 1.5 }}>
+        <Grid xs={4}>
+          <Stack spacing={3}>
             <RHFTextField name="Hoten" label="Họ tên" />
           </Stack>
-          <Stack spacing={3} sx={{ p: 1.5 }}>
+        </Grid>
+        <Grid xs={4}>
+          <Stack spacing={3}>
             <RHFTextField name="Diachi" label="Địa chỉ" />
           </Stack>
-          <Stack spacing={1} sx={{ p: 1.5 }}>
+        </Grid>
+        <Grid xs={4}>
+          <Stack spacing={3}>
             <Typography variant="subtitle2">Giới tính</Typography>
             <RHFRadioGroup row name="Gioitinh" spacing={1} options={USER_GENDER_OPTIONS} />
           </Stack>
-          <Stack spacing={3} sx={{ p: 1.5 }}>
+        </Grid>
+        <Grid xs={4}>
+          <Stack spacing={3}>
+            <DatePicker
+              label="Ngày ghi nhận"
+              value={new Date(values.NgayGhinhan)}
+              onChange={(newValue) => setValue('NgayGhinhan', newValue)}
+            />
+          </Stack>
+        </Grid>
+        <Grid xs={4}>
+          <Stack spacing={3}>
             <RHFTextField name="Sodienthoai" label="Số điện thoại" />
           </Stack>
-          <Stack spacing={3} sx={{ p: 1.5 }}>
+        </Grid>
+        <Grid xs={6}>
+          <Stack spacing={3}>
             <RHFTextField name="Ghichu" multiline rows={3} label="Ghi chú" />
           </Stack>
-        </Card>
+        </Grid>
       </Grid>
-    </>
   );
 
   const renderActions = (
@@ -197,7 +184,7 @@ export default function CreateUserNewForm() {
       <Grid
         xs={12}
         md={8}
-        sx={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'column-reverse' }}
+        sx={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'column-reverse', mb:2 }}
       >
         <LoadingButton
           type="submit"

@@ -61,7 +61,7 @@ import SuaChuaTSTableFiltersResult from '../suachua-ts-table-filters-result';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'ID_Suachua', label: 'Mã', width: 140 },
+  { id: 'ID_SuachuaTS', label: 'Mã', width: 140 },
   { id: 'Ngaygiao', label: 'Ngày giao', width: 200 },
   { id: 'Sophieu', label: 'Mã số phiếu', width: 200 },
   { id: 'Nguoitheodoi', label: 'Người theo dõi', width: 200 },
@@ -81,7 +81,7 @@ const STORAGE_KEY = 'accessToken';
 // ----------------------------------------------------------------------
 
 export default function GroupPolicyListView() {
-  const table = useTable({ defaultOrderBy: 'ID_Suachua' });
+  const table = useTable({ defaultOrderBy: 'ID_SuachuaTS' });
 
   const settings = useSettingsContext();
 
@@ -181,7 +181,7 @@ export default function GroupPolicyListView() {
     async (id: string) => {
       await axios
         .put(
-          `https://checklist.pmcweb.vn/pmc-assets/api/tb_suachuats/delete/${id}`,
+          `https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_suachuats/delete/${id}`,
 
           {
             headers: {
@@ -192,7 +192,7 @@ export default function GroupPolicyListView() {
         )
         .then((res) => {
           // reset();
-          const deleteRow = tableData?.filter((row) => row.ID_Suachua !== id);
+          const deleteRow = tableData?.filter((row) => row.ID_SuachuaTS !== id);
           setTableData(deleteRow);
 
           table.onUpdatePageDeleteRow(dataInPage.length);
@@ -324,7 +324,7 @@ export default function GroupPolicyListView() {
           numSelected={table.selected.length}
           rowCount={tableData?.length}
           onSelectAllRows={(checked) =>
-            table.onSelectAllRows(checked, tableData?.map((row) => row?.ID_Suachua))
+            table.onSelectAllRows(checked, tableData?.map((row) => row?.ID_SuachuaTS))
           }
           action={
             <Tooltip title="Xóa">
@@ -345,7 +345,7 @@ export default function GroupPolicyListView() {
               numSelected={table.selected.length}
               onSort={table.onSort}
               // onSelectAllRows={(checked) =>
-              //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_Suachua))
+              //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_SuachuaTS))
               // }
             />
 
@@ -357,12 +357,12 @@ export default function GroupPolicyListView() {
                 )
                 .map((row) => (
                   <SuaChuaTSTableRow
-                    key={row.ID_Suachua}
+                    key={row.ID_SuachuaTS}
                     row={row}
-                    selected={table.selected.includes(row.ID_Suachua)}
-                    onSelectRow={() => table.onSelectRow(row.ID_Suachua)}
-                    onDeleteRow={() => handleDeleteRow(row.ID_Suachua)}
-                    onViewRow={() => handleViewRow(row.ID_Suachua)}
+                    selected={table.selected.includes(row.ID_SuachuaTS)}
+                    onSelectRow={() => table.onSelectRow(row.ID_SuachuaTS)}
+                    onDeleteRow={() => handleDeleteRow(row.ID_SuachuaTS)}
+                    onViewRow={() => handleViewRow(row.ID_SuachuaTS)}
                   />
                 ))}
 

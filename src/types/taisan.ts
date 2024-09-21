@@ -79,7 +79,7 @@ export type INhomts = {
   ID_Nhomts: string;
   ID_LoaiNhom: string;
   Manhom: string;
-  Loaits: string;
+  Tennhom: string;
   ent_loainhom: ILoaiNhom;
 }
 
@@ -143,11 +143,11 @@ export type ITaisanQrCode = {
 export type IConnguoi = {
   ID_Connguoi: string;
   MaPMC: string;
-  ID_Nhompb: string | any;
   Hoten: string;
   Gioitinh: string;
   Diachi: string;
   Sodienthoai: string;
+  NgayGhinhan: string;
   Ghichu: string;
   isDelete: string;
   ent_nhompb: INhompb;
@@ -200,7 +200,7 @@ export type ISuaChuaCT = {
 }
 
 export type ISuachuaTS = {
-  ID_Suachua: string;
+  ID_SuachuaTS: string;
   Ngaygiao: string;
   Sophieu: string;
   Nguoitheodoi: string;

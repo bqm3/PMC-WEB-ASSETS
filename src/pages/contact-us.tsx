@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 // sections
-import { ContactView } from 'src/sections/contact/view';
+// import { ContactView } from 'src/sections/contact/view';
 
 // ----------------------------------------------------------------------
 
@@ -11,7 +11,7 @@ export default function ContactPage() {
         <title> Contact us</title>
       </Helmet>
 
-      <ContactView />
+      {/* <ContactView /> */}
     </>
   );
 }

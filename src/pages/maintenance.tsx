@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 // sections
-import MaintenanceView from 'src/sections/maintenance/view';
+// import MaintenanceView from 'src/sections/maintenance/view';
 
 // ----------------------------------------------------------------------
 
@@ -11,7 +11,7 @@ export default function MaintenancePage() {
         <title> Maintenance</title>
       </Helmet>
 
-      <MaintenanceView />
+      {/* <MaintenanceView /> */}
     </>
   );
 }

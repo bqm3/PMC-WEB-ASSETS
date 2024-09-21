@@ -210,7 +210,7 @@ export default function GroupPolicyListView() {
   const handleDeleteRow = useCallback(
     async (id: string) => {
       await axios
-        .put(`https://checklist.pmcweb.vn/pmc-assets/api/ent_taisan/delete/${id}`, [] ,{
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_taisan/delete/${id}`, [] ,{
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -268,7 +268,7 @@ export default function GroupPolicyListView() {
     async (id: string) => {
       console.log('dataSelect', dataSelect);
       await axios
-        .put(`https://checklist.pmcweb.vn/pmc-assets/api/ent_taisan/update/${id}`, dataSelect, {
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_taisan/update/${id}`, dataSelect, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -497,7 +497,7 @@ function applyFilter({
     inputData = inputData?.filter(
       (order) =>
         `${order.ent_nhomts.Manhom}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        `${order?.ent_nhomts?.Loaits}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        `${order?.ent_nhomts?.Tennhom}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         `${order.Mats}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         `${order.Nuocsx}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         `${order.Tents}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
@@ -558,7 +558,7 @@ function GroupPolicyDialog({
                   >
                     {nhomts?.map((item) => (
                       <MenuItem key={item?.ID_Nhomts} value={item?.ID_Nhomts}>
-                        {item?.Loaits}
+                        {item?.Tennhom}
                       </MenuItem>
                     ))}
                   </Select>

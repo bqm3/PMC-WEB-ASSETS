@@ -156,7 +156,7 @@ export default function SuaChuaTSNewForm() {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`https://checklist.pmcweb.vn/pmc-assets/api/tb_phieunx/create`, data, {
+      .post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieunx/create`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,

@@ -6,7 +6,7 @@ import { paths } from 'src/routes/paths';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 //
-import GroupPolicyNewEditForm from '../create-user-new-form';
+import UserNewEditForm from '../create-user-new-form';
 
 // ----------------------------------------------------------------------
 
@@ -16,21 +16,20 @@ export default function GroupPolicyCreateView() {
   return (
     <Container maxWidth={settings.themeStretch ? false : 'xl'}>
       <CustomBreadcrumbs
-        heading="Tạo hệ thống"
+        heading="Thêm mới"
         links={[
           {
             name: 'Dashboard',
             href: paths.dashboard.root,
           },
           
-          { name: 'Tạo mới' },
         ]}
         sx={{
           mb: { xs: 3, md: 5 },
         }}
       />
 
-      <GroupPolicyNewEditForm />
+      <UserNewEditForm />
     </Container>
   );
 }

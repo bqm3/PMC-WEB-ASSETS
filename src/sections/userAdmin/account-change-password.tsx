@@ -58,7 +58,7 @@ export default function AccountChangePassword() {
   const onSubmit = handleSubmit(async (data) => {
     try {
       axios
-        .post(`https://checklist.pmcweb.vn/pmc-assets/api/ent_user/change-password`, data, {
+        .post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_user/change-password`, data, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,

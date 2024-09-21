@@ -5,9 +5,12 @@ import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import { alpha } from '@mui/material/styles';
-import Tab from '@mui/material/Tab';
-import Tabs from '@mui/material/Tabs';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import Dialog, { DialogProps } from '@mui/material/Dialog';
 import Card from '@mui/material/Card';
+import Grid from '@mui/material/Grid';
 import Table from '@mui/material/Table';
 import Tooltip from '@mui/material/Tooltip';
 import Container from '@mui/material/Container';
@@ -40,16 +43,12 @@ import {
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogActions from '@mui/material/DialogActions';
-import Dialog, { DialogProps } from '@mui/material/Dialog';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { LoadingButton } from '@mui/lab';
 
 import { useSnackbar } from 'src/components/snackbar';
 // types
@@ -60,13 +59,14 @@ import { INhomts, ITaisanTableFilterValue, ITaisanTableFilters } from 'src/types
 import NhomTsTableRow from '../nhom-ts-table-row';
 import GiamsatTableToolbar from '../nhom-ts-table-toolbar';
 import GiamsatTableFiltersResult from '../nhom-ts-table-filters-result';
+import NhomTSTableFiltersResult from '../nhom-ts-new-form';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: 'ID_Nhomts', label: 'Mã', width: 140 },
   { id: 'Manhom', label: 'Mã tài sản', width: 200 },
-  { id: 'Loaits', label: 'Loại tài sản', width: 200 },
+  { id: 'Tennhom', label: 'Loại tài sản', width: 200 },
   { id: 'ID_LoaiNhom', label: 'Loại nhóm', width: 200 },
   { id: '', width: 88 },
 ];
@@ -74,17 +74,19 @@ const TABLE_HEAD = [
 const loaiNhom = [
   {
     ID_LoaiNhom: 1,
-    Loainhom: "Tài sản cố định"
+    Loainhom: 'Tài sản cố định',
   },
   {
     ID_LoaiNhom: 2,
-    Loainhom: "Công cụ, dụng cụ"
-  }
-]
+    Loainhom: 'Công cụ, dụng cụ',
+  },
+];
 
-const defaultFilters: ITaisanTableFilters= {
+const defaultFilters: ITaisanTableFilters = {
   name: '',
-  status: 'all',startDate: null, endDate: null
+  status: 'all',
+  startDate: null,
+  endDate: null,
 };
 
 const STORAGE_KEY = 'accessToken';
@@ -100,6 +102,9 @@ export default function GroupPolicyListView() {
   const popover = usePopover();
 
   const confirm = useBoolean();
+
+  const confirmAdd = useBoolean();
+  const popoverAdd = usePopover();
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -189,7 +194,7 @@ export default function GroupPolicyListView() {
     async (id: string) => {
       await axios
         .put(
-          `https://checklist.pmcweb.vn/pmc-assets/api/ent_nhomts/delete/${id}`,
+          `https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_nhomts/delete/${id}`,
 
           {
             headers: {
@@ -246,14 +251,19 @@ export default function GroupPolicyListView() {
     [confirm, popover]
   );
 
+  const handleViewAdd = useCallback(() => {
+    confirmAdd.onTrue();
+    popoverAdd.onClose();
+  }, [popoverAdd, confirmAdd]);
+
   const handleUpdate = useCallback(
     async (id: string) => {
       await axios
         .put(
-          `https://checklist.pmcweb.vn/pmc-assets/api/ent_nhomts/update/${id}`,
+          `https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_nhomts/update/${id}`,
           {
             Manhom: dataSelect?.Manhom,
-            Loaits: dataSelect?.Loaits,
+            Tennhom: dataSelect?.Tennhom,
             ID_LoaiNhom: dataSelect?.ID_LoaiNhom,
           },
           {
@@ -312,19 +322,28 @@ export default function GroupPolicyListView() {
   return (
     <>
       <Container maxWidth={settings.themeStretch ? false : 'xl'}>
-        <CustomBreadcrumbs
-          heading="Danh sách phân loại tài sản"
-          links={[
-            {
-              name: 'Dashboard',
-              href: paths.dashboard.root,
-            },
-            { name: 'Danh sách' },
-          ]}
-          sx={{
-            mb: { xs: 3, md: 5 },
-          }}
-        />
+        <Stack direction="row" alignItems="center" justifyContent="space-between">
+          <CustomBreadcrumbs
+            heading="Danh sách phân loại tài sản"
+            links={[
+              {
+                name: 'Dashboard',
+                href: paths.dashboard.root,
+              },
+              { name: 'Danh sách' },
+            ]}
+            sx={{
+              mb: { xs: 3, md: 5 },
+            }}
+          />
+          <LoadingButton
+            variant="contained"
+            startIcon={<Iconify icon="eva:add-upload-fill" />}
+            onClick={handleViewAdd}
+          >
+            Thêm mới
+          </LoadingButton>
+        </Stack>
 
         <Card>
           <GiamsatTableToolbar
@@ -427,28 +446,12 @@ export default function GroupPolicyListView() {
         handleSelectChange={handleSelectChange}
       />
 
-      {/* <ConfirmDialog
-        open={confirm.value}
-        onClose={confirm.onFalse}
-        title="Delete"
-        content={
-          <>
-            Are you sure want to delete <strong> {table.selected.length} </strong> items?
-          </>
-        }
-        action={
-          <Button
-            variant="contained"
-            color="error"
-            onClick={() => {
-              handleDeleteRows();
-              confirm.onFalse();
-            }}
-          >
-            Delete
-          </Button>
-        }
-      /> */}
+      <NhomTSDialogAdd
+        open={confirmAdd.value}
+        onClose={confirmAdd.onFalse}
+        // onChange={handleInputChange}
+        // handleUpdate={handleUpdate}
+      />
     </>
   );
 }
@@ -481,7 +484,7 @@ function applyFilter({
     inputData = inputData?.filter(
       (order) =>
         order.Manhom.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.Loaits.toLowerCase().indexOf(name.toLowerCase()) !== -1
+        order.Tennhom.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
 
@@ -505,7 +508,7 @@ function NhomTSDialog({
   onClose,
   onBlur,
   handleUpdate,
-  handleSelectChange
+  handleSelectChange,
 }: ConfirmTransferDialogProps) {
   const idGroupPolicy = dataSelect?.ID_Nhomts;
 
@@ -514,8 +517,7 @@ function NhomTSDialog({
       <DialogTitle>Cập nhật</DialogTitle>
 
       <Stack spacing={3} sx={{ px: 3 }}>
-
-      {loaiNhom?.length > 0 && (
+        {loaiNhom?.length > 0 && (
           <FormControl fullWidth>
             <InputLabel id="demo-simple-select-label-phong-ban">Loại nhóm</InputLabel>
             <Select
@@ -545,9 +547,9 @@ function NhomTSDialog({
         />
 
         <TextField
-          name="Loaits"
+          name="Tennhom"
           label="Loại tài sản" // Vietnamese for "Category Name"
-          value={dataSelect?.Loaits}
+          value={dataSelect?.Tennhom}
           onChange={onChange} // Update local state and notify parent
           fullWidth
           onBlur={onBlur}
@@ -555,8 +557,6 @@ function NhomTSDialog({
       </Stack>
 
       <DialogActions>
-        
-
         <Button
           variant="contained"
           color="info"
@@ -567,8 +567,23 @@ function NhomTSDialog({
           }}
         >
           Cập nhật
-        </Button><Button onClick={onClose}>Hủy</Button>
+        </Button>
+        <Button onClick={onClose}>Hủy</Button>
       </DialogActions>
+    </Dialog>
+  );
+}
+
+function NhomTSDialogAdd({ open, onClose }: any) {
+  return (
+    <Dialog open={open} fullWidth maxWidth="md" onClose={onClose}>
+      <DialogTitle>Thêm mới</DialogTitle>
+
+      <DialogContent sx={{ overflow: 'hidden', height: 'auto' }}>
+        <Grid spacing={3}>
+          <NhomTSTableFiltersResult />
+        </Grid>
+      </DialogContent>
     </Dialog>
   );
 }

@@ -42,7 +42,7 @@ export default function CalvTableRow({
   onSelectRow,
   onDeleteRow,
 }: Props) {
-  const { ID_Connguoi,MaPMC, ID_Nhompb, Hoten, Gioitinh, Diachi, Sodienthoai, Ghichu, ent_nhompb } = row;
+  const { ID_Connguoi,MaPMC, Hoten, Gioitinh, Diachi, Sodienthoai, Ghichu, ent_nhompb } = row;
 
   const confirm = useBoolean();
 

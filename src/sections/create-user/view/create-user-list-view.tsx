@@ -38,6 +38,7 @@ import {
   TablePaginationCustom,
 } from 'src/components/table';
 import Stack from '@mui/material/Stack';
+import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -53,17 +54,18 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useSnackbar } from 'src/components/snackbar';
+import { LoadingButton } from '@mui/lab';
 // types
 import { IKhuvucTableFilters, IKhuvucTableFilterValue } from 'src/types/khuvuc';
 
 import { IConnguoi, INhompb, ITaisanTableFilters } from 'src/types/taisan';
 //
 import CreateUserTableRow from '../create-user-table-row';
-import GiamsatTableToolbar from '../create-user-table-toolbar';
-import GiamsatTableFiltersResult from '../create-user-filters-result';
-
+import UserTableToolbar from '../create-user-table-toolbar';
+import UserTableFiltersResult from '../create-user-filters-result';
+import UserNewEditForm from '../create-user-new-form';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -94,8 +96,10 @@ export default function GroupPolicyListView() {
   const router = useRouter();
 
   const popover = usePopover();
+  const popoverAdd = usePopover();
 
   const confirm = useBoolean();
+  const confirmAdd = useBoolean();
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -145,6 +149,17 @@ export default function GroupPolicyListView() {
     }
   };
 
+  const handleInputDate = (date: any) => {
+    console.log('date', date);
+    // if (dataSelect) {
+    //   // Update the corresponding field in `dataSelect`
+    //   setDataSelect({
+    //     ...dataSelect,
+    //     NgayGhinhan: date,
+    //   });
+    // }
+  };
+
   const handleSelectChange = (event: SelectChangeEvent) => {
     const { name, value } = event.target;
     setDataSelect((prev: any) => ({
@@ -186,16 +201,12 @@ export default function GroupPolicyListView() {
   const handleDeleteRow = useCallback(
     async (id: string) => {
       await axios
-        .put(
-          `https://checklist.pmcweb.vn/pmc-assets/api/ent_connguoi/delete/${id}`,
-          [],
-          {
-            headers: {
-              Accept: 'application/json',
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        )
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_connguoi/delete/${id}`, [], {
+          headers: {
+            Accept: 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
         .then((res) => {
           // reset();
           const deleteRow = tableData?.filter((row) => row.ID_Connguoi !== id);
@@ -247,7 +258,7 @@ export default function GroupPolicyListView() {
   const handleUpdate = useCallback(
     async (id: string) => {
       await axios
-        .put(`https://checklist.pmcweb.vn/pmc-assets/api/ent_connguoi/update/${id}`, dataSelect, {
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_connguoi/update/${id}`, dataSelect, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -292,6 +303,11 @@ export default function GroupPolicyListView() {
     [accessToken, enqueueSnackbar, reset, dataSelect, confirm, popover, mutateConnguoi] // Add accessToken and enqueueSnackbar as dependencies
   );
 
+  const handleViewAdd = useCallback(() => {
+    confirmAdd.onTrue();
+    popoverAdd.onClose();
+  }, [popoverAdd, confirmAdd]);
+
   const handleFilterStatus = useCallback(
     (event: React.SyntheticEvent, newValue: string) => {
       handleFilters('status', newValue);
@@ -302,22 +318,30 @@ export default function GroupPolicyListView() {
   return (
     <>
       <Container maxWidth={settings.themeStretch ? false : 'xl'}>
-        <CustomBreadcrumbs
-          heading="Danh sách tài khoản"
-          links={[
-            {
-              name: 'Dashboard',
-              href: paths.dashboard.root,
-            },
-            { name: 'Danh sách' },
-          ]}
-          sx={{
-            mb: { xs: 3, md: 5 },
-          }}
-        />
+        <Stack direction="row" alignItems="center" justifyContent="space-between">
+          <CustomBreadcrumbs
+            heading="Danh sách con người"
+            links={[
+              {
+                name: 'Dashboard',
+                href: paths.dashboard.root,
+              },
+            ]}
+            sx={{
+              mb: { xs: 3, md: 5 },
+            }}
+          />
+          <LoadingButton
+            variant="contained"
+            startIcon={<Iconify icon="eva:add-upload-fill" />}
+            onClick={handleViewAdd}
+          >
+            Thêm mới
+          </LoadingButton>
+        </Stack>
 
         <Card>
-          <GiamsatTableToolbar
+          <UserTableToolbar
             filters={filters}
             onFilters={handleFilters}
             //
@@ -326,7 +350,7 @@ export default function GroupPolicyListView() {
           />
 
           {canReset && (
-            <GiamsatTableFiltersResult
+            <UserTableFiltersResult
               filters={filters}
               onFilters={handleFilters}
               //
@@ -414,33 +438,17 @@ export default function GroupPolicyListView() {
         dataSelect={dataSelect}
         onClose={confirm.onFalse}
         onChange={handleInputChange}
+        handleInputDate={handleInputDate}
         handleUpdate={handleUpdate}
         nhompb={nhompb}
         handleSelectChange={handleSelectChange}
       />
 
-      {/* <ConfirmDialog
-        open={confirm.value}
-        onClose={confirm.onFalse}
-        title="Delete"
-        content={
-          <>
-            Are you sure want to delete <strong> {table.selected.length} </strong> items?
-          </>
-        }
-        action={
-          <Button
-            variant="contained"
-            color="error"
-            onClick={() => {
-              handleDeleteRows();
-              confirm.onFalse();
-            }}
-          >
-            Delete
-          </Button>
-        }
-      /> */}
+      <GroupPolicyDialogAdd
+        open={confirmAdd.value}
+        onClose={confirmAdd.onFalse}
+      />
+
     </>
   );
 }
@@ -492,6 +500,7 @@ interface ConfirmTransferDialogProps {
   onChange: (event: React.FocusEvent<HTMLInputElement>) => void;
   onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
   handleSelectChange: any;
+  handleInputDate: any;
 }
 
 function GroupPolicyDialog({
@@ -503,6 +512,7 @@ function GroupPolicyDialog({
   onBlur,
   handleUpdate,
   handleSelectChange,
+  handleInputDate,
 }: ConfirmTransferDialogProps) {
   const idGroupPolicy = dataSelect?.ID_Connguoi;
 
@@ -513,39 +523,19 @@ function GroupPolicyDialog({
       <DialogTitle>Cập nhật</DialogTitle>
       <DialogContent dividers={scroll === 'paper'}>
         <Stack spacing={3} sx={{ p: 3 }}>
-          {nhompb?.length > 0 && (
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">Nhóm phòng ban</InputLabel>
-              <Select
-                name="ID_Nhompb"
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={dataSelect?.ID_Nhompb}
-                label="Nhóm phòng ban"
-                onChange={handleSelectChange}
-              >
-                {nhompb?.map((item) => (
-                  <MenuItem key={item?.ID_Nhompb} value={item?.ID_Nhompb}>
-                    {item?.Nhompb}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          )}
-
           <TextField
             name="Hoten"
-            label="Họ tên" // Vietnamese for "Category Name"
+            label="Họ tên" 
             value={dataSelect?.Hoten}
-            onChange={onChange} // Update local state and notify parent
+            onChange={onChange} 
             fullWidth
             onBlur={onBlur}
           />
           <TextField
             name="Diachi"
-            label="Địa chỉ" // Vietnamese for "Category Name"
+            label="Địa chỉ" 
             value={dataSelect?.Diachi}
-            onChange={onChange} // Update local state and notify parent
+            onChange={onChange} 
             fullWidth
           />
           <Stack spacing={1} sx={{ p: 1.5 }}>
@@ -564,11 +554,16 @@ function GroupPolicyDialog({
               </RadioGroup>
             </FormControl>
           </Stack>
+          <DatePicker
+            label="Ngày ghi nhận"
+            onChange={(val) => handleInputDate(val)}
+            value={dataSelect?.NgayGhinhan ? new Date(dataSelect.NgayGhinhan) : null}
+          />
           <TextField
             name="Sodienthoai"
-            label="Số điện thoại" // Vietnamese for "Category Name"
+            label="Số điện thoại" 
             value={dataSelect?.Sodienthoai}
-            onChange={onChange} // Update local state and notify parent
+            onChange={onChange}
             fullWidth
             onBlur={onBlur}
           />
@@ -576,9 +571,9 @@ function GroupPolicyDialog({
             multiline
             rows={3}
             name="Ghichu"
-            label="Ghi chú" // Vietnamese for "Category Name"
+            label="Ghi chú" 
             value={dataSelect?.Ghichu}
-            onChange={onChange} // Update local state and notify parent
+            onChange={onChange} 
             fullWidth
             onBlur={onBlur}
           />
@@ -599,6 +594,20 @@ function GroupPolicyDialog({
         </Button>
         <Button onClick={onClose}>Hủy</Button>
       </DialogActions>
+    </Dialog>
+  );
+}
+
+function GroupPolicyDialogAdd({ open, onClose }: any) {
+  return (
+    <Dialog open={open} fullWidth maxWidth="md" onClose={onClose}>
+      <DialogTitle>Thêm mới</DialogTitle>
+
+      <DialogContent sx={{ overflow: 'hidden', height: 'auto' }}>
+        <Grid spacing={3}>
+          <UserNewEditForm />
+        </Grid>
+      </DialogContent>
     </Dialog>
   );
 }

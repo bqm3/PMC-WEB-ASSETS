@@ -58,14 +58,14 @@ export default function GroupPolicyNewForm() {
 
   const NewProductSchema = Yup.object().shape({
     Manhom: Yup.string().required('Không được để trống'),
-    Loaits: Yup.string().required('Không được để trống'),
+    Tennhom: Yup.string().required('Không được để trống'),
     ID_LoaiNhom: Yup.string().required('Không được để trống'),
   });
 
   const defaultValues = useMemo(
     () => ({
       Manhom: '',
-      Loaits: '',
+      Tennhom: '',
       ID_LoaiNhom: null || '',
     }),
     []
@@ -90,7 +90,7 @@ export default function GroupPolicyNewForm() {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`https://checklist.pmcweb.vn/pmc-assets/api/ent_nhomts/create`, data, {
+      .post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_nhomts/create`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -166,7 +166,7 @@ export default function GroupPolicyNewForm() {
             <RHFTextField name="Manhom" label="Mã nhóm" />
           </Stack>
           <Stack spacing={2} sx={{ p: 1.5 }}>
-            <RHFTextField name="Loaits" label="Loại tài sản" />
+            <RHFTextField name="Tennhom" label="Loại tài sản" />
           </Stack>
         </Card>
       </Grid>
@@ -179,7 +179,7 @@ export default function GroupPolicyNewForm() {
       <Grid
         xs={12}
         md={8}
-        sx={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'column-reverse' }}
+        sx={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'column-reverse', pb:2 }}
       >
         <LoadingButton
           type="submit"

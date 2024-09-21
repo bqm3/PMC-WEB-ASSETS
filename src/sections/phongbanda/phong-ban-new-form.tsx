@@ -27,7 +27,7 @@ import FormProvider, {
   RHFTextField,
   RHFAutocomplete,
   RHFMultiCheckbox,
-  RHFRadioGroup
+  RHFRadioGroup,
 } from 'src/components/hook-form';
 // types
 // api
@@ -56,7 +56,7 @@ export default function GroupPolicyNewForm() {
   const mdUp = useResponsive('up', 'md');
 
   const { chinhanh } = useGetChinhanh();
-  
+
   const { nhompb } = useGetNhomPb();
 
   const { enqueueSnackbar } = useSnackbar();
@@ -66,7 +66,7 @@ export default function GroupPolicyNewForm() {
     Tenphongban: Yup.string().required('Không được để trống'),
     Diachi: Yup.string().required('Không được để trống'),
     Thuoc: Yup.string(),
-    ID_Nhompb: Yup.mixed<any>()
+    ID_Nhompb: Yup.mixed<any>(),
   });
 
   const defaultValues = useMemo(
@@ -77,7 +77,7 @@ export default function GroupPolicyNewForm() {
       ID_Nhompb: null,
       ID_Chinhanh: null,
       Ghichu: '',
-      Thuoc: ''
+      Thuoc: '',
     }),
     []
   );
@@ -101,7 +101,7 @@ export default function GroupPolicyNewForm() {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`https://checklist.pmcweb.vn/pmc-assets/api/ent_phongbanda/create`, data, {
+      .post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_phongbanda/create`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -142,23 +142,11 @@ export default function GroupPolicyNewForm() {
       });
   });
 
-
   const renderDetails = (
-    <>
-      {mdUp && (
-        <Grid md={4}>
-          <Typography variant="h6" sx={{ mb: 0.5 }}>
-            Chi tiết
-          </Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Thông tin...
-          </Typography>
-        </Grid>
-      )}
-
-      <Grid xs={12} md={8}>
-        <Card>
-          <Stack spacing={3} sx={{ p: 1.5 }}>
+    <Card>
+      <Grid container>
+        <Grid xs={4}>
+          <Stack sx={{ pt: 2, px: 2 }}>
             {nhompb?.length > 0 && (
               <RHFSelect
                 name="ID_Nhompb"
@@ -174,7 +162,10 @@ export default function GroupPolicyNewForm() {
               </RHFSelect>
             )}
           </Stack>
-          <Stack spacing={3} sx={{ p: 1.5 }}>
+        </Grid>
+
+        <Grid xs={4}>
+          <Stack sx={{ pt: 2, px: 2 }}>
             {chinhanh?.length > 0 && (
               <RHFSelect
                 name="ID_Chinhanh"
@@ -190,25 +181,46 @@ export default function GroupPolicyNewForm() {
               </RHFSelect>
             )}
           </Stack>
-          <Stack spacing={1} sx={{ p: 1.5 }}>
-              <Typography variant="subtitle2">Thuộc</Typography>
-              <RHFRadioGroup row spacing={2} name="Thuoc" options={TAISAN_EXPERIENCE_OPTIONS} />
-            </Stack>
-          <Stack spacing={3} sx={{ p: 1.5 }}>
-            <RHFTextField name="Mapb" label={`${values.ID_Nhompb}` === '101' ? 'Mã công ty' : 'Mã phòng ban'} />
+        </Grid>
+
+        <Grid xs={4}>
+          <Stack sx={{ pt: 2, px: 2 }}>
+            <Typography variant="subtitle2">Thuộc</Typography>
+            <RHFRadioGroup row spacing={2} name="Thuoc" options={TAISAN_EXPERIENCE_OPTIONS} />
           </Stack>
-          <Stack spacing={3} sx={{ p: 1.5 }}>
-            <RHFTextField name="Tenphongban" label={`${values.ID_Nhompb}` === '101' ? 'Tên công ty' : 'Tên phòng ban'}  />
+        </Grid>
+
+        <Grid xs={4}>
+          <Stack sx={{ pt: 2, px: 2 }}>
+            <RHFTextField
+              name="Mapb"
+              label={`${values.ID_Nhompb}` === '101' ? 'Mã công ty' : 'Mã phòng ban'}
+            />
           </Stack>
-          <Stack spacing={3} sx={{ p: 1.5 }}>
+        </Grid>
+
+        <Grid xs={4}>
+          <Stack sx={{ pt: 2, px: 2 }}>
+            <RHFTextField
+              name="Tenphongban"
+              label={`${values.ID_Nhompb}` === '101' ? 'Tên công ty' : 'Tên phòng ban'}
+            />
+          </Stack>
+        </Grid>
+
+        <Grid xs={4}>
+          <Stack sx={{ pt: 2, px: 2 }}>
             <RHFTextField name="Diachi" label="Địa chỉ" />
           </Stack>
-          <Stack spacing={3} sx={{ p: 1.5 }}>
+        </Grid>
+
+        <Grid xs={4}>
+          <Stack sx={{ p: 2}}>
             <RHFTextField name="Ghichu" multiline rows={3} label="Ghi chú" />
           </Stack>
-        </Card>
+        </Grid>
       </Grid>
-    </>
+    </Card>
   );
 
   const renderActions = (
@@ -217,7 +229,7 @@ export default function GroupPolicyNewForm() {
       <Grid
         xs={12}
         md={8}
-        sx={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'column-reverse' }}
+        sx={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'column-reverse', mb: 2 }}
       >
         <LoadingButton
           type="submit"

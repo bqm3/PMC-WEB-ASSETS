@@ -49,16 +49,18 @@ import {
   TablePaginationCustom,
 } from 'src/components/table';
 import Stack from '@mui/material/Stack';
+import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent'
+import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Dialog, { DialogProps } from '@mui/material/Dialog';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { LoadingButton } from '@mui/lab';
 
 import { useSnackbar } from 'src/components/snackbar';
 // types
@@ -77,7 +79,7 @@ import {
 import PhongBanTableRow from '../phong-ban-table-row';
 import PhongBanTableToolbar from '../phong-ban-table-toolbar';
 import PhongBanTableFiltersResult from '../phong-ban-table-filters-result';
-
+import PhongBanNewEditForm from '../phong-ban-new-form';
 
 // ----------------------------------------------------------------------
 
@@ -111,8 +113,10 @@ export default function GroupPolicyListView() {
   const router = useRouter();
 
   const popover = usePopover();
+  const popoverAdd = usePopover();
 
   const confirm = useBoolean();
+  const confirmAdd = useBoolean();
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -142,14 +146,16 @@ export default function GroupPolicyListView() {
 
   const [STATUS_OPTIONS, set_STATUS_OPTIONS] = useState<any>([]);
 
-useEffect(() => {
-  if (chinhanh) {
-    set_STATUS_OPTIONS(chinhanh.map((data) => ({
-      value: data.Tenchinhanh,
-      label: data.Tenchinhanh
-    })));
-  }
-}, [chinhanh]);
+  useEffect(() => {
+    if (chinhanh) {
+      set_STATUS_OPTIONS(
+        chinhanh.map((data) => ({
+          value: data.Tenchinhanh,
+          label: data.Tenchinhanh,
+        }))
+      );
+    }
+  }, [chinhanh]);
 
   const dataFiltered = applyFilter({
     inputData: tableData,
@@ -220,7 +226,7 @@ useEffect(() => {
   const handleDeleteRow = useCallback(
     async (id: string) => {
       await axios
-        .put(`https://checklist.pmcweb.vn/pmc-assets/api/ent_policy/delete/${id}`, {
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_policy/delete/${id}`, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -277,7 +283,7 @@ useEffect(() => {
   const handleUpdate = useCallback(
     async (id: string) => {
       await axios
-        .put(`https://checklist.pmcweb.vn/pmc-assets/api/ent_phongbanda/update/${id}`, dataSelect, {
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_phongbanda/update/${id}`, dataSelect, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -322,6 +328,11 @@ useEffect(() => {
     [accessToken, enqueueSnackbar, dataSelect, reset, confirm, popover, mutatePhongBanDa] // Add accessToken and enqueueSnackbar as dependencies
   );
 
+  const handleViewAdd = useCallback(() => {
+    confirmAdd.onTrue();
+    popoverAdd.onClose();
+  }, [popoverAdd, confirmAdd]);
+
   const handleFilterStatus = useCallback(
     (event: React.SyntheticEvent, newValue: string) => {
       handleFilters('status', newValue);
@@ -329,24 +340,31 @@ useEffect(() => {
     [handleFilters]
   );
 
- 
-
   return (
     <>
       <Container maxWidth={settings.themeStretch ? false : 'xl'}>
-        <CustomBreadcrumbs
-          heading="Danh sách phòng ban"
-          links={[
-            {
-              name: 'Dashboard',
-              href: paths.dashboard.root,
-            },
-            { name: 'Danh sách' },
-          ]}
-          sx={{
-            mb: { xs: 3, md: 5 },
-          }}
-        />
+        <Stack direction="row" alignItems="center" justifyContent="space-between">
+          <CustomBreadcrumbs
+            heading="Danh sách phòng ban dự án"
+            links={[
+              {
+                name: 'Dashboard',
+                href: paths.dashboard.root,
+              },
+              { name: 'Danh sách' },
+            ]}
+            sx={{
+              mb: { xs: 3, md: 5 },
+            }}
+          />
+          <LoadingButton
+            variant="contained"
+            startIcon={<Iconify icon="eva:add-upload-fill" />}
+            onClick={handleViewAdd}
+          >
+            Thêm mới
+          </LoadingButton>
+        </Stack>
 
         <Card>
           <PhongBanTableToolbar
@@ -453,28 +471,7 @@ useEffect(() => {
         handleSelectChange={handleSelectChange}
       />
 
-      {/* <ConfirmDialog
-        open={confirm.value}
-        onClose={confirm.onFalse}
-        title="Delete"
-        content={
-          <>
-            Are you sure want to delete <strong> {table.selected.length} </strong> items?
-          </>
-        }
-        action={
-          <Button
-            variant="contained"
-            color="error"
-            onClick={() => {
-              handleDeleteRows();
-              confirm.onFalse();
-            }}
-          >
-            Delete
-          </Button>
-        }
-      /> */}
+      <RoomDialogAdd open={confirmAdd.value} onClose={confirmAdd.onFalse} />
     </>
   );
 }
@@ -491,7 +488,7 @@ function applyFilter({
   filters: IPhongBanTableFilters;
   // dateError: boolean;
 }) {
-  const { status, name , publish} = filters;
+  const { status, name, publish } = filters;
 
   const stabilizedThis = inputData?.map((el, index) => [el, index] as const);
 
@@ -555,94 +552,93 @@ function GroupPolicyDialog({
     <Dialog open={open} fullWidth maxWidth="md" onClose={onClose}>
       <DialogTitle>Cập nhật</DialogTitle>
       <DialogContent>
-      <Stack spacing={3} sx={{ p: 3 }}>
-        {chinhanh?.length > 0 && (
-          <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label-chi-nhanh">Thuộc chi nhánh</InputLabel>
-            <Select
-              name="ID_Chinhanh"
-              labelId="demo-simple-select-label-chi-nhanh"
-              id="demo-simple-select"
-              value={dataSelect?.ID_Chinhanh}
-              label="Chi nhánh"
-              onChange={handleSelectChange}
-            >
-              {chinhanh?.map((item) => (
-                <MenuItem key={item?.ID_Chinhanh} value={item?.ID_Chinhanh}>
-                  {item?.Tenchinhanh}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        )}
+        <Stack spacing={3} sx={{ p: 3 }}>
+          {chinhanh?.length > 0 && (
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label-chi-nhanh">Thuộc chi nhánh</InputLabel>
+              <Select
+                name="ID_Chinhanh"
+                labelId="demo-simple-select-label-chi-nhanh"
+                id="demo-simple-select"
+                value={dataSelect?.ID_Chinhanh}
+                label="Chi nhánh"
+                onChange={handleSelectChange}
+              >
+                {chinhanh?.map((item) => (
+                  <MenuItem key={item?.ID_Chinhanh} value={item?.ID_Chinhanh}>
+                    {item?.Tenchinhanh}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
 
-        {nhompb?.length > 0 && (
-          <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label-phong-ban">Thuộc phòng ban</InputLabel>
-            <Select
-              name="ID_Nhompb"
-              labelId="demo-simple-select-label-phong-ban"
-              id="demo-simple-select"
-              value={dataSelect?.ID_Nhompb}
-              label="Phòng ban"
+          {nhompb?.length > 0 && (
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label-phong-ban">Thuộc phòng ban</InputLabel>
+              <Select
+                name="ID_Nhompb"
+                labelId="demo-simple-select-label-phong-ban"
+                id="demo-simple-select"
+                value={dataSelect?.ID_Nhompb}
+                label="Phòng ban"
+                onChange={handleSelectChange}
+              >
+                {nhompb?.map((item) => (
+                  <MenuItem key={item?.ID_Nhompb} value={item?.ID_Nhompb}>
+                    {item?.Nhompb}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
+          <FormControl>
+            <FormLabel id="demo-radio-buttons-group-label">Thuộc</FormLabel>
+            <RadioGroup
+              aria-labelledby="demo-radio-buttons-group-label"
+              defaultValue={dataSelect?.Thuoc}
               onChange={handleSelectChange}
+              name="Thuoc"
+              style={{ display: 'flex', flexDirection: 'row' }}
             >
-              {nhompb?.map((item) => (
-                <MenuItem key={item?.ID_Nhompb} value={item?.ID_Nhompb}>
-                  {item?.Nhompb}
-                </MenuItem>
-              ))}
-            </Select>
+              <FormControlLabel value="PMC" control={<Radio />} label="PMC" />
+              <FormControlLabel value="Dự án ngoài" control={<Radio />} label="Dự án ngoài" />
+            </RadioGroup>
           </FormControl>
-        )}
-        <FormControl>
-          <FormLabel id="demo-radio-buttons-group-label">Thuộc</FormLabel>
-          <RadioGroup
-            aria-labelledby="demo-radio-buttons-group-label"
-            defaultValue={dataSelect?.Thuoc}
-            onChange={handleSelectChange}
-            name="Thuoc"
-            style={{display: 'flex', flexDirection: 'row'}}
-          >
-            <FormControlLabel value="PMC" control={<Radio />} label="PMC" />
-            <FormControlLabel value="Dự án ngoài" control={<Radio />} label="Dự án ngoài" />
-          </RadioGroup>
-        </FormControl>
-        <TextField
-          name="Mapb"
-          label="Mã phòng ban" 
-          value={dataSelect?.Mapb}
-          onChange={onChange} 
-          fullWidth
-          onBlur={onBlur}
-        />
-        <TextField
-          name="Tenphongban"
-          label="Tên phòng ban" 
-          value={dataSelect?.Tenphongban}
-          onChange={onChange} 
-          fullWidth
-        />
-        <TextField
-          name="Diachi"
-          label="Địa chỉ" 
-          value={dataSelect?.Diachi}
-          onChange={onChange}
-          fullWidth
-        />
-        <TextField
-          name="Ghichu"
-          multiline
-          rows={4}
-          value={dataSelect?.Ghichu}
-          onChange={onChange}
-          label="Ghi chú"
-        />
-      </Stack>
+          <TextField
+            name="Mapb"
+            label="Mã phòng ban"
+            value={dataSelect?.Mapb}
+            onChange={onChange}
+            fullWidth
+            onBlur={onBlur}
+          />
+          <TextField
+            name="Tenphongban"
+            label="Tên phòng ban"
+            value={dataSelect?.Tenphongban}
+            onChange={onChange}
+            fullWidth
+          />
+          <TextField
+            name="Diachi"
+            label="Địa chỉ"
+            value={dataSelect?.Diachi}
+            onChange={onChange}
+            fullWidth
+          />
+          <TextField
+            name="Ghichu"
+            multiline
+            rows={4}
+            value={dataSelect?.Ghichu}
+            onChange={onChange}
+            label="Ghi chú"
+          />
+        </Stack>
       </DialogContent>
 
       <DialogActions>
-
         <Button
           variant="contained"
           color="info"
@@ -653,8 +649,23 @@ function GroupPolicyDialog({
           }}
         >
           Cập nhật
-        </Button><Button onClick={onClose}>Hủy</Button>
+        </Button>
+        <Button onClick={onClose}>Hủy</Button>
       </DialogActions>
+    </Dialog>
+  );
+}
+
+function RoomDialogAdd({ open, onClose }: any) {
+  return (
+    <Dialog open={open} fullWidth maxWidth="lg" onClose={onClose}>
+      <DialogTitle>Thêm mới</DialogTitle>
+
+      <DialogContent sx={{ overflow: 'hidden',  height: 'auto' }}>
+        <Grid spacing={3}>
+          <PhongBanNewEditForm />
+        </Grid>
+      </DialogContent>
     </Dialog>
   );
 }

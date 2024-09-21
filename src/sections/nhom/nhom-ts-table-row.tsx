@@ -42,7 +42,7 @@ export default function CalvTableRow({
   onSelectRow,
   onDeleteRow,
 }: Props) {
-  const { ID_Nhomts, Manhom, Loaits, ent_loainhom } = row;
+  const { ID_Nhomts, Manhom, Tennhom, ent_loainhom } = row;
 
   const confirm = useBoolean();
 
@@ -70,7 +70,7 @@ export default function CalvTableRow({
         {Manhom}
       </TableCell>
       <TableCell sx={{alignItems: 'center' }}>
-        {Loaits}
+        {Tennhom}
       </TableCell>
       <TableCell sx={{alignItems: 'center' }}>
         {ent_loainhom?.Loainhom}

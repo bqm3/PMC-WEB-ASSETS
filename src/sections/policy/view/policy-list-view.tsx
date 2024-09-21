@@ -194,7 +194,7 @@ export default function GroupPolicyListView() {
   const handleDeleteRow = useCallback(
     async (id: string) => {
       await axios
-        .put(`https://checklist.pmcweb.vn/pmc-assets/api/ent_policy/delete/${id}`, {
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_policy/delete/${id}`, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -253,7 +253,7 @@ export default function GroupPolicyListView() {
       console.log('dataSelect', dataSelect);
       await axios
         .put(
-          `https://checklist.pmcweb.vn/pmc-assets/api/ent_policy/update/${id}`,
+          `https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_policy/update/${id}`,
           {
             GroupPolicy: dataSelect?.GroupPolicy,
             ID_GroupPolicy: dataSelect?.ID_GroupPolicy,
