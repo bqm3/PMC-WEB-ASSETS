@@ -176,13 +176,14 @@ export function useNavData() {
             { title: t('create'), path: paths.dashboard.policy.new },
           ],
         },
+
         {
-          title: t('createuser'),
-          path: paths.dashboard.createuser.root,
-          icon: ICONS.user,
+          title: t('nhacc'),
+          path: paths.dashboard.nhacc.root,
+          icon: ICONS.invoice,
           children: [
-            { title: t('list'), path: paths.dashboard.createuser.root },
-            { title: t('create'), path: paths.dashboard.createuser.new },  
+            { title: t('list'), path: paths.dashboard.nhacc.root },
+            { title: t('create'), path: paths.dashboard.nhacc.new },
           ],
         },
         {
@@ -194,6 +195,16 @@ export function useNavData() {
             { title: t('create'), path: paths.dashboard.phongbanda.new },
           ],
         },
+        {
+          title: t('donvi-nhom'),
+          path: paths.dashboard.donvi.root,
+          icon: ICONS.external,
+          children: [
+            { title: t('list'), path: paths.dashboard.donvi.root },
+            { title: t('create'), path: paths.dashboard.donvi.new },
+          ],
+        },
+
         {
           title: t('nhomts'),
           path: paths.dashboard.nhomts.root,
@@ -209,17 +220,17 @@ export function useNavData() {
           icon: ICONS.product,
           children: [
             { title: t('list'), path: paths.dashboard.taisan.root },
-            { title: t('create'), path: paths.dashboard.taisan.new },  
+            { title: t('create'), path: paths.dashboard.taisan.new },
           ],
         },
-       
+
         {
           title: t('phieunx'),
           path: paths.dashboard.phieunx.root,
           icon: ICONS.invoice,
           children: [
             { title: t('list'), path: paths.dashboard.phieunx.root },
-            { title: t('create'), path: paths.dashboard.phieunx.new },  
+            { title: t('create'), path: paths.dashboard.phieunx.new },
           ],
         },
         {
@@ -228,19 +239,24 @@ export function useNavData() {
           icon: ICONS.disabled,
           children: [
             { title: t('list'), path: paths.dashboard.suachuats.root },
-            { title: t('create'), path: paths.dashboard.suachuats.new },  
+            { title: t('create'), path: paths.dashboard.suachuats.new },
           ],
         },
         {
           title: t('taisanqrcode'),
           path: paths.dashboard.taisanqrcode.root,
           icon: ICONS.external,
-          children: [
-            { title: t('list'), path: paths.dashboard.taisanqrcode.root },
-          ],
+          children: [{ title: t('list'), path: paths.dashboard.taisanqrcode.root }],
         },
-        
-        
+        {
+          title: t('createuser'),
+          path: paths.dashboard.createuser.root,
+          icon: ICONS.user,
+          children: [
+            { title: t('list'), path: paths.dashboard.createuser.root },
+            { title: t('create'), path: paths.dashboard.createuser.new },
+          ],
+        }
       );
     }
 

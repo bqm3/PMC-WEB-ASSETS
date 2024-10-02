@@ -41,6 +41,8 @@ export default function InvoiceTableFiltersResult({
     onFilters('endDate', null);
   };
 
+  console.log('filters.startDate && filters.endDate', filters.startDate, filters.endDate)
+
   return (
     <Stack spacing={1.5} {...other}>
       <Box sx={{ typography: 'body2' }}>
@@ -67,7 +69,7 @@ export default function InvoiceTableFiltersResult({
         )}
 
         {filters.startDate && filters.endDate && (
-          <Block label="Date:">
+          <Block label="Ngày:">
             <Chip size="small" label={shortLabel} onDelete={handleRemoveDate} />
           </Block>
         )}

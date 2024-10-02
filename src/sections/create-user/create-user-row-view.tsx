@@ -52,7 +52,11 @@ export default function CalvTableRow({
   const popover = usePopover();
 
   const renderPrimary = (
-    <TableRow hover selected={selected}>
+    <TableRow hover selected={selected}  sx={{
+      '& .MuiTableCell-root': {
+        borderBottom: '2px solid rgba(0, 0, 0, 0.05)', // Thicker border
+      },
+    }}>
       
       <TableCell>
         <Box

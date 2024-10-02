@@ -73,7 +73,11 @@ export default function CalvTableRow({
   const popover2 = usePopover();
 
   const renderPrimary = (
-    <TableRow hover selected={selected}>
+    <TableRow hover selected={selected}  sx={{
+      '& .MuiTableCell-root': {
+        borderBottom: '2px solid rgba(0, 0, 0, 0.05)', // Thicker border
+      },
+    }}>
       <TableCell>
         <Box
           onClick={onViewRow}
@@ -90,7 +94,8 @@ export default function CalvTableRow({
 
       <TableCell> {ent_nghiepvu?.Nghiepvu} </TableCell>
       <TableCell> {Sophieu} </TableCell>
-      <TableCell> {moment(NgayNX).format('DD-MM-YYYY')} </TableCell>
+      {/* <TableCell> {moment(NgayNX).format('DD-MM-YYYY')} </TableCell> */}
+      <TableCell> {NgayNX} </TableCell>
       <TableCell sx={{ alignItems: 'center' }}>
         <ListItemText
           primary={NoiNhap?.Tenphongban}

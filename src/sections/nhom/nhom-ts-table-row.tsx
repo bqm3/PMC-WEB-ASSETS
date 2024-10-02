@@ -51,7 +51,12 @@ export default function CalvTableRow({
   const popover = usePopover();
 
   const renderPrimary = (
-    <TableRow hover selected={selected}>
+    <TableRow hover selected={selected}  sx={{
+      '& .MuiTableCell-root': {
+        borderBottom: '2px solid rgba(0, 0, 0, 0.05)', // Thicker border
+      },
+    }}>
+     
       <TableCell>
         <Box
           onClick={onViewRow}
@@ -114,18 +119,6 @@ export default function CalvTableRow({
           Xóa
         </MenuItem>
       </CustomPopover>
-
-      {/* <ConfirmDialog
-        open={confirm.value}
-        onClose={confirm.onFalse}
-        title="PMC thông báo"
-        content="Bạn có thực sự muốn xóa không?"
-        action={
-          <Button variant="contained" color="error" onClick={onDeleteRow}>
-            Xóa
-          </Button>
-        }
-      /> */}
     </>
   );
 }

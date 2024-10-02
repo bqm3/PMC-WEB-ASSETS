@@ -27,21 +27,12 @@ import { useSettingsContext } from 'src/components/settings';
 import axios from 'axios';
 import FormProvider, { RHFSelect, RHFTextField } from 'src/components/hook-form';
 import { MenuItem } from '@mui/material';
+import { useGetLoaiNhom } from 'src/api/taisan';
 
 // ----------------------------------------------------------------------
 
 const STORAGE_KEY = 'accessToken';
 
-const loaiNhom = [
-  {
-    ID_LoaiNhom: 1,
-    Loainhom: "Tài sản cố định"
-  },
-  {
-    ID_LoaiNhom: 2,
-    Loainhom: "Công cụ, dụng cụ"
-  }
-]
 
 export default function GroupPolicyNewForm() {
   const router = useRouter();
@@ -56,17 +47,19 @@ export default function GroupPolicyNewForm() {
 
   const { enqueueSnackbar } = useSnackbar();
 
+  const { loainhom } = useGetLoaiNhom();
+
   const NewProductSchema = Yup.object().shape({
     Manhom: Yup.string().required('Không được để trống'),
     Tennhom: Yup.string().required('Không được để trống'),
-    ID_LoaiNhom: Yup.string().required('Không được để trống'),
+    ID_Loainhom: Yup.string().required('Không được để trống'),
   });
 
   const defaultValues = useMemo(
     () => ({
       Manhom: '',
       Tennhom: '',
-      ID_LoaiNhom: null || '',
+      ID_Loainhom: null || '',
     }),
     []
   );
@@ -90,7 +83,7 @@ export default function GroupPolicyNewForm() {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_nhomts/create`, data, {
+      .post(`http://localhost:8888/api/v1/ent_nhomts/create`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -147,15 +140,15 @@ export default function GroupPolicyNewForm() {
       <Grid xs={12} md={8}>
         <Card>
         <Stack spacing={3} sx={{ p: 1.5 }}>
-            {loaiNhom?.length > 0 && (
+        {loainhom?.length > 0 && (
               <RHFSelect
-                name="ID_LoaiNhom"
+                name="ID_Loainhom"
                 label="Loại Nhóm"
                 InputLabelProps={{ shrink: true }}
                 PaperPropsSx={{ textTransform: 'capitalize' }}
               >
-                {loaiNhom?.map((item) => (
-                  <MenuItem key={item?.ID_LoaiNhom} value={item?.ID_LoaiNhom}>
+                {loainhom?.map((item) => (
+                  <MenuItem key={item?.ID_Loainhom} value={item?.ID_Loainhom}>
                     {item?.Loainhom}
                   </MenuItem>
                 ))}

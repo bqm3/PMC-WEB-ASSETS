@@ -23,7 +23,7 @@ import { useRouter } from 'src/routes/hooks';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // _mock
-import { useGetGroupPolicy, useGetNhomts } from 'src/api/taisan';
+import { useGetGroupPolicy, useGetLoaiNhom, useGetNhomts } from 'src/api/taisan';
 // components
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
@@ -51,10 +51,12 @@ import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import { LoadingButton } from '@mui/lab';
 
 import { useSnackbar } from 'src/components/snackbar';
-// types
-import { IKhuvucTableFilters, IKhuvucTableFilterValue } from 'src/types/khuvuc';
-
-import { INhomts, ITaisanTableFilterValue, ITaisanTableFilters } from 'src/types/taisan';
+import {
+  ILoaiNhom,
+  INhomts,
+  IPhongBanTableFilterValue,
+  IPhongBanTableFilters,
+} from 'src/types/taisan';
 //
 import NhomTsTableRow from '../nhom-ts-table-row';
 import GiamsatTableToolbar from '../nhom-ts-table-toolbar';
@@ -67,26 +69,16 @@ const TABLE_HEAD = [
   { id: 'ID_Nhomts', label: 'Mã', width: 140 },
   { id: 'Manhom', label: 'Mã tài sản', width: 200 },
   { id: 'Tennhom', label: 'Loại tài sản', width: 200 },
-  { id: 'ID_LoaiNhom', label: 'Loại nhóm', width: 200 },
+  { id: 'ID_Loainhom', label: 'Loại nhóm', width: 200 },
   { id: '', width: 88 },
 ];
 
-const loaiNhom = [
-  {
-    ID_LoaiNhom: 1,
-    Loainhom: 'Tài sản cố định',
-  },
-  {
-    ID_LoaiNhom: 2,
-    Loainhom: 'Công cụ, dụng cụ',
-  },
-];
-
-const defaultFilters: ITaisanTableFilters = {
+const defaultFilters: IPhongBanTableFilters = {
   name: '',
   status: 'all',
   startDate: null,
   endDate: null,
+  publish: [],
 };
 
 const STORAGE_KEY = 'accessToken';
@@ -114,15 +106,30 @@ export default function GroupPolicyListView() {
 
   const { nhomts, mutateNhomts } = useGetNhomts();
 
+  const { loainhom } = useGetLoaiNhom();
+
   const [tableData, setTableData] = useState<INhomts[]>([]);
 
   const [dataSelect, setDataSelect] = useState<INhomts>();
+
+  const [STATUS_OPTIONS, set_STATUS_OPTIONS] = useState<any>([]);
 
   useEffect(() => {
     if (nhomts?.length > 0) {
       setTableData(nhomts);
     }
   }, [nhomts, mutateNhomts]);
+
+  useEffect(() => {
+    if (loainhom) {
+      set_STATUS_OPTIONS(
+        loainhom.map((data) => ({
+          value: data.Loainhom,
+          label: data.Loainhom,
+        }))
+      );
+    }
+  }, [loainhom]);
 
   const dataFiltered = applyFilter({
     inputData: tableData,
@@ -161,7 +168,7 @@ export default function GroupPolicyListView() {
   };
 
   const handleFilters = useCallback(
-    (name: string, value: IKhuvucTableFilterValue) => {
+    (name: string, value: IPhongBanTableFilterValue) => {
       table.onResetPage();
       setFilters((prevState) => ({
         ...prevState,
@@ -172,11 +179,11 @@ export default function GroupPolicyListView() {
   );
 
   const GroupPolicySchema = Yup.object().shape({
-    GroupPolicy: Yup.string().required('Không được để trống'),
+    Tennhom: Yup.string().required('Không được để trống'),
   });
 
   const defaultValues = {
-    GroupPolicy: '',
+    Tennhom: '',
   };
 
   const methods = useForm({
@@ -194,7 +201,7 @@ export default function GroupPolicyListView() {
     async (id: string) => {
       await axios
         .put(
-          `https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_nhomts/delete/${id}`,
+          `http://localhost:8888/api/v1/ent_nhomts/delete/${id}`,
 
           {
             headers: {
@@ -260,11 +267,11 @@ export default function GroupPolicyListView() {
     async (id: string) => {
       await axios
         .put(
-          `https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_nhomts/update/${id}`,
+          `http://localhost:8888/api/v1/ent_nhomts/update/${id}`,
           {
             Manhom: dataSelect?.Manhom,
             Tennhom: dataSelect?.Tennhom,
-            ID_LoaiNhom: dataSelect?.ID_LoaiNhom,
+            ID_Loainhom: dataSelect?.ID_Loainhom,
           },
           {
             headers: {
@@ -352,6 +359,7 @@ export default function GroupPolicyListView() {
             //
             canReset={canReset}
             onResetFilters={handleResetFilters}
+            statusOptions={STATUS_OPTIONS}
           />
 
           {canReset && (
@@ -465,10 +473,10 @@ function applyFilter({
 }: {
   inputData: INhomts[];
   comparator: (a: any, b: any) => number;
-  filters: ITaisanTableFilters;
+  filters: IPhongBanTableFilters;
   // dateError: boolean;
 }) {
-  const { status, name } = filters;
+  const { status, name, publish } = filters;
 
   const stabilizedThis = inputData?.map((el, index) => [el, index] as const);
 
@@ -486,6 +494,10 @@ function applyFilter({
         order.Manhom.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         order.Tennhom.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
+  }
+
+  if (publish.length) {
+    inputData = inputData.filter((product) => publish.includes(product.ent_loainhom.Loainhom));
   }
 
   return inputData;
@@ -510,26 +522,27 @@ function NhomTSDialog({
   handleUpdate,
   handleSelectChange,
 }: ConfirmTransferDialogProps) {
-  const idGroupPolicy = dataSelect?.ID_Nhomts;
+  const ID_Nhomts = dataSelect?.ID_Nhomts;
 
+  const { loainhom } = useGetLoaiNhom();
   return (
     <Dialog open={open} fullWidth maxWidth="xs" onClose={onClose}>
       <DialogTitle>Cập nhật</DialogTitle>
 
       <Stack spacing={3} sx={{ px: 3 }}>
-        {loaiNhom?.length > 0 && (
+        {loainhom?.length > 0 && (
           <FormControl fullWidth>
             <InputLabel id="demo-simple-select-label-phong-ban">Loại nhóm</InputLabel>
             <Select
-              name="ID_LoaiNhom"
+              name="ID_Loainhom"
               labelId="demo-simple-select-label-phong-ban"
               id="demo-simple-select"
-              value={dataSelect?.ID_LoaiNhom}
+              value={dataSelect?.ID_Loainhom}
               label="Loại nhóm"
               onChange={handleSelectChange}
             >
-              {loaiNhom?.map((item) => (
-                <MenuItem key={item?.ID_LoaiNhom} value={item?.ID_LoaiNhom}>
+              {loainhom?.map((item: ILoaiNhom) => (
+                <MenuItem key={item?.ID_Loainhom} value={item?.ID_Loainhom}>
                   {item?.Loainhom}
                 </MenuItem>
               ))}
@@ -561,8 +574,8 @@ function NhomTSDialog({
           variant="contained"
           color="info"
           onClick={() => {
-            if (idGroupPolicy) {
-              handleUpdate(idGroupPolicy);
+            if (ID_Nhomts) {
+              handleUpdate(ID_Nhomts);
             }
           }}
         >

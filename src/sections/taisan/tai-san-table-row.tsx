@@ -62,7 +62,11 @@ export default function CalvTableRow({
   const popover = usePopover();
 
   const renderPrimary = (
-    <TableRow hover selected={selected}>
+    <TableRow hover selected={selected}  sx={{
+      '& .MuiTableCell-root': {
+        borderBottom: '2px solid rgba(0, 0, 0, 0.05)', // Thicker border
+      },
+    }}>
       <TableCell>
         <Box
           onClick={onViewRow}
@@ -77,9 +81,12 @@ export default function CalvTableRow({
         </Box>
       </TableCell>
       <TableCell> {Tents} </TableCell>
+     
+      <TableCell> {Mats} </TableCell>
+      <TableCell>{ent_nhomts?.Tennhom}</TableCell>
       <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
         <ListItemText
-          primary={ent_nhomts?.Tennhom}
+          primary={ent_nhomts?.ent_loainhom?.Loainhom}
           secondary={ent_donvi.Donvi}
           primaryTypographyProps={{ typography: 'body2' }}
           secondaryTypographyProps={{
@@ -88,7 +95,6 @@ export default function CalvTableRow({
           }}
         />
       </TableCell>
-      <TableCell> {Mats} </TableCell>
       <TableCell>{Nuocsx}</TableCell>
 
       <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>

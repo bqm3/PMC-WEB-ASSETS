@@ -57,6 +57,7 @@ export default function GroupPolicyNewForm() {
   const { nhomts } = useGetNhomts();
 
   const { donvi } = useGetDonvi();
+  const { taisan, mutateTaisan } = useGetTaisan();
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -98,7 +99,7 @@ export default function GroupPolicyNewForm() {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_taisan/create`, data, {
+      .post(`http://localhost:8888/api/v1/ent_taisan/create`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -107,6 +108,7 @@ export default function GroupPolicyNewForm() {
       .then((res) => {
         setLoading(false);
         reset();
+        mutateTaisan()
         enqueueSnackbar({
           variant: 'success',
           autoHideDuration: 2000,
@@ -215,11 +217,8 @@ export default function GroupPolicyNewForm() {
                 ))}
               </RHFSelect>
             )}
-
-            {/* <Stack spacing={1.5} sx={{ flexGrow: 1 }}> */}
               
             </Stack>
-          {/* </Stack> */}
 
           <Stack spacing={3} sx={{ p: 2 }}>
             <RHFTextField name="Tents" label="Tên tài sản" />
@@ -241,7 +240,7 @@ export default function GroupPolicyNewForm() {
       <Grid
         xs={12}
         md={8}
-        sx={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'column-reverse' }}
+        sx={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'column-reverse'}}
       >
         <LoadingButton
           type="submit"

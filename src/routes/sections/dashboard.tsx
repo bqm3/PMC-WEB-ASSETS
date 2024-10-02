@@ -27,6 +27,12 @@ const PhongBanDaNewPage = lazy(() => import('src/pages/dashboard/phongbanda/new'
 const NhomTsListsPage = lazy(() => import('src/pages/dashboard/nhom/list'));
 const NhomTsNewPage = lazy(() => import('src/pages/dashboard/nhom/new'));
 
+const NhaCCListsPage = lazy(() => import('src/pages/dashboard/nhacc/list'));
+const NhaCCNewPage = lazy(() => import('src/pages/dashboard/nhacc/new'));
+
+const DonviListsPage = lazy(() => import('src/pages/dashboard/donvi/list'));
+const DonviNewPage = lazy(() => import('src/pages/dashboard/donvi/new'));
+
 const CreateUserListsPage = lazy(() => import('src/pages/dashboard/create-user/list'));
 const CreateUserNewPage = lazy(() => import('src/pages/dashboard/create-user/new'));
 
@@ -77,7 +83,7 @@ export const dashboardRoutes = [
         ],
       },
       {
-        path: 'phong-ban',
+        path: 'departments',
         children: [
           { element: <PhongBanDaListsPage />, index: true },
           { path: 'list', element: <PhongBanDaListsPage /> },
@@ -85,7 +91,23 @@ export const dashboardRoutes = [
         ],
       },
       {
-        path: 'nhom-tai-san',
+        path: 'unit-group-type',
+        children: [
+          { element: <DonviListsPage />, index: true },
+          { path: 'list', element: <DonviListsPage /> },
+          { path: 'new', element: <DonviNewPage /> },
+        ],
+      },
+      {
+        path: 'nhacc',
+        children: [
+          { element: <NhaCCListsPage />, index: true },
+          { path: 'list', element: <NhaCCListsPage /> },                                                                                                                                                                                                                                                                     
+          { path: 'new', element: <NhaCCNewPage /> },
+        ],
+      },
+      {
+        path: 'group-assets',
         children: [
           { element: <NhomTsListsPage />, index: true },
           { path: 'list', element: <NhomTsListsPage /> },
@@ -101,7 +123,7 @@ export const dashboardRoutes = [
         ],
       },
       {
-        path: 'tai-san',
+        path: 'asset',
         children: [
           { element: <TaiSanListsPage />, index: true },
           { path: 'list', element: <TaiSanListsPage /> },
@@ -109,7 +131,7 @@ export const dashboardRoutes = [
         ],
       },
       {
-        path: 'phieu-nhap-xuat',
+        path: 'inventory-in-out',
         children: [
           { element: <PhieuNXListsPage />, index: true },
           { path: 'list', element: <PhieuNXListsPage /> },
@@ -120,7 +142,7 @@ export const dashboardRoutes = [
       },
 
       {
-        path: 'sua-chua-ts',
+        path: 'property-repair',
         children: [
           { element: <SuaChuaTSListsPage />, index: true },
           { path: 'list', element: <SuaChuaTSListsPage /> },
@@ -130,7 +152,7 @@ export const dashboardRoutes = [
         ],
       },
       {
-        path: 'tai-san-qrcode',
+        path: 'qrcode-property',
         children: [
           { element: <TaiSanQrCodeListsPage />, index: true },
           { path: 'list', element: <TaiSanQrCodeListsPage /> },

@@ -23,11 +23,8 @@ import { fTimestamp } from 'src/utils/format-time';
 // _mock
 import {
   useGetChinhanh,
-  useGetGroupPolicy,
   useGetNhomPb,
   useGetPhieuNX,
-  useGetPhongBanDa,
-  useGetPolicy,
 } from 'src/api/taisan';
 // components
 import Label from 'src/components/label';
@@ -47,13 +44,9 @@ import {
 } from 'src/components/table';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import Dialog, { DialogProps } from '@mui/material/Dialog';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
@@ -61,10 +54,8 @@ import { useSnackbar } from 'src/components/snackbar';
 // types
 import {
   IChinhanh,
-  IGroupPolicy,
   INhompb,
   IPhieuNX,
-  IPolicy,
   ITaisanTableFilterValue,
   ITaisanTableFilters,
 } from 'src/types/taisan';
@@ -155,7 +146,7 @@ export default function PhieuNXListView() {
 
   const denseHeight = table.dense ? 52 : 72;
 
-  const canReset = !!filters.name || filters.status !== 'all';
+  const canReset = !!filters.name || filters.status !== 'all' || (!!filters.startDate && !!filters.endDate);
 
   const notFound = (!dataFiltered?.length && canReset) || !dataFiltered?.length;
 
@@ -210,7 +201,7 @@ export default function PhieuNXListView() {
   const handleDeleteRow = useCallback(
     async (id: string) => {
       await axios
-        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieunx/delete/${id}`,[], {
+        .put(`http://localhost:8888/api/v1/tb_phieunx/delete/${id}`,[], {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -254,7 +245,7 @@ export default function PhieuNXListView() {
   const handleCloseRow = useCallback(
     async (id: string) => {
       await axios
-        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieunx/close-fast/${id}`,[], {
+        .put(`http://localhost:8888/api/v1/tb_phieunx/close-fast/${id}`,[], {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -312,7 +303,7 @@ export default function PhieuNXListView() {
   const handleUpdate = useCallback(
     async (id: string) => {
       await axios
-        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieunx/update/${id}`, dataSelect, {
+        .put(`http://localhost:8888/api/v1/tb_phieunx/update/${id}`, dataSelect, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -472,12 +463,7 @@ export default function PhieuNXListView() {
                 />
 
                 <TableBody>
-                  {dataFiltered
-                    .slice(
-                      table.page * table.rowsPerPage,
-                      table.page * table.rowsPerPage + table.rowsPerPage
-                    )
-                    .map((row) => (
+                  {dataInPage.map((row) => (
                       <PhieuNXTableRow
                         key={row.ID_PhieuNX}
                         row={row}
@@ -513,7 +499,7 @@ export default function PhieuNXListView() {
         </Card>
       </Container>
 
-      <GroupPolicyDialog
+      <PhieuNXDialog
         open={confirm.value}
         dataSelect={dataSelect}
         chinhanh={chinhanh}
@@ -524,28 +510,6 @@ export default function PhieuNXListView() {
         handleSelectChange={handleSelectChange}
       />
 
-      {/* <ConfirmDialog
-        open={confirm.value}
-        onClose={confirm.onFalse}
-        title="Delete"
-        content={
-          <>
-            Are you sure want to delete <strong> {table.selected.length} </strong> items?
-          </>
-        }
-        action={
-          <Button
-            variant="contained"
-            color="error"
-            onClick={() => {
-              handleDeleteRows();
-              confirm.onFalse();
-            }}
-          >
-            Delete
-          </Button>
-        }
-      /> */}
     </>
   );
 }
@@ -564,6 +528,8 @@ function applyFilter({
   dateError: boolean;
 }) {
   const { status, name, startDate, endDate } = filters;
+
+  // console.log('startDate, endDate', startDate, endDate)
 
   const stabilizedThis = inputData?.map((el, index) => [el, index] as const);
 
@@ -625,7 +591,7 @@ interface ConfirmTransferDialogProps {
   handleSelectChange: any;
 }
 
-function GroupPolicyDialog({
+function PhieuNXDialog({
   open,
   dataSelect,
   chinhanh,
