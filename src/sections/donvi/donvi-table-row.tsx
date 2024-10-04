@@ -17,7 +17,7 @@ import { useBoolean } from 'src/hooks/use-boolean';
 // utils
 import { fCurrency } from 'src/utils/format-number';
 // types
-import { IDonvi, IGroupPolicy, ILoaiNhom, INhomts } from 'src/types/taisan';
+import { IDonvi, IGroupPolicy, ILoainhom, INhomts } from 'src/types/taisan';
 // components
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';

@@ -42,7 +42,7 @@ export default function OrderTableToolbar({
   canReset,
   onResetFilters,
   statusOptions,
-  statusPBOptions
+  statusPBOptions,
 }: Props) {
   const popover = usePopover();
 
@@ -87,69 +87,66 @@ export default function OrderTableToolbar({
           pr: { xs: 2.5, md: 1 },
         }}
       >
- {
-          statusOptions && statusOptions.length > 0 && 
+        {statusPBOptions && statusPBOptions.length > 0 && (
           <FormControl
-          sx={{
-            flexShrink: 0,
-            width: { xs: 1, md: 200 },
-          }}
-        >
-          <InputLabel>Chi nhánh</InputLabel>
-
-          <Select
-            multiple
-            value={filters.chinhanh}
-            onChange={handleFilterPublish}
-            input={<OutlinedInput label="Publish" />}
-            renderValue={(selected) => selected.map((value) => value).join(', ')}
-            sx={{ textTransform: 'capitalize' }}
+            sx={{
+              flexShrink: 0,
+              width: { xs: 1, md: 200 },
+            }}
           >
-            {statusOptions?.map((option: any) => (
-              <MenuItem key={option?.value} value={option?.value}>
-                <Checkbox
-                  disableRipple
-                  size="small"
-                  checked={filters.chinhanh.includes(option?.value)}
-                />
-                {option?.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        }
+            <InputLabel>Phòng ban</InputLabel>
 
-{
-          statusPBOptions && statusPBOptions.length > 0 && 
+            <Select
+              multiple
+              value={filters.phongban}
+              onChange={handleFilterPhongBan}
+              input={<OutlinedInput label="Publish" />}
+              renderValue={(selected) => selected.map((value) => value).join(', ')}
+              sx={{ textTransform: 'capitalize' }}
+            >
+              {statusPBOptions?.map((option: any) => (
+                <MenuItem key={option?.value} value={option?.value}>
+                  <Checkbox
+                    disableRipple
+                    size="small"
+                    checked={filters.phongban.includes(option?.value)}
+                  />
+                  {option?.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
+        {statusOptions && statusOptions.length > 0 && (
           <FormControl
-          sx={{
-            flexShrink: 0,
-            width: { xs: 1, md: 200 },
-          }}
-        >
-          <InputLabel>Phòng ban</InputLabel>
-
-          <Select
-            multiple
-            value={filters.phongban}
-            onChange={handleFilterPhongBan}
-            input={<OutlinedInput label="Publish" />}
-            renderValue={(selected) => selected.map((value) => value).join(', ')}
-            sx={{ textTransform: 'capitalize' }}
+            sx={{
+              flexShrink: 0,
+              width: { xs: 1, md: 200 },
+            }}
           >
-            {statusPBOptions?.map((option: any) => (
-              <MenuItem key={option?.value} value={option?.value}>
-                <Checkbox
-                  disableRipple
-                  size="small"
-                  checked={filters.phongban.includes(option?.value)}
-                />
-                {option?.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        }
+            <InputLabel>Chi nhánh</InputLabel>
+
+            <Select
+              multiple
+              value={filters.chinhanh}
+              onChange={handleFilterPublish}
+              input={<OutlinedInput label="Publish" />}
+              renderValue={(selected) => selected.map((value) => value).join(', ')}
+              sx={{ textTransform: 'capitalize' }}
+            >
+              {statusOptions?.map((option: any) => (
+                <MenuItem key={option?.value} value={option?.value}>
+                  <Checkbox
+                    disableRipple
+                    size="small"
+                    checked={filters.chinhanh.includes(option?.value)}
+                  />
+                  {option?.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
         <Stack direction="row" alignItems="center" spacing={2} flexGrow={1} sx={{ width: 1 }}>
           <TextField
             fullWidth

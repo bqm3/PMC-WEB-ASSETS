@@ -21,12 +21,11 @@ import { useResponsive } from 'src/hooks/use-responsive';
 import { _tags, _roles, USER_GENDER_OPTIONS } from 'src/_mock';
 import FormProvider, { RHFSelect, RHFTextField } from 'src/components/hook-form';
 // types
-import { IPhieuNX, IPhongbanda } from 'src/types/taisan';
+import { IPhieuNX, IPhongbanda, ITaisan } from 'src/types/taisan';
 // api
-import { useGetNghiepvu, useGetPhongBanDa, useGetNam, useGetThang } from 'src/api/taisan';
+import { useGetNghiepvu, useGetPhongBanDa, useGetLoaiNhom, useGetTaisan } from 'src/api/taisan';
 // components
 import { useSnackbar } from 'src/components/snackbar';
-import { parseISO, isValid } from 'date-fns';
 // types
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 // components
@@ -77,12 +76,15 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
 
   const [noiXuat, setNoiXuat] = useState<IPhongbanda[]>([]);
   const [noiNhap, setNoiNhap] = useState<IPhongbanda[]>([]);
+  const [taiSan, setTaiSan] = useState<ITaisan[]>([]);
 
   const mdUp = useResponsive('up', 'md');
 
   const { phongbanda } = useGetPhongBanDa();
 
   const { nghiepvu } = useGetNghiepvu();
+  const { loainhom } = useGetLoaiNhom();
+  const { taisan } = useGetTaisan();
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -90,8 +92,9 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
     Sophieu: Yup.string().required('Không được để trống'),
     NgayNX: Yup.mixed<any>().nullable().required('Phải có ngày nhập xuất'),
     ID_Nghiepvu: Yup.string().required('Không được để trống'),
-    ID_NoiXuat: Yup.mixed<any>(),
-    ID_NoiNhap: Yup.mixed<any>(),
+    ID_NoiXuat: Yup.mixed<any>().required('Không được để trống'),
+    ID_NoiNhap: Yup.mixed<any>().required('Không được để trống'),
+    ID_Loainhom: Yup.mixed<any>().required('Không được để trống'),
   });
 
   const defaultValues = useMemo(
@@ -101,6 +104,7 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
       Sophieu: currentPhieuNX?.Sophieu || '',
       ID_NoiNhap: currentPhieuNX?.ID_NoiNhap || null,
       ID_NoiXuat: currentPhieuNX?.ID_NoiXuat || null,
+      ID_Loainhom: currentPhieuNX?.ID_Loainhom || null,
       iTinhtrang: currentPhieuNX?.iTinhtrang || '',
       NgayNX: currentPhieuNX?.NgayNX || new Date(),
       Ghichu: currentPhieuNX?.Ghichu || '',
@@ -142,41 +146,61 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
   }, [currentPhieuNX, defaultValues, reset]);
 
   useEffect(() => {
-    let dataNoiNhap = [];
-    let dataNoiXuat = [];
+    let dataNoiNhap: any = [];
+    let dataNoiXuat: any = [];
 
-    if (`${values.ID_Nghiepvu}` === '2') {
-      dataNoiXuat = phongbanda.filter((item) => item.Thuoc === 'Dự án ngoài');
-      dataNoiNhap = phongbanda.filter((item) => item.Thuoc === 'PMC');
-    } else if (`${values.ID_Nghiepvu}` === '1' || `${values.ID_Nghiepvu}` === '7') {
-      dataNoiNhap = phongbanda?.filter((item) => item.Thuoc === 'PMC');
-      dataNoiXuat = phongbanda?.filter((item) => item.Thuoc === 'PMC');
-      setValue('ID_NoiXuat', values.ID_NoiNhap);
-    } else if (`${values.ID_Nghiepvu}` === '5' || `${values.ID_Nghiepvu}` === '6') {
-      dataNoiNhap = phongbanda.filter((item) => item.Thuoc === 'Dự án ngoài');
-      dataNoiXuat = phongbanda.filter((item) => item.Thuoc === 'PMC');
+    if (
+      `${values.ID_Nghiepvu}` === '1' ||
+      `${values.ID_Nghiepvu}` === '9' ||
+      `${values.ID_Nghiepvu}` === '7' ||
+      `${values.ID_Nghiepvu}` === '6'
+    ) {
+      dataNoiXuat = phongbanda;
+      dataNoiNhap = phongbanda;
+
+      if (values.ID_NoiNhap) {
+        setValue('ID_NoiXuat', values.ID_NoiNhap);
+      } else if (values.ID_NoiXuat) {
+        setValue('ID_NoiNhap', values.ID_NoiXuat);
+      }
+
+      if (values.ID_NoiNhap === values.ID_NoiXuat) {
+        if (values.ID_NoiNhap && values.ID_NoiXuat) {
+          setValue('ID_NoiNhap', values.ID_NoiXuat); // Đồng bộ giá trị
+        }
+      }
+    } else if (`${values.ID_Nghiepvu}` === '3') {
+      dataNoiNhap = phongbanda;
+      dataNoiXuat = dataNoiNhap.filter((item: any) => item.ID_Phongban !== values.ID_NoiNhap);
     } else {
-      dataNoiNhap = phongbanda.filter((item) => item.Thuoc === 'PMC');
-      dataNoiXuat = dataNoiNhap.filter((item) => item.ID_Phongban !== values.ID_NoiNhap);
+      dataNoiXuat = phongbanda;
+      dataNoiNhap = phongbanda;
     }
-
     setNoiNhap(dataNoiNhap);
     setNoiXuat(dataNoiXuat);
-  }, [values.ID_Nghiepvu, phongbanda, values.ID_NoiNhap, setValue]);
+  }, [values.ID_Nghiepvu, phongbanda, values.ID_NoiNhap, values.ID_NoiXuat, setValue]);
+
+  useEffect(() => {
+    let dataTaiSan: any = [];
+    if (values.ID_Loainhom) {
+      dataTaiSan = taisan.filter(
+        (item) => `${item.ent_nhomts.ent_loainhom.ID_Loainhom}` === `${values.ID_Loainhom}`
+      );
+    } else {
+      dataTaiSan = taisan;
+    }
+    setTaiSan(dataTaiSan);
+  }, [values.ID_Loainhom, taisan, setValue]);
 
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .put(
-        `http://localhost:8888/api/v1/tb_phieunx/update/${currentPhieuNX?.ID_PhieuNX}`,
-        data,
-        {
-          headers: {
-            Accept: 'application/json',
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      )
+      .put(`http://localhost:8888/api/v1/tb_phieunx/update/${currentPhieuNX?.ID_PhieuNX}`, data, {
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
       .then(async (res) => {
         setLoading(false);
         await mutate();
@@ -215,16 +239,12 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
   const handleClose = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(
-        `http://localhost:8888/api/v1/tb_phieunx/close/${currentPhieuNX?.ID_PhieuNX}`,
-        data,
-        {
-          headers: {
-            Accept: 'application/json',
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      )
+      .post(`http://localhost:8888/api/v1/tb_phieunx/close/${currentPhieuNX?.ID_PhieuNX}`, data, {
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
       .then(async (res) => {
         setLoading(false);
         await mutate();
@@ -268,21 +288,23 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
             <RHFSelect
               name="ID_Nghiepvu"
               defaultValue={defaultValues?.ID_Nghiepvu}
-              label="Nghiệp vụ"
+              label="Nghiệp vụ *"
               InputLabelProps={{ shrink: true }}
               PaperPropsSx={{ textTransform: 'capitalize' }}
             >
-              {nghiepvu?.map((item) => (
-                <MenuItem key={item?.ID_Nghiepvu} value={item?.ID_Nghiepvu}>
-                  {item?.Nghiepvu}
-                </MenuItem>
-              ))}
+              {nghiepvu
+                ?.filter((item) => ['1', '9', '7', '6', '3'].includes(`${item?.ID_Nghiepvu}`))
+                .map((item) => (
+                  <MenuItem key={item?.ID_Nghiepvu} value={item?.ID_Nghiepvu}>
+                    {item?.Nghiepvu}
+                  </MenuItem>
+                ))}
             </RHFSelect>
           )}
           {noiNhap?.length > 0 && (
             <RHFSelect
               name="ID_NoiNhap"
-              label="Nơi nhập"
+              label="Nơi nhập *"
               InputLabelProps={{ shrink: true }}
               PaperPropsSx={{ textTransform: 'capitalize' }}
             >
@@ -296,7 +318,7 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
           {noiXuat?.length > 0 && (
             <RHFSelect
               name="ID_NoiXuat"
-              label="Nơi xuất"
+              label="Nơi xuất *"
               InputLabelProps={{ shrink: true }}
               PaperPropsSx={{ textTransform: 'capitalize' }}
             >
@@ -313,8 +335,20 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
           sx={{ p: 2, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
         >
           <Stack width="100%">
-            <RHFTextField name="Sophieu" label="Số phiếu" defaultValue={defaultValues?.Sophieu} />
+            <RHFTextField name="Sophieu" label="Số phiếu *" defaultValue={defaultValues?.Sophieu} />
           </Stack>
+          <RHFSelect
+            name="ID_Loainhom"
+            label="Loại nhóm *"
+            InputLabelProps={{ shrink: true }}
+            PaperPropsSx={{ textTransform: 'capitalize' }}
+          >
+            {loainhom?.map((item) => (
+              <MenuItem key={item?.ID_Loainhom} value={item?.ID_Loainhom}>
+                {item?.Loainhom}
+              </MenuItem>
+            ))}
+          </RHFSelect>
           <Stack width="100%">
             <DatePicker
               label="Ngày nhập xuất"
@@ -359,7 +393,7 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
     <FormProvider methods={methods}>
       {renderDetails}
       <Card sx={{ mt: 3 }}>
-        <PhieuNXEditDetails />
+        <PhieuNXEditDetails taiSan={taiSan}/>
       </Card>
 
       <Stack justifyContent="flex-end" direction="row" spacing={3} sx={{ mt: 3 }}>

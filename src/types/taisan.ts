@@ -1,5 +1,3 @@
-import { IChucvu } from './khuvuc';
-
 export type ITaisanTableFilterValue = string | Date | null | string[];
 
 export type IPhongBanTableFilters = {
@@ -9,6 +7,16 @@ export type IPhongBanTableFilters = {
   endDate: Date | null;
   publish: string[];
 };
+
+export type IUserTableFilters = {
+  name: string;
+  status: string;
+  startDate: Date | null;
+  endDate: Date | null;
+  chinhanh: string[];
+  phongban: string[];
+};
+
 
 export type ITaisanTableFilters = {
   name: string;
@@ -29,6 +37,7 @@ export type ITaisanFilterValue = string | Date | null | string[];
 
 export type ITbTaisanTableFilterValue = string | Date | null;
 export type IPhongBanTableFilterValue = string | Date | null | string[];
+export type IUserTableFilterValue = string | Date | null | string[];
 
 export type IGroupPolicy = {
   ID_GroupPolicy: string;
@@ -50,17 +59,21 @@ export type IUser = {
   ID_Nhompb: string;
   ID_Chinhanh: string;
   ID_Chucvu: string;
+  ID_Phongban: string;
+  Password: string;
+  IDNHOMNGUOIDUNG: string;
   MaPMC: string;
   ID_Policy: string;
   Hoten: string;
   Gioitinh: string;
   Diachi: string;
   Sodienthoai: string;
-  Email: string;
+  Emails: string;
   Anh: string;
   ent_nhompb: INhompb;
   ent_chinhanh: IChinhanh;
   ent_chucvu: IChucvu;
+  ent_phongbanda: IPhongbanda;
 };
 
 export type IDonvi = {
@@ -68,7 +81,7 @@ export type IDonvi = {
   Donvi: string;
 };
 
-export type ILoaiNhom = {
+export type ILoainhom = {
   ID_Loainhom: string;
   Loainhom: string;
 };
@@ -103,7 +116,7 @@ export type INhomts = {
   ID_Loainhom: string;
   Manhom: string;
   Tennhom: string;
-  ent_loainhom: ILoaiNhom;
+  ent_loainhom: ILoainhom;
 };
 
 export type IPolicy = {
@@ -129,6 +142,16 @@ export type INghiepvu = {
   ID_Nghiepvu: string;
   Nghiepvu: string;
   isDelete: string;
+};
+
+export type INhansuPBDA = {
+  ID_NSPB: string;
+  ID_Phongban: string;
+  Ngayvao: string;
+  iTinhtrang: string;
+  Ngay: string;
+  isDelete: string;
+  ent_phongbanda: IPhongbanda;
 };
 
 export type ITaisan = {
@@ -172,7 +195,7 @@ export type IConnguoi = {
   NgayGhinhan: string;
   Ghichu: string;
   isDelete: string;
-  ent_nhompb: INhompb;
+  ent_nhansupbda: INhansuPBDA[];
 };
 
 export type IPhongbanda = {
@@ -188,6 +211,11 @@ export type IPhongbanda = {
   ent_nhompb: INhompb;
 };
 
+export type IChucvu = {
+  ID_Chucvu: string;
+  Chucvu: string;
+};
+
 export type IPhieuNX = {
   ID_PhieuNX: string;
   ID_Nghiepvu: string;
@@ -195,6 +223,8 @@ export type IPhieuNX = {
   ID_NoiNhap: string;
   ID_NoiXuat: string;
   ID_Connguoi: string;
+  ID_Loainhom: string;
+  ID_Phongban: string;
   NgayNX: string;
   Ghichu: string;
   ID_Quy: string;

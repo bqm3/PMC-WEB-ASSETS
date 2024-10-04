@@ -1,16 +1,13 @@
-import { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import axios from 'axios';
 // @mui
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import { alpha } from '@mui/material/styles';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
-import Dialog, { DialogProps } from '@mui/material/Dialog';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
 import Card from '@mui/material/Card';
-import Grid from '@mui/material/Grid';
 import Table from '@mui/material/Table';
 import Tooltip from '@mui/material/Tooltip';
 import Container from '@mui/material/Container';
@@ -23,7 +20,15 @@ import { useRouter } from 'src/routes/hooks';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // _mock
-import { useGetGroupPolicy, useGetLoaiNhom, useGetNhacc, useGetNhomts } from 'src/api/taisan';
+import {
+  useGetConNguoi,
+  useGetChinhanh,
+  useGetNhomPb,
+  useGetPhongBanDa,
+  useGetUser,
+  useGetChucvu,
+  useGetLoaiNhom,
+} from 'src/api/taisan';
 // components
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
@@ -41,68 +46,89 @@ import {
   TablePaginationCustom,
 } from 'src/components/table';
 import Stack from '@mui/material/Stack';
+import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
+import Autocomplete from '@mui/material/Autocomplete';
+import { Typography } from '@mui/material';
 import TextField from '@mui/material/TextField';
-import FormControl from '@mui/material/FormControl';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import Dialog, { DialogProps } from '@mui/material/Dialog';
+import CircularProgress from '@mui/material/CircularProgress';
+import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import CustomPopover, { usePopover } from 'src/components/custom-popover';
-import { LoadingButton } from '@mui/lab';
-
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useSnackbar } from 'src/components/snackbar';
+import { LoadingButton } from '@mui/lab';
+import Timeline from '@mui/lab/Timeline';
+import TimelineItem from '@mui/lab/TimelineItem';
+import TimelineSeparator from '@mui/lab/TimelineSeparator';
+import TimelineConnector from '@mui/lab/TimelineConnector';
+import TimelineContent from '@mui/lab/TimelineContent';
+import TimelineOppositeContent from '@mui/lab/TimelineOppositeContent';
+import TimelineDot from '@mui/lab/TimelineDot';
 import {
-  ILoainhom,
-  INhaCC,
-  INhomts,
-  IPhongBanTableFilterValue,
-  IPhongBanTableFilters,
+  IConnguoi,
+  INhompb,
+  ITaisanTableFilters,
+  IUser,
+  IUserTableFilters,
+  IUserTableFilterValue,
 } from 'src/types/taisan';
 //
-import NhaCCTableRow from '../nhacc-table-row';
-import NhaCCTableToolbar from '../nhacc-table-toolbar';
-import NhaCCTableFiltersResult from '../nhacc-table-filters-result';
-import NhaCCNewForm from '../nhacc-new-form';
+import UserNewEditForm from '../create-user-new-form';
+import CreateUserTableRow from '../create-user-table-row';
+import UserTableToolbar from '../create-user-table-toolbar';
+import UserTableFiltersResult from '../create-user-filters-result';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'ID_Nhacc', label: 'Mã', width: 50 },
-  { id: 'MaNhacc', label: 'Mã NCC', width: 80 },
-  { id: 'TenNhacc', label: 'Tên NCC', width: 200 },
-  { id: 'Masothue', label: 'Mã số thuế', width: 120 },
-  { id: 'Sodienthoai', label: 'Số điện thoại', width: 120 },
-  { id: 'Sotaikhoan', label: 'Số tài khoản', width: 120 },
-  { id: 'Nganhang', label: 'Ngân hàng', width: 120 },
-  { id: 'Diachi', label: 'Địa chỉ', width: 120 },
+  { id: 'ID_User', label: 'Mã', width: 50 },
+  { id: 'MaPMC', label: 'Mã truy cập', width: 80 },
+  { id: 'Hoten', label: 'Họ tên', width: 120 },
+  { id: 'ID_Phongban', label: 'Dự án', width: 80 },
+  { id: 'ID_Chucvu', label: 'Chức vụ', width: 80 },
+  { id: 'ID_Nhompb', label: 'Phòng ban', width: 80 },
+  { id: 'ID_Chinhanh', label: 'Chi nhánh', width: 80 },
+
   { id: '', width: 30 },
 ];
 
-const defaultFilters: IPhongBanTableFilters = {
+const defaultFilters: IUserTableFilters = {
   name: '',
   status: 'all',
   startDate: null,
   endDate: null,
-  publish: [],
+  chinhanh: [],
+  phongban: [],
 };
 
 const STORAGE_KEY = 'accessToken';
 // ----------------------------------------------------------------------
 
 export default function GroupPolicyListView() {
-  const table = useTable({ defaultOrderBy: 'ID_Nhacc' });
+  const table = useTable({ defaultOrderBy: 'ID_User' });
 
   const settings = useSettingsContext();
 
   const router = useRouter();
 
   const popover = usePopover();
+  const popoverAdd = usePopover();
+  const popoverShow = usePopover();
 
   const confirm = useBoolean();
-
   const confirmAdd = useBoolean();
-
-  const popoverAdd = usePopover();
+  const confirmShow = useBoolean();
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -110,19 +136,45 @@ export default function GroupPolicyListView() {
 
   const [filters, setFilters] = useState(defaultFilters);
 
-  const { nhomts, mutateNhomts } = useGetNhomts();
+  const { user, mutateUser } = useGetUser();
 
-  const { nhacc, mutateNhacc } = useGetNhacc();
+  const { nhompb } = useGetNhomPb();
+  const { chinhanh } = useGetChinhanh();
 
-  const [tableData, setTableData] = useState<INhaCC[]>([]);
+  const [tableData, setTableData] = useState<IUser[]>([]);
 
-  const [dataSelect, setDataSelect] = useState<INhaCC>();
+  const [dataSelect, setDataSelect] = useState<any>();
+  const [dataShow, setDataShow] = useState<any>();
+  const [loadingShow, setLoadingShow] = useState<boolean>();
+
+  const [STATUS_OPTIONS, set_STATUS_OPTIONS] = useState<any>([]);
+  const [STATUS_OPTIONS_PB, set_STATUS_OPTIONS_PB] = useState<any>([]);
 
   useEffect(() => {
-    if (nhacc?.length > 0) {
-      setTableData(nhacc);
+    if (chinhanh) {
+      set_STATUS_OPTIONS(
+        chinhanh.map((data: any) => ({
+          value: data.Tenchinhanh,
+          label: data.Tenchinhanh,
+        }))
+      );
     }
-  }, [nhacc, mutateNhacc]);
+
+    if (nhompb) {
+      set_STATUS_OPTIONS_PB(
+        nhompb.map((data: any) => ({
+          value: data.Nhompb,
+          label: data.Nhompb,
+        }))
+      );
+    }
+  }, [chinhanh, nhompb]);
+
+  useEffect(() => {
+    if (user?.length > 0) {
+      setTableData(user);
+    }
+  }, [user, mutateUser]);
 
   const dataFiltered = applyFilter({
     inputData: tableData,
@@ -144,9 +196,35 @@ export default function GroupPolicyListView() {
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     if (dataSelect) {
+      // Update the corresponding field in `dataSelect`
       setDataSelect({
         ...dataSelect,
         [name]: value,
+      });
+    }
+  };
+
+  const handleAutocompleteChange = (event: any, value: any) => {
+    if (typeof value === 'object' && value !== null) {
+      // Lưu ID_Phongban vào dataSelect
+      setDataSelect({
+        ...dataSelect,
+        ID_Phongban: value.ID_Phongban, // Lưu ID_Phongban
+      });
+    } else {
+      setDataSelect({
+        ...dataSelect,
+        ID_Phongban: null, // Đặt lại ID_Phongban nếu không có lựa chọn
+      });
+    }
+  };
+
+  const handleInputDate = (date: any) => {
+    if (dataSelect) {
+      // Update the corresponding field in `dataSelect`
+      setDataSelect({
+        ...dataSelect,
+        NgayGhinhan: date,
       });
     }
   };
@@ -160,7 +238,7 @@ export default function GroupPolicyListView() {
   };
 
   const handleFilters = useCallback(
-    (name: string, value: IPhongBanTableFilterValue) => {
+    (name: string, value: IUserTableFilterValue) => {
       table.onResetPage();
       setFilters((prevState) => ({
         ...prevState,
@@ -170,41 +248,18 @@ export default function GroupPolicyListView() {
     [table]
   );
 
-  const GroupPolicySchema = Yup.object().shape({
-    Tennhom: Yup.string().required('Không được để trống'),
-  });
-
-  const defaultValues = {
-    Tennhom: '',
-  };
-
-  const methods = useForm({
-    resolver: yupResolver(GroupPolicySchema),
-    defaultValues,
-  });
-
-  const {
-    reset,
-    handleSubmit,
-    formState: { isSubmitting },
-  } = methods;
-
   const handleDeleteRow = useCallback(
     async (id: string) => {
       await axios
-        .put(
-          `http://localhost:8888/api/v1/ent_nhacc/delete/${id}`,
-
-          {
-            headers: {
-              Accept: 'application/json',
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        )
+        .put(`http://localhost:8888/api/v1/ent_user/delete/${id}`, [], {
+          headers: {
+            Accept: 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
         .then((res) => {
           // reset();
-          const deleteRow = tableData?.filter((row) => row.ID_Nhacc !== id);
+          const deleteRow = tableData?.filter((row) => row.ID_User !== id);
           setTableData(deleteRow);
 
           table.onUpdatePageDeleteRow(dataInPage.length);
@@ -242,7 +297,7 @@ export default function GroupPolicyListView() {
   }, []);
 
   const handleViewRow = useCallback(
-    (data: INhaCC) => {
+    (data: IUser) => {
       confirm.onTrue();
       popover.onClose();
       setDataSelect(data);
@@ -250,36 +305,64 @@ export default function GroupPolicyListView() {
     [confirm, popover]
   );
 
-  const handleViewAdd = useCallback(() => {
-    confirmAdd.onTrue();
-    popoverAdd.onClose();
-  }, [popoverAdd, confirmAdd]);
-
-  const handleUpdate = useCallback(
+  const handleShowRow = useCallback(
     async (id: string) => {
-      const dataInsert = {
-        MaNhacc: dataSelect?.MaNhacc,
-        TenNhacc: dataSelect?.TenNhacc,
-        Masothue: dataSelect?.Masothue,
-        Sodienthoai: dataSelect?.Sodienthoai,
-        Sotaikhoan: dataSelect?.Sotaikhoan,
-        Nganhang: dataSelect?.Nganhang,
-        Diachi: dataSelect?.Diachi,
-        Ghichu: dataSelect?.Ghichu,
-      };
-
+      setLoadingShow(true);
+      confirmShow.onTrue();
       await axios
-        .put(`http://localhost:8888/api/v1/ent_nhacc/update/${id}`, dataInsert, {
+        .get(`http://localhost:8888/api/v1/ent_user/${id}`, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
           },
         })
         .then(async (res) => {
-          reset();
+          popoverShow.onClose();
+          setDataShow(res.data.data);
+          setLoadingShow(false);
+        })
+        .catch((error) => {
+          setLoadingShow(false);
+          if (error.response) {
+            enqueueSnackbar({
+              variant: 'error',
+              autoHideDuration: 2000,
+              message: `${error.response.data.message}`,
+            });
+          } else if (error.request) {
+            // Lỗi không nhận được phản hồi từ server
+            enqueueSnackbar({
+              variant: 'error',
+              autoHideDuration: 2000,
+              message: `Không nhận được phản hồi từ máy chủ`,
+            });
+          } else {
+            // Lỗi khi cấu hình request
+            enqueueSnackbar({
+              variant: 'error',
+              autoHideDuration: 2000,
+              message: `Lỗi gửi yêu cầu`,
+            });
+          }
+        });
+    },
+    [accessToken, confirmShow, popoverShow, enqueueSnackbar]
+  );
+
+  const handleUpdate = useCallback(
+    async (id: string) => {
+      await axios
+        .put(`http://localhost:8888/api/v1/ent_user/update/${id}`, dataSelect, {
+          headers: {
+            Accept: 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
+        .then(async (res) => {
           confirm.onFalse();
           popover.onClose();
-          mutateNhacc();
+          await mutateUser();
+
           enqueueSnackbar({
             variant: 'success',
             autoHideDuration: 2000,
@@ -310,8 +393,13 @@ export default function GroupPolicyListView() {
           }
         });
     },
-    [accessToken, enqueueSnackbar, dataSelect, reset, confirm, popover, mutateNhacc] // Add accessToken and enqueueSnackbar as dependencies
+    [enqueueSnackbar, accessToken, dataSelect, confirm, popover, mutateUser] // Add accessToken and enqueueSnackbar as dependencies
   );
+
+  const handleViewAdd = useCallback(() => {
+    confirmAdd.onTrue();
+    popoverAdd.onClose();
+  }, [popoverAdd, confirmAdd]);
 
   const handleFilterStatus = useCallback(
     (event: React.SyntheticEvent, newValue: string) => {
@@ -325,13 +413,12 @@ export default function GroupPolicyListView() {
       <Container maxWidth={settings.themeStretch ? false : 'xl'}>
         <Stack direction="row" alignItems="center" justifyContent="space-between">
           <CustomBreadcrumbs
-            heading="Danh sách nhà cung cấp"
+            heading="Danh sách con người"
             links={[
               {
                 name: 'Dashboard',
                 href: paths.dashboard.root,
               },
-              { name: 'Danh sách' },
             ]}
             sx={{
               mb: { xs: 3, md: 5 },
@@ -347,16 +434,18 @@ export default function GroupPolicyListView() {
         </Stack>
 
         <Card>
-          <NhaCCTableToolbar
+          <UserTableToolbar
             filters={filters}
             onFilters={handleFilters}
             //
             canReset={canReset}
             onResetFilters={handleResetFilters}
+            statusOptions={STATUS_OPTIONS}
+            statusPBOptions={STATUS_OPTIONS_PB}
           />
 
           {canReset && (
-            <NhaCCTableFiltersResult
+            <UserTableFiltersResult
               filters={filters}
               onFilters={handleFilters}
               //
@@ -373,7 +462,7 @@ export default function GroupPolicyListView() {
               numSelected={table.selected.length}
               rowCount={tableData?.length}
               onSelectAllRows={(checked) =>
-                table.onSelectAllRows(checked, tableData?.map((row) => row?.ID_Nhacc))
+                table.onSelectAllRows(checked, tableData?.map((row) => row?.ID_User))
               }
               action={
                 <Tooltip title="Delete">
@@ -394,7 +483,7 @@ export default function GroupPolicyListView() {
                   numSelected={table.selected.length}
                   onSort={table.onSort}
                   // onSelectAllRows={(checked) =>
-                  //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_Nhacc))
+                  //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_User))
                   // }
                 />
 
@@ -405,12 +494,13 @@ export default function GroupPolicyListView() {
                       table.page * table.rowsPerPage + table.rowsPerPage
                     )
                     .map((row) => (
-                      <NhaCCTableRow
-                        key={row.ID_Nhacc}
+                      <CreateUserTableRow
+                        key={row.ID_User}
                         row={row}
-                        selected={table.selected.includes(row.ID_Nhacc)}
-                        onSelectRow={() => table.onSelectRow(row.ID_Nhacc)}
-                        onDeleteRow={() => handleDeleteRow(row.ID_Nhacc)}
+                        selected={table.selected.includes(row.ID_User)}
+                        onSelectRow={() => table.onSelectRow(row.ID_User)}
+                        onDeleteRow={() => handleDeleteRow(row.ID_User)}
+                        onShowRow={() => handleShowRow(row.ID_User)}
                         onViewRow={() => handleViewRow(row)}
                       />
                     ))}
@@ -432,22 +522,39 @@ export default function GroupPolicyListView() {
             rowsPerPage={table.rowsPerPage}
             onPageChange={table.onChangePage}
             onRowsPerPageChange={table.onChangeRowsPerPage}
+            //
             dense={table.dense}
             onChangeDense={table.onChangeDense}
           />
         </Card>
       </Container>
 
-      <NhaCCDialog
+      <UserDialog
         open={confirm.value}
         dataSelect={dataSelect}
         onClose={confirm.onFalse}
         onChange={handleInputChange}
+        handleInputDate={handleInputDate}
         handleUpdate={handleUpdate}
+        nhompb={nhompb}
         handleSelectChange={handleSelectChange}
+        handleAutocompleteChange={handleAutocompleteChange}
       />
 
-      <NhaCCDialogAdd open={confirmAdd.value} onClose={confirmAdd.onFalse} />
+      {/* <UserShowDialog
+        open={confirmShow.value}
+        dataSelect={dataShow}
+        onClose={confirmShow.onFalse}
+        onChange={handleInputChange}
+        loadingShow={loadingShow}
+        // handleInputDate={handleInputDate}
+        // handleUpdate={handleUpdate}
+        // nhompb={nhompb}
+        // handleSelectChange={handleSelectChange}
+        handleAutocompleteChange={handleAutocompleteChange}
+      /> */}
+
+      <UserDialogAdd open={confirmAdd.value} onClose={confirmAdd.onFalse} />
     </>
   );
 }
@@ -459,12 +566,12 @@ function applyFilter({
   comparator,
   filters, // dateError,
 }: {
-  inputData: INhaCC[];
+  inputData: IUser[];
   comparator: (a: any, b: any) => number;
-  filters: IPhongBanTableFilters;
+  filters: IUserTableFilters;
   // dateError: boolean;
 }) {
-  const { status, name, publish } = filters;
+  const { status, name, chinhanh, phongban } = filters;
 
   const stabilizedThis = inputData?.map((el, index) => [el, index] as const);
 
@@ -479,13 +586,18 @@ function applyFilter({
   if (name) {
     inputData = inputData?.filter(
       (order) =>
-        order.MaNhacc.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.Masothue.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        order.Hoten.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        order.Diachi.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         order.Sodienthoai.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.Sotaikhoan.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.Nganhang.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.Diachi.toLowerCase().indexOf(name.toLowerCase()) !== -1
+        order.MaPMC.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
+  }
+
+  if (chinhanh.length) {
+    inputData = inputData.filter((product) => chinhanh.includes(product.ent_chinhanh.Tenchinhanh));
+  }
+  if (phongban.length) {
+    inputData = inputData.filter((product) => phongban.includes(product.ent_nhompb.Nhompb));
   }
 
   return inputData;
@@ -493,127 +605,50 @@ function applyFilter({
 
 interface ConfirmTransferDialogProps {
   open: boolean;
-  dataSelect?: INhaCC;
+  dataSelect?: IUser;
   onClose: VoidFunction;
+  nhompb: INhompb[];
   handleUpdate: (id: string) => void;
-  handleSelectChange: any;
   onChange: (event: React.FocusEvent<HTMLInputElement>) => void;
   onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
+  handleSelectChange: any;
+  handleInputDate: any;
+  handleAutocompleteChange: any;
 }
 
-function NhaCCDialog({
+function UserDialog({
   open,
   dataSelect,
+  nhompb,
   onChange,
   onClose,
   onBlur,
   handleUpdate,
   handleSelectChange,
+  handleInputDate,
+  handleAutocompleteChange,
 }: ConfirmTransferDialogProps) {
-  const ID_Nhacc = dataSelect?.ID_Nhacc;
-
   return (
-    <Dialog open={open} fullWidth maxWidth="md" onClose={onClose}>
+    <Dialog open={open} fullWidth maxWidth="lg" onClose={onClose}>
       <DialogTitle>Cập nhật</DialogTitle>
 
-      <DialogContent>
-        <Stack spacing={2} sx={{ p: 2 }}>
-          <TextField
-            name="MaNhacc"
-            label="Mã nhóm"
-            value={dataSelect?.MaNhacc}
-            onChange={onChange}
-            fullWidth
-            onBlur={onBlur}
-          />
-          <TextField
-            name="TenNhacc"
-            label="Tên nhà cung cấp"
-            value={dataSelect?.TenNhacc}
-            onChange={onChange}
-            fullWidth
-            onBlur={onBlur}
-          />
-
-          <TextField
-            name="Masothue"
-            label="Mã số thuế"
-            value={dataSelect?.Masothue}
-            onChange={onChange}
-            fullWidth
-            onBlur={onBlur}
-          />
-          <TextField
-            name="Sodienthoai"
-            label="Số điện thoại"
-            value={dataSelect?.Sodienthoai}
-            onChange={onChange}
-            fullWidth
-            onBlur={onBlur}
-          />
-          <TextField
-            name="Sotaikhoan"
-            label="Số tài khoản"
-            value={dataSelect?.Sotaikhoan}
-            onChange={onChange}
-            fullWidth
-            onBlur={onBlur}
-          />
-          <TextField
-            name="Nganhang"
-            label="Tên ngân hàng"
-            value={dataSelect?.Nganhang}
-            onChange={onChange}
-            fullWidth
-            onBlur={onBlur}
-          />
-          <TextField
-            name="Diachi"
-            label="Địa chỉ"
-            value={dataSelect?.Diachi}
-            onChange={onChange}
-            fullWidth
-            onBlur={onBlur}
-          />
-          <TextField
-            name="Ghichu"
-            multiline
-            rows={3}
-            label="Ghi chu"
-            value={dataSelect?.Ghichu}
-            onChange={onChange}
-            fullWidth
-            onBlur={onBlur}
-          />
-        </Stack>
+      <DialogContent sx={{ overflow: 'hidden', height: 'auto' }}>
+        <Grid spacing={3}>
+          <UserNewEditForm currentUser={dataSelect} />
+        </Grid>
       </DialogContent>
-
-      <DialogActions>
-        <Button
-          variant="contained"
-          color="info"
-          onClick={() => {
-            if (ID_Nhacc) {
-              handleUpdate(ID_Nhacc);
-            }
-          }}
-        >
-          Cập nhật
-        </Button>
-        <Button onClick={onClose}>Hủy</Button>
-      </DialogActions>
     </Dialog>
   );
 }
 
-function NhaCCDialogAdd({ open, onClose }: any) {
+function UserDialogAdd({ open, onClose }: any) {
   return (
-    <Dialog open={open} fullWidth maxWidth="md" onClose={onClose}>
+    <Dialog open={open} fullWidth maxWidth="lg" onClose={onClose}>
       <DialogTitle>Thêm mới</DialogTitle>
 
       <DialogContent sx={{ overflow: 'hidden', height: 'auto' }}>
         <Grid spacing={3}>
-          <NhaCCNewForm />
+          <UserNewEditForm />
         </Grid>
       </DialogContent>
     </Dialog>

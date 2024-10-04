@@ -175,6 +175,8 @@ export const paths = {
     userAdmin: {
       root: `${ROOTS.DASHBOARD}/profile/`,
       profile: `${ROOTS.DASHBOARD}/profile/`,
+      new: `${ROOTS.DASHBOARD}/profile/new`,
+      list: `${ROOTS.DASHBOARD}/profile/list`,
     },
     
     user: {

@@ -56,7 +56,7 @@ import { IKhuvucTableFilters, IKhuvucTableFilterValue } from 'src/types/khuvuc';
 
 import {
   IDonvi,
-  ILoaiNhom,
+  ILoainhom,
   INhomts,
   ITaisanTableFilterValue,
   ITaisanTableFilters,
@@ -141,9 +141,9 @@ export default function DonViNhomListView() {
 
   const [tableDataDonVi, setTableDataDonVi] = useState<IDonvi[]>([]);
 
-  const [tableDataLoaiNhom, setTableDataLoaiNhom] = useState<ILoaiNhom[]>([]);
+  const [tableDataLoaiNhom, setTableDataLoaiNhom] = useState<ILoainhom[]>([]);
 
-  const [dataSelectLoaiNhom, setDataSelectLoaiNhom] = useState<ILoaiNhom>();
+  const [dataSelectLoaiNhom, setDataSelectLoaiNhom] = useState<ILoainhom>();
   const [dataSelectDonVi, setDataSelectDonVi] = useState<IDonvi>();
 
   useEffect(() => {
@@ -371,7 +371,7 @@ export default function DonViNhomListView() {
   }, []);
 
   const handleViewRowLoaiNhom = useCallback(
-    (data: ILoaiNhom) => {
+    (data: ILoainhom) => {
       confirm.onTrue();
       popover.onClose();
       setDataSelectLoaiNhom(data);
@@ -760,7 +760,7 @@ function applyFilterLoaiNhom({
   comparator,
   filters, // dateError,
 }: {
-  inputData: ILoaiNhom[];
+  inputData: ILoainhom[];
   comparator: (a: any, b: any) => number;
   filters: ITaisanTableFilters;
   // dateError: boolean;
@@ -819,7 +819,7 @@ function applyFilterDonVi({
 
 interface ConfirmTransferDialogProps {
   open: boolean;
-  dataSelect?: ILoaiNhom;
+  dataSelect?: ILoainhom;
   onClose: VoidFunction;
   handleUpdate: (id: string) => void;
   handleSelectChange: any;

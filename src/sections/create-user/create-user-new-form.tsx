@@ -7,6 +7,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
+import Autocomplete from '@mui/material/Autocomplete';
 // routes
 import { paths } from 'src/routes/paths';
 // hooks
@@ -25,7 +26,7 @@ import FormProvider, {
   RHFRadioGroup,
 } from 'src/components/hook-form';
 // api
-import { useGetGroupPolicy, useGetChinhanh, useGetNhomPb } from 'src/api/taisan';
+import { useGetChinhanh, useGetNhomPb, useGetPhongBanDa } from 'src/api/taisan';
 // components
 import { useSnackbar } from 'src/components/snackbar';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -46,9 +47,11 @@ export default function CreateUserNewForm() {
 
   const accessToken = localStorage.getItem(STORAGE_KEY);
 
+  const [selectedPhongbanID, setSelectedPhongbanID] = useState<any>(null); // State lưu giá trị ID_Phongban
+
   const mdUp = useResponsive('up', 'md');
 
-  const { nhompb } = useGetNhomPb();
+  const { phongbanda } = useGetPhongBanDa();
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -89,9 +92,13 @@ export default function CreateUserNewForm() {
   const values = watch();
 
   const onSubmit = handleSubmit(async (data) => {
+    const dataInsert= {
+      ...data,
+      ID_Phongban: selectedPhongbanID
+    }
     setLoading(true);
     await axios
-      .post(`http://localhost:8888/api/v1/ent_connguoi/create`, data, {
+      .post(`http://localhost:8888/api/v1/ent_connguoi/create`, dataInsert, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -100,7 +107,6 @@ export default function CreateUserNewForm() {
       .then((res) => {
         setLoading(false);
         reset();
-        window.location.reload();
         enqueueSnackbar({
           variant: 'success',
           autoHideDuration: 2000,
@@ -134,48 +140,74 @@ export default function CreateUserNewForm() {
   });
 
   const renderDetails = (
-      <Grid container xs={12} md={12} spacing={2}>
-        <Grid xs={4}>
-          <Stack spacing={3}>
-            <RHFTextField name="MaPMC" label="Mã PMC" />
-          </Stack>
-        </Grid>
-        <Grid xs={4}>
-          <Stack spacing={3}>
-            <RHFTextField name="Hoten" label="Họ tên" />
-          </Stack>
-        </Grid>
-        <Grid xs={4}>
-          <Stack spacing={3}>
-            <RHFTextField name="Diachi" label="Địa chỉ" />
-          </Stack>
-        </Grid>
-        <Grid xs={4}>
-          <Stack spacing={3}>
-            <Typography variant="subtitle2">Giới tính</Typography>
-            <RHFRadioGroup row name="Gioitinh" spacing={1} options={USER_GENDER_OPTIONS} />
-          </Stack>
-        </Grid>
-        <Grid xs={4}>
-          <Stack spacing={3}>
-            <DatePicker
-              label="Ngày ghi nhận"
-              value={new Date(values.NgayGhinhan)}
-              onChange={(newValue) => setValue('NgayGhinhan', newValue)}
-            />
-          </Stack>
-        </Grid>
-        <Grid xs={4}>
-          <Stack spacing={3}>
-            <RHFTextField name="Sodienthoai" label="Số điện thoại" />
-          </Stack>
-        </Grid>
-        <Grid xs={6}>
-          <Stack spacing={3}>
-            <RHFTextField name="Ghichu" multiline rows={3} label="Ghi chú" />
-          </Stack>
-        </Grid>
+    <Grid container xs={12} md={12} spacing={2}>
+      <Grid xs={4}>
+        <Stack spacing={3}>
+          <RHFTextField name="MaPMC" label="Mã PMC" />
+        </Stack>
       </Grid>
+      <Grid xs={4}>
+        <Stack spacing={3}>
+          <RHFTextField name="Hoten" label="Họ tên" />
+        </Stack>
+      </Grid>
+      <Grid xs={4}>
+        <Stack spacing={3}>
+          <RHFTextField name="Diachi" label="Địa chỉ" />
+        </Stack>
+      </Grid>
+      <Grid xs={4}>
+        <Stack>
+          <Typography variant="subtitle2">Giới tính</Typography>
+          <RHFRadioGroup row name="Gioitinh" options={USER_GENDER_OPTIONS} />
+        </Stack>
+      </Grid>
+      <Grid xs={4}>
+        <Stack spacing={3}>
+          <DatePicker
+            label="Ngày ghi nhận"
+            value={new Date(values.NgayGhinhan)}
+            onChange={(newValue) => setValue('NgayGhinhan', newValue)}
+          />
+        </Stack>
+      </Grid>
+      <Grid xs={4}>
+        <Stack spacing={3}>
+          <RHFTextField name="Sodienthoai" label="Số điện thoại" />
+        </Stack>
+      </Grid>
+      <Grid xs={4}>
+        <Stack spacing={3}>
+          <RHFAutocomplete
+            name="ID_Phongban"
+            label="Phòng ban dự án"
+            freeSolo
+            sx={{ flexGrow: 1, width: '100%' }}
+            options={phongbanda}
+            getOptionLabel={(option) =>
+              typeof option === 'string' ? option : option?.Tenphongban || ''
+            }
+            renderOption={(props, option) => (
+              <li {...props} key={`${option.ID_Phongban}`}>
+                {option.Tenphongban}
+              </li>
+            )}
+            onChange={(event, value) => {
+              if (typeof value === 'object' && value !== null && 'ID_Phongban' in value) {
+                setSelectedPhongbanID(value.ID_Phongban)
+              } else {
+                setSelectedPhongbanID(null);
+              }
+            }}
+          />
+        </Stack>
+      </Grid>
+      <Grid xs={6}>
+        <Stack spacing={3}>
+          <RHFTextField name="Ghichu" multiline rows={3} label="Ghi chú" />
+        </Stack>
+      </Grid>
+    </Grid>
   );
 
   const renderActions = (
@@ -184,7 +216,7 @@ export default function CreateUserNewForm() {
       <Grid
         xs={12}
         md={8}
-        sx={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'column-reverse', mb:2 }}
+        sx={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'column-reverse', mb: 2 }}
       >
         <LoadingButton
           type="submit"

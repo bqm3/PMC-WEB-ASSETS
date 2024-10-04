@@ -26,8 +26,11 @@ import { useGetNhomts, useGetTaisan } from 'src/api/taisan';
 import { ITaisan } from 'src/types/taisan';
 
 // ----------------------------------------------------------------------
+type Props = {
+  taiSan: ITaisan[];
+};
 
-export default function PhieuNXNewEditDetails() {
+export default function PhieuNXEditDetails({ taiSan }: Props) {
   const { control, setValue, watch, resetField } = useFormContext();
 
   const { fields, append, remove } = useFieldArray({
@@ -45,8 +48,6 @@ export default function PhieuNXNewEditDetails() {
   });
 
   const subTotal = sum(totalOnRow);
-
-  const { taisan } = useGetTaisan();
 
   const handleAdd = () => {
     append({
@@ -100,14 +101,14 @@ export default function PhieuNXNewEditDetails() {
     (event: any, newValue: any, index: number) => {
       if (newValue) {
         // Find the selected option from taisan
-        const selectedOption = taisan.find((option) => option.ID_Taisan === newValue.ID_Taisan);
+        const selectedOption = taiSan.find((option) => option.ID_Taisan === newValue.ID_Taisan);
         if (selectedOption) {
           // Set the corresponding ID_Taisan value in the form state
           setValue(`phieunxct[${index}].ID_Taisan`, selectedOption.ID_Taisan);
         }
       }
     },
-    [setValue, taisan]
+    [setValue, taiSan]
   );
 
   const formatCash = (input: string) => {
@@ -164,9 +165,9 @@ export default function PhieuNXNewEditDetails() {
                     render={({ field }) => (
                       <Autocomplete
                         {...field}
-                        options={taisan}
+                        options={taiSan}
                         getOptionLabel={(option: any) =>
-                          taisan.find((i: any) => `${i.ID_Taisan}` === `${option}`)?.Tents || ''
+                          taiSan.find((i: any) => `${i.ID_Taisan}` === `${option}`)?.Tents || ''
                         }
                         onChange={(event, newValue) => handleTaiSanChange(event, newValue, index)}
                         renderInput={(params) => (

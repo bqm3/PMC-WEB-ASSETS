@@ -17,7 +17,7 @@ import { useBoolean } from 'src/hooks/use-boolean';
 // utils
 import { fCurrency } from 'src/utils/format-number';
 // types
-import { IGroupPolicy, ILoaiNhom, INhomts } from 'src/types/taisan';
+import { IGroupPolicy, ILoainhom, INhomts } from 'src/types/taisan';
 // components
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
@@ -28,7 +28,7 @@ import moment from 'moment';
 // ----------------------------------------------------------------------
 
 type Props = {
-  row: ILoaiNhom;
+  row: ILoainhom;
   selected: boolean;
   onViewRow: VoidFunction;
   onSelectRow: VoidFunction;

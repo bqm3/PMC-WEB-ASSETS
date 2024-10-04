@@ -1,4 +1,5 @@
 import { format } from 'date-fns';
+import { styled } from '@mui/material/styles';
 // @mui
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
@@ -12,38 +13,47 @@ import Checkbox from '@mui/material/Checkbox';
 import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
 import ListItemText from '@mui/material/ListItemText';
+import Label from 'src/components/label';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // utils
 import { fCurrency } from 'src/utils/format-number';
 // types
-import { IOrderItem } from 'src/types/order';
-import { IKhuvuc, IHangMuc, ICalv, IGiamsat, IUser } from 'src/types/khuvuc';
+import { IConnguoi, IGroupPolicy, IUser } from 'src/types/taisan';
 // components
-import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import moment from 'moment';
 
 // ----------------------------------------------------------------------
+const StyledTableCell = styled(TableCell)({
+  overflow: 'hidden',
+  WebkitLineClamp: 2,
+  WebkitBoxOrient: 'vertical',
+  whiteSpace: 'nowrap', // Prevent wrapping
+  textOverflow: 'ellipsis', // Display ellipsis for truncated text
+  maxWidth: '200px', // Set a max width for truncation
+});
 
 type Props = {
   row: IUser;
   selected: boolean;
   onViewRow: VoidFunction;
-//   onSelectRow: VoidFunction;
-//   onDeleteRow: VoidFunction;
+  onShowRow: VoidFunction;
+  onSelectRow: VoidFunction;
+  onDeleteRow: VoidFunction;
 };
 
 export default function CalvTableRow({
   row,
   selected,
   onViewRow,
-//   onSelectRow,
-//   onDeleteRow,
+  onShowRow,
+  onSelectRow,
+  onDeleteRow,
 }: Props) {
-  const { ID_Duan, ID_User, ID_KhoiCV, isDelete, ent_chucvu, ent_khoicv, UserName, Emails } = row;
+  const { ID_User,Anh, Diachi, Gioitinh,Hoten, Emails, ent_chinhanh, ent_chucvu, ent_phongbanda, ent_nhompb, MaPMC, Sodienthoai  } = row;
 
   const confirm = useBoolean();
 
@@ -52,13 +62,16 @@ export default function CalvTableRow({
   const popover = usePopover();
 
   const renderPrimary = (
-    <TableRow hover selected={selected}  sx={{
-      '& .MuiTableCell-root': {
-        borderBottom: '2px solid rgba(0, 0, 0, 0.05)', // Thicker border
-      },
-    }}>
-      
-      <TableCell>
+    <TableRow
+      hover
+      selected={selected}
+      sx={{
+        '& .MuiTableCell-root': {
+          borderBottom: '2px solid rgba(0, 0, 0, 0.05)', // Thicker border
+        },
+      }}
+    >
+      <StyledTableCell>
         <Box
           onClick={onViewRow}
           sx={{
@@ -68,37 +81,19 @@ export default function CalvTableRow({
             },
           }}
         >
-          GS-{ID_User}
+          U-{ID_User}
         </Box>
-      </TableCell>
+      </StyledTableCell>
 
-      <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-        <ListItemText
-          primary={UserName}
-          // secondary={ent_khoicv?.KhoiCV}
-          primaryTypographyProps={{ typography: 'body2' }}
-          secondaryTypographyProps={{
-            component: 'span',
-            color: 'text.disabled',
-          }}
-        />
-      </TableCell>
-      <TableCell align="center"> {Emails} </TableCell>
-      <TableCell align="center"> {ent_chucvu?.Chucvu}</TableCell>
+      <StyledTableCell>{MaPMC}</StyledTableCell>
+      <StyledTableCell>{Hoten}</StyledTableCell>
+      
+      <StyledTableCell>{ent_phongbanda?.Tenphongban}</StyledTableCell>
+      
+      <StyledTableCell>{ent_chucvu?.Chucvu}</StyledTableCell>
+      <StyledTableCell>{ent_nhompb?.Nhompb}</StyledTableCell>
+      <StyledTableCell>{ent_chinhanh?.Tenchinhanh}</StyledTableCell>
 
-      <TableCell align="center">
-        <Label
-          variant="soft"
-          color={
-            (`${ID_KhoiCV}` === '1' && 'success') ||
-            (`${ID_KhoiCV}` === '2' && 'warning') ||
-            (`${ID_KhoiCV}` === '3' && 'error') ||
-            'default'
-          }
-        >
-          {ent_khoicv.KhoiCV}
-        </Label>
-      </TableCell>
       <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
         <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
           <Iconify icon="eva:more-vertical-fill" />
@@ -123,10 +118,19 @@ export default function CalvTableRow({
             popover.onClose();
           }}
         >
-          <Iconify icon="solar:eye-bold" />
-          Xem
+          <Iconify icon="solar:pen-bold" />
+          Cập nhật
         </MenuItem>
         {/* <MenuItem
+          onClick={() => {
+            onShowRow();
+            popover.onClose();
+          }}
+        >
+          <Iconify icon="solar:eye-bold" />
+          Xem
+        </MenuItem> */}
+        <MenuItem
           onClick={() => {
             confirm.onTrue();
             popover.onClose();
@@ -135,10 +139,10 @@ export default function CalvTableRow({
         >
           <Iconify icon="solar:trash-bin-trash-bold" />
           Xóa
-        </MenuItem> */}
+        </MenuItem>
       </CustomPopover>
 
-      {/* <ConfirmDialog
+      <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
         title="PMC thông báo"
@@ -148,7 +152,7 @@ export default function CalvTableRow({
             Xóa
           </Button>
         }
-      /> */}
+      />
     </>
   );
 }

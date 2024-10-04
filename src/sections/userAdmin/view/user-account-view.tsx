@@ -51,7 +51,7 @@ export default function AccountView() {
           { name: 'Người dùng', href: paths.dashboard.userAdmin.root },
         ]}
         sx={{
-          mb: { xs: 3, md: 5 },
+          mb: { xs: 1, md: 2 },
         }}
       />
 
@@ -59,7 +59,7 @@ export default function AccountView() {
         value={currentTab}
         onChange={handleChangeTab}
         sx={{
-          mb: { xs: 3, md: 5 },
+          mb: { xs: 1, md: 2 },
         }}
       >
         {TABS.map((tab) => (

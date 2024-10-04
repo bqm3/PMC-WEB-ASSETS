@@ -50,6 +50,8 @@ const SuaChuaTSEditPage = lazy(() => import('src/pages/dashboard/suachuats/edit'
 const TaiSanQrCodeListsPage = lazy(() => import('src/pages/dashboard/taisanqrcode/list'));
 
 const ProfilePage = lazy(() => import('src/pages/dashboard/userAdmin/profile'));
+const NewUserPage = lazy(() => import('src/pages/dashboard/userAdmin/new'));
+const ListUserPage = lazy(() => import('src/pages/dashboard/userAdmin/list'));
 
 // -----------------------------------------
 
@@ -115,7 +117,7 @@ export const dashboardRoutes = [
         ],
       },
       {
-        path: 'create-user',
+        path: 'user',
         children: [
           { element: <CreateUserListsPage />, index: true },
           { path: 'list', element: <CreateUserListsPage /> },
@@ -160,7 +162,11 @@ export const dashboardRoutes = [
       },
       {
         path: 'profile',
-        children: [{ element: <ProfilePage />, index: true }],
+        children: [
+          { element: <ProfilePage />, index: true },
+          { path: 'list', element: <ListUserPage /> },
+          { path: 'new', element: <NewUserPage /> },
+        ],
       },
 
 

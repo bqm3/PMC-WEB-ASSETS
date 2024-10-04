@@ -1,7 +1,3 @@
-import {
-  IUser,
-} from 'src/types/khuvuc';
-// utils
 import { endpoints, fetcher } from 'src/utils/axios';
 import { useEffect, useMemo } from 'react';
 
@@ -9,8 +5,9 @@ import { useEffect, useMemo } from 'react';
 import useSWR from 'swr';
 import { IChinhanh, IConnguoi, IDonvi, IGroupPolicy, INam, INghiepvu, INhompb,
   ITaisanQrCode, INhomts, IPhieuNX, IPhongbanda, IPolicy, ISuachuaTS, ITaisan, IThang, 
-  ILoaiNhom,
-  INhaCC} from 'src/types/taisan';
+  ILoainhom,IUser,
+  INhaCC,
+  IChucvu} from 'src/types/taisan';
 
 const STORAGE_KEY = 'accessToken';
 
@@ -98,6 +95,34 @@ export function useGetConNguoi() {
   return memoizedValue;
 }
 
+export function useGetUser() {
+  const accessToken = localStorage.getItem(STORAGE_KEY);
+  const URL = 'http://localhost:8888/api/v1/ent_user/all';
+  const fetCher = (url: string) =>
+    fetch(url, {
+      method: 'get',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }).then((res) => res.json());
+  const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetCher);
+
+  const memoizedValue = useMemo(
+    () => ({
+      user: (data?.data as IUser[]) || [],
+      userLoading: isLoading,
+      userError: error,
+      userValidating: isValidating,
+      userEmpty: !isLoading && !data.length,
+      mutateUser: mutate,
+    }),
+    [data, error, isLoading, isValidating, mutate]
+  );
+
+  return memoizedValue;
+}
+
 export function useGetNhomPb() {
   const accessToken = localStorage.getItem(STORAGE_KEY);
   const URL = 'http://localhost:8888/api/v1/ent_nhompb/all';
@@ -167,7 +192,7 @@ export function useGetLoaiNhom() {
 
   const memoizedValue = useMemo(
     () => ({
-      loainhom: (data?.data as ILoaiNhom[]) || [],
+      loainhom: (data?.data as ILoainhom[]) || [],
       loainhomLoading: isLoading,
       loainhomError: error,
       loainhomValidating: isValidating,
@@ -340,6 +365,34 @@ export function useGetPhongBanDa() {
       phongbandaValidating: isValidating,
       phongbandaEmpty: !isLoading && !data.length,
       mutatePhongBanDa: mutate,
+    }),
+    [data, error, isLoading, isValidating, mutate]
+  );
+
+  return memoizedValue;
+}
+
+export function useGetChucvu() {
+  const accessToken = localStorage.getItem(STORAGE_KEY);
+  const URL = 'http://localhost:8888/api/v1/ent_chucvu/all';
+  const fetCher = (url: string) =>
+    fetch(url, {
+      method: 'get',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }).then((res) => res.json());
+  const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetCher);
+
+  const memoizedValue = useMemo(
+    () => ({
+      chucvu: (data?.data as IChucvu[]) || [],
+      chucvuLoading: isLoading,
+      chucvuError: error,
+      chucvuValidating: isValidating,
+      chucvuEmpty: !isLoading && !data.length,
+      mutateChucvu: mutate,
     }),
     [data, error, isLoading, isValidating, mutate]
   );

@@ -22,8 +22,16 @@ import { _tags, _roles, USER_GENDER_OPTIONS } from 'src/_mock';
 import FormProvider, { RHFSelect, RHFTextField } from 'src/components/hook-form';
 // types
 // api
-import { IPhongbanda } from 'src/types/taisan';
-import { useGetNghiepvu, useGetPhongBanDa, useGetNam, useGetThang } from 'src/api/taisan';
+import { IPhongbanda, ITaisan } from 'src/types/taisan';
+import {
+  useGetNghiepvu,
+  useGetPhongBanDa,
+  useGetNam,
+  useGetThang,
+  useGetNhacc,
+  useGetLoaiNhom,
+  useGetTaisan,
+} from 'src/api/taisan';
 // components
 import { useSnackbar } from 'src/components/snackbar';
 // types
@@ -33,7 +41,7 @@ import { useSettingsContext } from 'src/components/settings';
 import axios from 'axios';
 import { useBoolean } from 'src/hooks/use-boolean';
 
-import PhieuNXNewEditDetails from './phieunx-new-edit-details';
+import PhieuNXNewEditDetails from './phieunx-new-details';
 
 // ----------------------------------------------------------------------
 
@@ -69,7 +77,8 @@ export default function SuaChuaTSNewForm() {
 
   const [loading, setLoading] = useState<Boolean | any>(false);
 
-  const [noiXuat, setNoiXuat] = useState<IPhongbanda[]>([]);
+  const [noiXuat, setNoiXuat] = useState<any>([]);
+  const [taiSan, setTaiSan] = useState<ITaisan[]>([]);
 
   const [noiNhap, setNoiNhap] = useState<IPhongbanda[]>([]);
 
@@ -80,6 +89,8 @@ export default function SuaChuaTSNewForm() {
   const { phongbanda } = useGetPhongBanDa();
 
   const { nghiepvu } = useGetNghiepvu();
+  const { loainhom } = useGetLoaiNhom();
+  const { taisan } = useGetTaisan();
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -87,8 +98,9 @@ export default function SuaChuaTSNewForm() {
     Sophieu: Yup.string().required('Không được để trống'),
     NgayNX: Yup.mixed<any>().nullable().required('Phải có ngày nhập xuất'),
     ID_Nghiepvu: Yup.string().required('Không được để trống'),
-    ID_NoiXuat: Yup.mixed<any>(),
-    ID_NoiNhap: Yup.mixed<any>(),
+    ID_NoiXuat: Yup.mixed<any>().required('Không được để trống'),
+    ID_NoiNhap: Yup.mixed<any>().required('Không được để trống'),
+    ID_Loainhom: Yup.mixed<any>().required('Không được để trống'),
   });
 
   const defaultValues = useMemo(
@@ -97,6 +109,7 @@ export default function SuaChuaTSNewForm() {
       Sophieu: '',
       ID_NoiNhap: null,
       ID_NoiXuat: null,
+      ID_Loainhom: null,
       NgayNX: new Date(),
       Ghichu: '',
       ID_Quy: null,
@@ -130,28 +143,67 @@ export default function SuaChuaTSNewForm() {
 
   const values = watch();
 
+  // 1: Phiếu hàng tồn đầu kỳ
+  // 2: Phiếu nhập ngoài
+  // 3: Phiếu nhập xuất nội bộ
+  // 4: Phiếu nhập khác
+  // 5: Phiếu xuất trả nhà cung cấp
+  // 6: Phiếu xuất thanh lý
+  // 7: Phiếu xuất hủy
+  // 8: Phiếu xuất khác
+  // 9: Phiếu kiểm kê // }
+
+  // 1-9 ID_NX = ID_NN
+  // 3 ID_NX !== ID_NN
+  // 4-8 (vẫn là phongbanda) random
+  // 7 - 6 ID_NX = ID_NN
+
+  // 2-5 là của bảng ENT_PhieuNCC
+
   useEffect(() => {
-    let dataNoiNhap = [];
-    let dataNoiXuat = [];
+    let dataNoiNhap: any = [];
+    let dataNoiXuat: any = [];
 
-    if (`${values.ID_Nghiepvu}` === '2') {
-      dataNoiXuat = phongbanda.filter((item) => item.Thuoc === 'Dự án ngoài');
-      dataNoiNhap = phongbanda.filter((item) => item.Thuoc === 'PMC');
-    } else if (`${values.ID_Nghiepvu}` === '1' || `${values.ID_Nghiepvu}` === '7') {
-      dataNoiNhap = phongbanda?.filter((item) => item.Thuoc === 'PMC');
-      dataNoiXuat = phongbanda?.filter((item) => item.Thuoc === 'PMC');
-      setValue('ID_NoiXuat', values.ID_NoiNhap);
-    } else if (`${values.ID_Nghiepvu}` === '5' || `${values.ID_Nghiepvu}` === '6') {
-      dataNoiNhap = phongbanda.filter((item) => item.Thuoc === 'Dự án ngoài');
-      dataNoiXuat = phongbanda.filter((item) => item.Thuoc === 'PMC');
+    if (
+      `${values.ID_Nghiepvu}` === '1' ||
+      `${values.ID_Nghiepvu}` === '9' ||
+      `${values.ID_Nghiepvu}` === '7' ||
+      `${values.ID_Nghiepvu}` === '6'
+    ) {
+      dataNoiXuat = phongbanda;
+      dataNoiNhap = phongbanda;
+
+      if (values.ID_NoiNhap) {
+        setValue('ID_NoiXuat', values.ID_NoiNhap);
+      } else if (values.ID_NoiXuat) {
+        setValue('ID_NoiNhap', values.ID_NoiXuat);
+      }
+
+      if (values.ID_NoiNhap === values.ID_NoiXuat) {
+        if (values.ID_NoiNhap && values.ID_NoiXuat) {
+          setValue('ID_NoiNhap', values.ID_NoiXuat); // Đồng bộ giá trị
+        }
+      }
+    } else if (`${values.ID_Nghiepvu}` === '3') {
+      dataNoiNhap = phongbanda;
+      dataNoiXuat = dataNoiNhap.filter((item: any) => item.ID_Phongban !== values.ID_NoiNhap);
     } else {
-      dataNoiNhap = phongbanda.filter((item) => item.Thuoc === 'PMC');
-      dataNoiXuat = dataNoiNhap.filter((item) => item.ID_Phongban !== values.ID_NoiNhap);
+      dataNoiXuat = phongbanda;
+      dataNoiNhap = phongbanda;
     }
-
     setNoiNhap(dataNoiNhap);
     setNoiXuat(dataNoiXuat);
-  }, [values.ID_Nghiepvu, phongbanda, values.ID_NoiNhap, setValue]);
+  }, [values.ID_Nghiepvu, phongbanda, values.ID_NoiNhap, values.ID_NoiXuat, setValue]);
+
+  useEffect(() => {
+    let dataTaiSan: any = [];
+    if (values.ID_Loainhom) {
+      dataTaiSan = taisan.filter((item) => `${item.ent_nhomts.ent_loainhom.ID_Loainhom}` === `${values.ID_Loainhom}`);
+    } else {
+      dataTaiSan = taisan
+    }
+    setTaiSan(dataTaiSan);
+  }, [values.ID_Loainhom, taisan, setValue]);
 
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
@@ -204,21 +256,23 @@ export default function SuaChuaTSNewForm() {
           {nghiepvu?.length > 0 && (
             <RHFSelect
               name="ID_Nghiepvu"
-              label="Nghiệp vụ"
+              label="Nghiệp vụ *"
               InputLabelProps={{ shrink: true }}
               PaperPropsSx={{ textTransform: 'capitalize' }}
             >
-              {nghiepvu?.map((item) => (
-                <MenuItem key={item?.ID_Nghiepvu} value={item?.ID_Nghiepvu}>
-                  {item?.Nghiepvu}
-                </MenuItem>
-              ))}
+              {nghiepvu
+                ?.filter((item) => ['1', '9', '7', '6', '3'].includes(`${item?.ID_Nghiepvu}`))
+                .map((item) => (
+                  <MenuItem key={item?.ID_Nghiepvu} value={item?.ID_Nghiepvu}>
+                    {item?.Nghiepvu}
+                  </MenuItem>
+                ))}
             </RHFSelect>
           )}
           {noiNhap?.length > 0 && (
             <RHFSelect
               name="ID_NoiNhap"
-              label="Nơi nhập"
+              label="Nơi nhập *"
               InputLabelProps={{ shrink: true }}
               PaperPropsSx={{ textTransform: 'capitalize' }}
             >
@@ -232,11 +286,11 @@ export default function SuaChuaTSNewForm() {
           {noiXuat?.length > 0 && (
             <RHFSelect
               name="ID_NoiXuat"
-              label="Nơi xuất"
+              label="Nơi xuất *"
               InputLabelProps={{ shrink: true }}
               PaperPropsSx={{ textTransform: 'capitalize' }}
             >
-              {noiXuat?.map((item) => (
+              {noiXuat?.map((item: any) => (
                 <MenuItem key={item?.ID_Phongban} value={item?.ID_Phongban}>
                   {item?.Tenphongban}
                 </MenuItem>
@@ -245,13 +299,25 @@ export default function SuaChuaTSNewForm() {
           )}
         </Stack>
         <Stack spacing={3} sx={{ p: 2, display: 'flex', flexDirection: 'row' }}>
-          <RHFTextField name="Sophieu" label="Mã số phiếu" />
+          <RHFTextField name="Sophieu" label="Mã số phiếu *" />
+          <RHFSelect
+            name="ID_Loainhom"
+            label="Loại nhóm *"
+            InputLabelProps={{ shrink: true }}
+            PaperPropsSx={{ textTransform: 'capitalize' }}
+          >
+            {loainhom?.map((item) => (
+              <MenuItem key={item?.ID_Loainhom} value={item?.ID_Loainhom}>
+                {item?.Loainhom}
+              </MenuItem>
+            ))}
+          </RHFSelect>
           <Controller
             name="NgayNX"
             control={control}
             render={({ field, fieldState: { error } }) => (
               <DatePicker
-                label="Ngày nhập xuất"
+                label="Ngày nhập xuất "
                 value={field.value}
                 onChange={(newValue) => {
                   field.onChange(newValue);
@@ -278,6 +344,7 @@ export default function SuaChuaTSNewForm() {
               </MenuItem>
             ))}
           </RHFSelect>
+          
         </Stack>
         <Stack spacing={3} sx={{ p: 1.5 }}>
           <RHFTextField name="Ghichu" multiline rows={3} label="Ghi chú" />
@@ -290,7 +357,7 @@ export default function SuaChuaTSNewForm() {
     <FormProvider methods={methods}>
       {renderDetails}
       <Card sx={{ mt: 3 }}>
-        <PhieuNXNewEditDetails />
+        <PhieuNXNewEditDetails taiSan={taiSan}/>
       </Card>
 
       <Stack justifyContent="flex-end" direction="row" spacing={2} sx={{ mt: 3 }}>
@@ -298,7 +365,7 @@ export default function SuaChuaTSNewForm() {
           type="submit"
           size="large"
           variant="contained"
-          loading={loadingSend.value && isSubmitting}
+          loading={loading}
           onClick={onSubmit}
         >
           Tạo mới

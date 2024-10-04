@@ -53,93 +53,120 @@ export function useNavData() {
   const { t } = useLocales();
   const { user, logout } = useAuthContext();
 
-  useEffect(() => {}, []);
+  useEffect(() => { }, []);
 
   const data = useMemo(() => {
     const navigationData = [
       // OVERVIEW
       {
         subheader: t('overview'),
-        items: user
-          ? [
-              user?.Permission === 1
-                ? {
-                    title: t('analytics'),
-                    path: paths.dashboard.general.analytics,
-                    icon: ICONS.analytics,
-                  }
-                : {
-                    title: t('management'),
-                    path: paths.dashboard.general.management,
-                    icon: ICONS.analytics,
-                  },
-            ]
-          : [],
+        items: [],
       },
       // MANAGEMENT
       {
         subheader: t('lists'),
 
-        items:
-          user?.ID_Chucvu === 1
-            ? [
-                // KHU VUC
-                // {
-                //   title: t('area'),
-                //   path: paths.dashboard.khuvuc.root,
-                //   icon: ICONS.tour,
-                //   children: [
-                //     { title: t('list'), path: paths.dashboard.khuvuc.root },
-                //     { title: t('create'), path: paths.dashboard.khuvuc.new },
-                //   ],
-                // },
-                // {
-                //   title: t('article'),
-                //   path: paths.dashboard.hangmuc.root,
-                //   icon: ICONS.kanban,
-                //   children: [
-                //     { title: t('list'), path: paths.dashboard.hangmuc.root },
-                //     { title: t('create'), path: paths.dashboard.hangmuc.new,  },
-                //   ],
-                // },
-                // {
-                //   title: t('calv'),
-                //   path: paths.dashboard.calv.root,
-                //   icon: ICONS.job,
-                //   children: [
-                //     { title: t('list'), path: paths.dashboard.calv.root },
-                //     { title: t('create'), path: paths.dashboard.calv.new },
-                //   ],
-                // },
-                // {
-                //   title: t('taikhoangiamsat'),
-                //   path: paths.dashboard.quanlygiamsat.root,
-                //   icon: ICONS.external,
-                //   children: [
-                //     { title: t('list'), path: paths.dashboard.quanlygiamsat.root },
-                //   ],
-                // },
-                // {
-                //   title: t('giamsat'),
-                //   path: paths.dashboard.giamsat.root,
-                //   icon: ICONS.user,
-                //   children: [
-                //     { title: t('list'), path: paths.dashboard.giamsat.root },
-                //     { title: t('create'), path: paths.dashboard.giamsat.new },
-                //   ],
-                // },
-                // {
-                //   title: t('checklist'),
-                //   path: paths.dashboard.checklist.root,
-                //   icon: ICONS.lock,
-                //   children: [
-                //     { title: t('list'), path: paths.dashboard.checklist.root },
-                //     { title: t('create'), path: paths.dashboard.checklist.new },
-                //     { title: t('calamviec'), path: paths.dashboard.checklist.lists },
-                //   ],
-                // },
-              ]
-            : [],
+        items: [
+          {
+            title: t('grouppolicy'),
+            path: paths.dashboard.grouppolicy.root,
+            icon: ICONS.folder,
+            children: [
+              { title: t('list'), path: paths.dashboard.grouppolicy.root },
+              { title: t('create'), path: paths.dashboard.grouppolicy.new },
+            ],
+          },
+          {
+            title: t('policy'),
+            path: paths.dashboard.policy.root,
+            icon: ICONS.file,
+            children: [
+              { title: t('list'), path: paths.dashboard.policy.root },
+              { title: t('create'), path: paths.dashboard.policy.new },
+            ],
+          },
+
+          {
+            title: t('nhacc'),
+            path: paths.dashboard.nhacc.root,
+            icon: ICONS.invoice,
+            children: [
+              { title: t('list'), path: paths.dashboard.nhacc.root },
+              { title: t('create'), path: paths.dashboard.nhacc.new },
+            ],
+          },
+          {
+            title: t('phongbanda'),
+            path: paths.dashboard.phongbanda.root,
+            icon: ICONS.banking,
+            children: [
+              { title: t('list'), path: paths.dashboard.phongbanda.root },
+              { title: t('create'), path: paths.dashboard.phongbanda.new },
+            ],
+          },
+          {
+            title: t('donvi-nhom'),
+            path: paths.dashboard.donvi.root,
+            icon: ICONS.external,
+            children: [
+              { title: t('list'), path: paths.dashboard.donvi.root },
+              { title: t('create'), path: paths.dashboard.donvi.new },
+            ],
+          },
+
+          {
+            title: t('nhomts'),
+            path: paths.dashboard.nhomts.root,
+            icon: ICONS.ecommerce,
+            children: [
+              { title: t('list'), path: paths.dashboard.nhomts.root },
+              { title: t('create'), path: paths.dashboard.nhomts.new },
+            ],
+          },
+          {
+            title: t('taisan'),
+            path: paths.dashboard.taisan.root,
+            icon: ICONS.product,
+            children: [
+              { title: t('list'), path: paths.dashboard.taisan.root },
+              { title: t('create'), path: paths.dashboard.taisan.new },
+            ],
+          },
+
+          {
+            title: t('phieunx'),
+            path: paths.dashboard.phieunx.root,
+            icon: ICONS.invoice,
+            children: [
+              { title: t('list'), path: paths.dashboard.phieunx.root },
+              { title: t('create'), path: paths.dashboard.phieunx.new },
+            ],
+          },
+          {
+            title: t('suachuats'),
+            path: paths.dashboard.suachuats.root,
+            icon: ICONS.disabled,
+            children: [
+              { title: t('list'), path: paths.dashboard.suachuats.root },
+              { title: t('create'), path: paths.dashboard.suachuats.new },
+            ],
+          },
+          {
+            title: t('taisanqrcode'),
+            path: paths.dashboard.taisanqrcode.root,
+            icon: ICONS.external,
+            children: [{ title: t('list'), path: paths.dashboard.taisanqrcode.root }],
+          },
+          {
+            title: t('createuser'),
+            path: paths.dashboard.createuser.root,
+            icon: ICONS.user,
+            children: [
+              { title: t('list'), path: paths.dashboard.createuser.root },
+              { title: t('create'), path: paths.dashboard.createuser.new },
+            ],
+          },
+        ],
       },
 
       {
@@ -149,119 +176,28 @@ export function useNavData() {
             title: t('user'),
             path: paths.dashboard.userAdmin.root,
             icon: ICONS.user,
-            children: [{ title: t('account'), path: paths.dashboard.userAdmin.root }],
+
+            children: [
+              {
+                title: t('account'),
+                path: paths.dashboard.userAdmin.root
+              },
+              {
+                title: t('list'),
+                path: paths.dashboard.userAdmin.list
+              },
+              {
+                title: t('create'),
+                path: paths.dashboard.userAdmin.new
+              }
+            ],
           },
         ],
       },
     ];
 
-    // Conditionally add "Tạo tài khoản" tab if user's role_id is 1
-    if (user?.ID_Chucvu === 1 || user?.ID_Chucvu === 2) {
-      navigationData[1].items.push(
-        {
-          title: t('grouppolicy'),
-          path: paths.dashboard.grouppolicy.root,
-          icon: ICONS.folder,
-          children: [
-            { title: t('list'), path: paths.dashboard.grouppolicy.root },
-            { title: t('create'), path: paths.dashboard.grouppolicy.new },
-          ],
-        },
-        {
-          title: t('policy'),
-          path: paths.dashboard.policy.root,
-          icon: ICONS.file,
-          children: [
-            { title: t('list'), path: paths.dashboard.policy.root },
-            { title: t('create'), path: paths.dashboard.policy.new },
-          ],
-        },
-
-        {
-          title: t('nhacc'),
-          path: paths.dashboard.nhacc.root,
-          icon: ICONS.invoice,
-          children: [
-            { title: t('list'), path: paths.dashboard.nhacc.root },
-            { title: t('create'), path: paths.dashboard.nhacc.new },
-          ],
-        },
-        {
-          title: t('phongbanda'),
-          path: paths.dashboard.phongbanda.root,
-          icon: ICONS.banking,
-          children: [
-            { title: t('list'), path: paths.dashboard.phongbanda.root },
-            { title: t('create'), path: paths.dashboard.phongbanda.new },
-          ],
-        },
-        {
-          title: t('donvi-nhom'),
-          path: paths.dashboard.donvi.root,
-          icon: ICONS.external,
-          children: [
-            { title: t('list'), path: paths.dashboard.donvi.root },
-            { title: t('create'), path: paths.dashboard.donvi.new },
-          ],
-        },
-
-        {
-          title: t('nhomts'),
-          path: paths.dashboard.nhomts.root,
-          icon: ICONS.ecommerce,
-          children: [
-            { title: t('list'), path: paths.dashboard.nhomts.root },
-            { title: t('create'), path: paths.dashboard.nhomts.new },
-          ],
-        },
-        {
-          title: t('taisan'),
-          path: paths.dashboard.taisan.root,
-          icon: ICONS.product,
-          children: [
-            { title: t('list'), path: paths.dashboard.taisan.root },
-            { title: t('create'), path: paths.dashboard.taisan.new },
-          ],
-        },
-
-        {
-          title: t('phieunx'),
-          path: paths.dashboard.phieunx.root,
-          icon: ICONS.invoice,
-          children: [
-            { title: t('list'), path: paths.dashboard.phieunx.root },
-            { title: t('create'), path: paths.dashboard.phieunx.new },
-          ],
-        },
-        {
-          title: t('suachuats'),
-          path: paths.dashboard.suachuats.root,
-          icon: ICONS.disabled,
-          children: [
-            { title: t('list'), path: paths.dashboard.suachuats.root },
-            { title: t('create'), path: paths.dashboard.suachuats.new },
-          ],
-        },
-        {
-          title: t('taisanqrcode'),
-          path: paths.dashboard.taisanqrcode.root,
-          icon: ICONS.external,
-          children: [{ title: t('list'), path: paths.dashboard.taisanqrcode.root }],
-        },
-        {
-          title: t('createuser'),
-          path: paths.dashboard.createuser.root,
-          icon: ICONS.user,
-          children: [
-            { title: t('list'), path: paths.dashboard.createuser.root },
-            { title: t('create'), path: paths.dashboard.createuser.new },
-          ],
-        }
-      );
-    }
-
     return navigationData;
-  }, [t, user]);
+  }, [t]);
 
   return data;
 }

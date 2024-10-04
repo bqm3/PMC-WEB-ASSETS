@@ -20,7 +20,7 @@ import { useRouter } from 'src/routes/hooks';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // _mock
-import { useGetConNguoi, useGetGroupPolicy, useGetNhomPb } from 'src/api/taisan';
+import { useGetConNguoi, useGetChinhanh, useGetNhomPb, useGetPhongBanDa } from 'src/api/taisan';
 // components
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
@@ -40,11 +40,14 @@ import {
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
+import Autocomplete from '@mui/material/Autocomplete';
+import { Typography } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import Dialog, { DialogProps } from '@mui/material/Dialog';
+import CircularProgress from '@mui/material/CircularProgress';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -57,32 +60,50 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useSnackbar } from 'src/components/snackbar';
 import { LoadingButton } from '@mui/lab';
+import Timeline from '@mui/lab/Timeline';
+import TimelineItem from '@mui/lab/TimelineItem';
+import TimelineSeparator from '@mui/lab/TimelineSeparator';
+import TimelineConnector from '@mui/lab/TimelineConnector';
+import TimelineContent from '@mui/lab/TimelineContent';
+import TimelineOppositeContent from '@mui/lab/TimelineOppositeContent';
+import TimelineDot from '@mui/lab/TimelineDot';
 // types
 import { IKhuvucTableFilters, IKhuvucTableFilterValue } from 'src/types/khuvuc';
 
-import { IConnguoi, INhompb, ITaisanTableFilters } from 'src/types/taisan';
+import {
+  IConnguoi,
+  INhompb,
+  ITaisanTableFilters,
+  IUserTableFilters,
+  IUserTableFilterValue,
+} from 'src/types/taisan';
 //
 import CreateUserTableRow from '../create-user-table-row';
 import UserTableToolbar from '../create-user-table-toolbar';
 import UserTableFiltersResult from '../create-user-filters-result';
 import UserNewEditForm from '../create-user-new-form';
+
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'ID_Connguoi', label: 'Mã', width: 100 },
-  { id: 'MaPMC', label: 'Mã truy cập', width: 150 },
-  { id: 'Hoten', label: 'Họ tên', width: 150 },
-  { id: 'Gioitinh', label: 'Giới tính', width: 150 },
-  { id: 'Diachi', label: 'Địa chỉ', width: 180 },
-  { id: 'Sodienthoai', label: 'Số điện thoại', width: 150 },
-  { id: '', width: 88 },
+  { id: 'ID_Connguoi', label: 'Mã', width: 50 },
+  { id: 'MaPMC', label: 'Mã truy cập', width: 100 },
+  { id: 'Hoten', label: 'Họ tên', width: 120 },
+  { id: 'Diachi', label: 'Địa chỉ', width: 120 },
+  { id: 'Sodienthoai', label: 'Số điện thoại', width: 80 },
+  { id: 'iTinhtrang', label: 'Tình trạng', width: 80 },
+  { id: 'Tenphongban', label: 'Phòng ban', width: 120 },
+  { id: '', width: 30 },
 ];
 
-const defaultFilters: ITaisanTableFilters = {
+const defaultFilters: IUserTableFilters = {
   name: '',
   status: 'all',
   startDate: null,
   endDate: null,
+  chinhanh: [],
+  phongban: [],
+
 };
 
 const STORAGE_KEY = 'accessToken';
@@ -97,9 +118,11 @@ export default function GroupPolicyListView() {
 
   const popover = usePopover();
   const popoverAdd = usePopover();
+  const popoverShow = usePopover();
 
   const confirm = useBoolean();
   const confirmAdd = useBoolean();
+  const confirmShow = useBoolean();
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -110,10 +133,38 @@ export default function GroupPolicyListView() {
   const { connguoi, mutateConnguoi } = useGetConNguoi();
 
   const { nhompb } = useGetNhomPb();
+  const { chinhanh } = useGetChinhanh();
 
   const [tableData, setTableData] = useState<IConnguoi[]>([]);
 
-  const [dataSelect, setDataSelect] = useState<IConnguoi>();
+  const [dataSelect, setDataSelect] = useState<any>();
+  const [dataShow, setDataShow] = useState<any>();
+  const [loadingShow, setLoadingShow] = useState<boolean>();
+
+  const [STATUS_OPTIONS, set_STATUS_OPTIONS] = useState<any>([]);
+  const [STATUS_OPTIONS_PB, set_STATUS_OPTIONS_PB] = useState<any>([]);
+
+  useEffect(() => {
+    if (chinhanh) {
+      set_STATUS_OPTIONS(
+        chinhanh.map((data: any) => ({
+          value: data.Tenchinhanh,
+          label: data.Tenchinhanh,
+        }))
+      );
+    }
+
+    if (nhompb) {
+      set_STATUS_OPTIONS_PB(
+        nhompb.map((data: any) => ({
+          value: data.Nhompb,
+          label: data.Nhompb,
+        }))
+      );
+    }
+  }, [chinhanh, nhompb]);
+
+  
 
   useEffect(() => {
     if (connguoi?.length > 0) {
@@ -149,15 +200,29 @@ export default function GroupPolicyListView() {
     }
   };
 
+  const handleAutocompleteChange = (event: any, value: any) => {
+    if (typeof value === 'object' && value !== null) {
+      // Lưu ID_Phongban vào dataSelect
+      setDataSelect({
+        ...dataSelect,
+        ID_Phongban: value.ID_Phongban, // Lưu ID_Phongban
+      });
+    } else {
+      setDataSelect({
+        ...dataSelect,
+        ID_Phongban: null, // Đặt lại ID_Phongban nếu không có lựa chọn
+      });
+    }
+  };
+
   const handleInputDate = (date: any) => {
-    console.log('date', date);
-    // if (dataSelect) {
-    //   // Update the corresponding field in `dataSelect`
-    //   setDataSelect({
-    //     ...dataSelect,
-    //     NgayGhinhan: date,
-    //   });
-    // }
+    if (dataSelect) {
+      // Update the corresponding field in `dataSelect`
+      setDataSelect({
+        ...dataSelect,
+        NgayGhinhan: date,
+      });
+    }
   };
 
   const handleSelectChange = (event: SelectChangeEvent) => {
@@ -169,7 +234,7 @@ export default function GroupPolicyListView() {
   };
 
   const handleFilters = useCallback(
-    (name: string, value: IKhuvucTableFilterValue) => {
+    (name: string, value: IUserTableFilterValue) => {
       table.onResetPage();
       setFilters((prevState) => ({
         ...prevState,
@@ -178,25 +243,6 @@ export default function GroupPolicyListView() {
     },
     [table]
   );
-
-  const GroupPolicySchema = Yup.object().shape({
-    GroupPolicy: Yup.string().required('Không được để trống'),
-  });
-
-  const defaultValues = {
-    GroupPolicy: '',
-  };
-
-  const methods = useForm({
-    resolver: yupResolver(GroupPolicySchema),
-    defaultValues,
-  });
-
-  const {
-    reset,
-    handleSubmit,
-    formState: { isSubmitting },
-  } = methods;
 
   const handleDeleteRow = useCallback(
     async (id: string) => {
@@ -255,6 +301,50 @@ export default function GroupPolicyListView() {
     [confirm, popover]
   );
 
+  const handleShowRow = useCallback(
+    async (id: string) => {
+      setLoadingShow(true);
+      confirmShow.onTrue();
+      await axios
+        .get(`http://localhost:8888/api/v1/ent_connguoi/${id}`, {
+          headers: {
+            Accept: 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
+        .then(async (res) => {
+          popoverShow.onClose();
+          setDataShow(res.data.data);
+          setLoadingShow(false);
+        })
+        .catch((error) => {
+          setLoadingShow(false);
+          if (error.response) {
+            enqueueSnackbar({
+              variant: 'error',
+              autoHideDuration: 2000,
+              message: `${error.response.data.message}`,
+            });
+          } else if (error.request) {
+            // Lỗi không nhận được phản hồi từ server
+            enqueueSnackbar({
+              variant: 'error',
+              autoHideDuration: 2000,
+              message: `Không nhận được phản hồi từ máy chủ`,
+            });
+          } else {
+            // Lỗi khi cấu hình request
+            enqueueSnackbar({
+              variant: 'error',
+              autoHideDuration: 2000,
+              message: `Lỗi gửi yêu cầu`,
+            });
+          }
+        });
+    },
+    [accessToken, confirmShow, popoverShow, enqueueSnackbar]
+  );
+
   const handleUpdate = useCallback(
     async (id: string) => {
       await axios
@@ -265,7 +355,6 @@ export default function GroupPolicyListView() {
           },
         })
         .then(async (res) => {
-          reset();
           confirm.onFalse();
           popover.onClose();
           await mutateConnguoi();
@@ -300,7 +389,7 @@ export default function GroupPolicyListView() {
           }
         });
     },
-    [accessToken, enqueueSnackbar, reset, dataSelect, confirm, popover, mutateConnguoi] // Add accessToken and enqueueSnackbar as dependencies
+    [enqueueSnackbar, accessToken, dataSelect, confirm, popover, mutateConnguoi] // Add accessToken and enqueueSnackbar as dependencies
   );
 
   const handleViewAdd = useCallback(() => {
@@ -347,6 +436,8 @@ export default function GroupPolicyListView() {
             //
             canReset={canReset}
             onResetFilters={handleResetFilters}
+            statusOptions={STATUS_OPTIONS}
+            statusPBOptions={STATUS_OPTIONS_PB}
           />
 
           {canReset && (
@@ -405,6 +496,7 @@ export default function GroupPolicyListView() {
                         selected={table.selected.includes(row.ID_Connguoi)}
                         onSelectRow={() => table.onSelectRow(row.ID_Connguoi)}
                         onDeleteRow={() => handleDeleteRow(row.ID_Connguoi)}
+                        onShowRow={() => handleShowRow(row.ID_Connguoi)}
                         onViewRow={() => handleViewRow(row)}
                       />
                     ))}
@@ -433,7 +525,7 @@ export default function GroupPolicyListView() {
         </Card>
       </Container>
 
-      <GroupPolicyDialog
+      <UserDialog
         open={confirm.value}
         dataSelect={dataSelect}
         onClose={confirm.onFalse}
@@ -442,13 +534,23 @@ export default function GroupPolicyListView() {
         handleUpdate={handleUpdate}
         nhompb={nhompb}
         handleSelectChange={handleSelectChange}
+        handleAutocompleteChange={handleAutocompleteChange}
       />
 
-      <GroupPolicyDialogAdd
-        open={confirmAdd.value}
-        onClose={confirmAdd.onFalse}
+      <UserShowDialog
+        open={confirmShow.value}
+        dataSelect={dataShow}
+        onClose={confirmShow.onFalse}
+        onChange={handleInputChange}
+        loadingShow={loadingShow}
+        // handleInputDate={handleInputDate}
+        // handleUpdate={handleUpdate}
+        // nhompb={nhompb}
+        // handleSelectChange={handleSelectChange}
+        handleAutocompleteChange={handleAutocompleteChange}
       />
 
+      <UserDialogAdd open={confirmAdd.value} onClose={confirmAdd.onFalse} />
     </>
   );
 }
@@ -462,10 +564,10 @@ function applyFilter({
 }: {
   inputData: IConnguoi[];
   comparator: (a: any, b: any) => number;
-  filters: ITaisanTableFilters;
+  filters: IUserTableFilters;
   // dateError: boolean;
 }) {
-  const { status, name } = filters;
+  const { status, name, chinhanh, phongban } = filters;
 
   const stabilizedThis = inputData?.map((el, index) => [el, index] as const);
 
@@ -483,8 +585,26 @@ function applyFilter({
         order.Hoten.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         order.Diachi.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         order.Sodienthoai.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.MaPMC.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.ent_nhompb.Nhompb.toLowerCase().indexOf(name.toLowerCase()) !== -1
+        order.MaPMC.toLowerCase().indexOf(name.toLowerCase()) !== -1
+    );
+  }
+
+  if (chinhanh.length) {
+    inputData = inputData.filter((product) =>
+      product.ent_nhansupbda.some(
+        (item) =>
+          `${item.iTinhtrang}` === '1' &&
+          chinhanh.includes(item.ent_phongbanda.ent_chinhanh.Tenchinhanh)
+      )
+    );
+  }
+  if (phongban.length) {
+    inputData = inputData.filter((product) =>
+      product.ent_nhansupbda.some(
+        (item) =>
+          `${item.iTinhtrang}` === '1' &&
+        phongban.includes(item.ent_phongbanda.ent_nhompb.Nhompb)
+      )
     );
   }
 
@@ -501,9 +621,10 @@ interface ConfirmTransferDialogProps {
   onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
   handleSelectChange: any;
   handleInputDate: any;
+  handleAutocompleteChange: any;
 }
 
-function GroupPolicyDialog({
+function UserDialog({
   open,
   dataSelect,
   nhompb,
@@ -513,70 +634,129 @@ function GroupPolicyDialog({
   handleUpdate,
   handleSelectChange,
   handleInputDate,
+  handleAutocompleteChange,
 }: ConfirmTransferDialogProps) {
-  const idGroupPolicy = dataSelect?.ID_Connguoi;
-
+  const ID_Connguoi = dataSelect?.ID_Connguoi;
+  const { phongbanda } = useGetPhongBanDa();
   const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
 
   return (
     <Dialog open={open} fullWidth maxWidth="md" onClose={onClose}>
-      <DialogTitle>Cập nhật</DialogTitle>
+      <DialogTitle>Cập nhật thông tin cá nhân</DialogTitle>
+
       <DialogContent dividers={scroll === 'paper'}>
         <Stack spacing={3} sx={{ p: 3 }}>
-          <TextField
-            name="Hoten"
-            label="Họ tên" 
-            value={dataSelect?.Hoten}
-            onChange={onChange} 
-            fullWidth
-            onBlur={onBlur}
-          />
-          <TextField
-            name="Diachi"
-            label="Địa chỉ" 
-            value={dataSelect?.Diachi}
-            onChange={onChange} 
-            fullWidth
-          />
-          <Stack spacing={1} sx={{ p: 1.5 }}>
-            <FormControl>
-              <FormLabel id="demo-radio-buttons-group-label">Giới tính</FormLabel>
-              <RadioGroup
-                aria-labelledby="demo-radio-buttons-group-label"
-                value={dataSelect?.Gioitinh}
-                name="Gioitinh"
-                onChange={handleSelectChange}
-                row
-              >
-                <FormControlLabel value="Nam" control={<Radio />} label="Nam" />
-                <FormControlLabel value="Nữ" control={<Radio />} label="Nữ" />
-                <FormControlLabel value="Khác" control={<Radio />} label="Khác" />
-              </RadioGroup>
-            </FormControl>
-          </Stack>
-          <DatePicker
-            label="Ngày ghi nhận"
-            onChange={(val) => handleInputDate(val)}
-            value={dataSelect?.NgayGhinhan ? new Date(dataSelect.NgayGhinhan) : null}
-          />
-          <TextField
-            name="Sodienthoai"
-            label="Số điện thoại" 
-            value={dataSelect?.Sodienthoai}
-            onChange={onChange}
-            fullWidth
-            onBlur={onBlur}
-          />
-          <TextField
-            multiline
-            rows={3}
-            name="Ghichu"
-            label="Ghi chú" 
-            value={dataSelect?.Ghichu}
-            onChange={onChange} 
-            fullWidth
-            onBlur={onBlur}
-          />
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+              <TextField
+                name="MaPMC"
+                label="Mã PMC"
+                value={dataSelect?.MaPMC}
+                onChange={onChange}
+                fullWidth
+                onBlur={onBlur}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                name="Hoten"
+                label="Họ tên"
+                value={dataSelect?.Hoten}
+                onChange={onChange}
+                fullWidth
+                onBlur={onBlur}
+              />
+            </Grid>
+          </Grid>
+
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+              <TextField
+                name="Diachi"
+                label="Địa chỉ"
+                value={dataSelect?.Diachi}
+                onChange={onChange}
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                name="Sodienthoai"
+                label="Số điện thoại"
+                value={dataSelect?.Sodienthoai}
+                onChange={onChange}
+                fullWidth
+                onBlur={onBlur}
+              />
+            </Grid>
+          </Grid>
+
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+              <FormControl>
+                <FormLabel id="demo-radio-buttons-group-label">Giới tính</FormLabel>
+                <RadioGroup
+                  aria-labelledby="demo-radio-buttons-group-label"
+                  value={dataSelect?.Gioitinh}
+                  name="Gioitinh"
+                  onChange={handleSelectChange}
+                  row
+                >
+                  <FormControlLabel value="Nam" control={<Radio />} label="Nam" />
+                  <FormControlLabel value="Nữ" control={<Radio />} label="Nữ" />
+                  <FormControlLabel value="Khác" control={<Radio />} label="Khác" />
+                </RadioGroup>
+              </FormControl>
+            </Grid>
+            {/* <Grid item xs={6}>
+              <Autocomplete
+                disablePortal
+                options={phongbanda}
+                getOptionLabel={(option) =>
+                  typeof option === 'string' ? option : option?.Tenphongban || ''
+                }
+                value={
+                  phongbanda.find(
+                    (option) =>
+                      option.ID_Phongban ===
+                      dataSelect?.ent_nhansupbda[0]?.ent_phongbanda?.ID_Phongban
+                  ) || null
+                }
+                onChange={handleAutocompleteChange}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Phòng ban dự án"
+                    name="ID_Phongban"
+                    onChange={onChange}
+                  />
+                )}
+              />
+            </Grid> */}
+            <Grid item xs={6}>
+              <DatePicker
+                sx={{ width: '100%' }}
+                label="Ngày ghi nhận"
+                onChange={(val) => handleInputDate(val)}
+                value={dataSelect?.NgayGhinhan ? new Date(dataSelect.NgayGhinhan) : null}
+              />
+            </Grid>
+          </Grid>
+
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+              <TextField
+                multiline
+                rows={2}
+                name="Ghichu"
+                label="Ghi chú"
+                value={dataSelect?.Ghichu}
+                onChange={onChange}
+                fullWidth
+                onBlur={onBlur}
+              />
+            </Grid>
+          </Grid>
         </Stack>
       </DialogContent>
 
@@ -585,8 +765,8 @@ function GroupPolicyDialog({
           variant="contained"
           color="info"
           onClick={() => {
-            if (idGroupPolicy) {
-              handleUpdate(idGroupPolicy);
+            if (ID_Connguoi) {
+              handleUpdate(ID_Connguoi);
             }
           }}
         >
@@ -598,7 +778,167 @@ function GroupPolicyDialog({
   );
 }
 
-function GroupPolicyDialogAdd({ open, onClose }: any) {
+function UserShowDialog({
+  open,
+  dataSelect,
+  onChange,
+  onClose,
+  loadingShow,
+  // onBlur,
+  // handleUpdate,
+  // handleSelectChange,
+  // handleInputDate,
+  handleAutocompleteChange,
+}: any) {
+  const ID_Connguoi = dataSelect?.ID_Connguoi;
+  const { phongbanda } = useGetPhongBanDa();
+  const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
+
+  const sortedData = dataSelect?.ent_nhansupbda?.sort((a: any, b: any) => {
+    const dateA = new Date(a.Ngayvao).getTime();
+    const dateB = new Date(b.Ngayvao).getTime();
+    return dateA - dateB;
+  });
+
+  const [selectedValue, setSelectedValue] = useState('0');
+
+  const handleRadioChange = (event: any) => {
+    setSelectedValue(event.target.value);
+  };
+
+  return (
+    <Dialog open={open} fullWidth maxWidth="md" onClose={onClose}>
+      <DialogTitle>Cập nhật phòng ban</DialogTitle>
+
+      <DialogContent dividers={scroll === 'paper'}>
+        {loadingShow === true ? (
+          <Stack spacing={3} sx={{ p: 3, alignItems: 'center' }}>
+            <CircularProgress />
+          </Stack>
+        ) : (
+          <Stack spacing={3} sx={{ p: 3 }}>
+            <Timeline position="alternate">
+              {sortedData?.map((item: any, index: number) => {
+                let color: any;
+                let position: any;
+                switch (`${item.iTinhtrang}`) {
+                  case '1':
+                    color = 'success'; // xanh
+                    position = 'right';
+                    break;
+                  case '2':
+                    color = 'warning'; // vàng
+                    position = 'left';
+                    break;
+                  case '3':
+                    color = 'error'; // đỏ
+                    position = 'left';
+                    break;
+                  default:
+                    color = 'grey';
+                    position = 'left';
+                    break;
+                }
+
+                return (
+                  <TimelineItem key={index} position={position}>
+                    <TimelineOppositeContent variant="caption" sx={{ m: 'auto 0' }}>
+                      {item.iTinhtrang === '1' ? (
+                        `Ngày vào: ${item.Ngayvao}`
+                      ) : (
+                        <>
+                          Ngày vào: {item.Ngayvao}
+                          <br />
+                          {item.Ngay && `Ngày ra: ${item.Ngay}`}
+                        </>
+                      )}
+                    </TimelineOppositeContent>
+                    <TimelineSeparator>
+                      <TimelineDot color={color} />
+                      {index < sortedData.length - 1 && <TimelineConnector />}
+                    </TimelineSeparator>
+                    <TimelineContent sx={{ py: '12px', px: 2 }}>
+                      <Typography variant="subtitle1">{item.ent_phongbanda.Tenphongban}</Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {item.ent_phongbanda.Diachi}
+                      </Typography>
+                    </TimelineContent>
+                  </TimelineItem>
+                );
+              })}
+            </Timeline>
+            <FormControl>
+              <FormLabel id="demo-radio-buttons-group-label">Trạng thái</FormLabel>
+              <RadioGroup
+                aria-labelledby="demo-radio-buttons-group-label"
+                value={selectedValue}
+                onChange={handleRadioChange}
+                name="radio-buttons-group"
+              >
+                <FormControlLabel value="1" control={<Radio />} label="Chuyển công tác" />
+                <FormControlLabel value="2" control={<Radio />} label="Nghỉ việc" />
+              </RadioGroup>
+            </FormControl>
+
+            {selectedValue === '1' && (
+              <Grid container spacing={2}>
+                <Grid item xs={6}>
+                  <Autocomplete
+                    disablePortal
+                    options={phongbanda}
+                    getOptionLabel={(option) =>
+                      typeof option === 'string' ? option : option?.Tenphongban || ''
+                    }
+                    value={
+                      phongbanda.find(
+                        (option) =>
+                          option.ID_Phongban ===
+                          dataSelect?.ent_nhansupbda[0]?.ent_phongbanda?.ID_Phongban
+                      ) || null
+                    }
+                    onChange={handleAutocompleteChange}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Phòng ban dự án"
+                        name="ID_Phongban"
+                        onChange={onChange}
+                      />
+                    )}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <DatePicker
+                    sx={{ width: '100%' }}
+                    label="Ngày ghi nhận"
+                    // onChange={(val) => handleInputDate(val)}
+                    value={dataSelect?.NgayGhinhan ? new Date(dataSelect.NgayGhinhan) : null}
+                  />
+                </Grid>
+              </Grid>
+            )}
+          </Stack>
+        )}
+      </DialogContent>
+
+      <DialogActions>
+        <Button
+          variant="contained"
+          color="info"
+          // onClick={() => {
+          //   if (ID_Connguoi) {
+          //     handleUpdate(ID_Connguoi);
+          //   }
+          // }}
+        >
+          Cập nhật
+        </Button>
+        <Button onClick={onClose}>Hủy</Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
+function UserDialogAdd({ open, onClose }: any) {
   return (
     <Dialog open={open} fullWidth maxWidth="md" onClose={onClose}>
       <DialogTitle>Thêm mới</DialogTitle>

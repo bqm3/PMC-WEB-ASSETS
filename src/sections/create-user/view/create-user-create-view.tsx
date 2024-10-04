@@ -6,7 +6,7 @@ import { paths } from 'src/routes/paths';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 //
-import UserNewEditForm from '../create-user-new-form';
+import UserNewEditForm from '../../userAdmin/create-user-new-form';
 
 // ----------------------------------------------------------------------
 
@@ -19,13 +19,13 @@ export default function GroupPolicyCreateView() {
         heading="Thêm mới"
         links={[
           {
-            name: 'Dashboard',
+            name: '',
             href: paths.dashboard.root,
           },
           
         ]}
         sx={{
-          mb: { xs: 3, md: 5 },
+          mb: { xs: 1, md: 2 },
         }}
       />
 

@@ -26,8 +26,11 @@ import { useGetNhomts, useGetTaisan } from 'src/api/taisan';
 import { ITaisan } from 'src/types/taisan';
 
 // ----------------------------------------------------------------------
+type Props = {
+  taiSan: ITaisan[];
+};
 
-export default function InvoiceNewEditDetails() {
+export default function PhieuNXNewEditDetails({ taiSan }: Props) {
   const { control, setValue, watch, resetField } = useFormContext();
 
   const { fields, append, remove } = useFieldArray({
@@ -45,8 +48,6 @@ export default function InvoiceNewEditDetails() {
   });
   const subTotal = sum(totalOnRow);
 
-  const { taisan } = useGetTaisan();
-
   const handleAdd = () => {
     append({
       ID_Taisan: null,
@@ -54,14 +55,13 @@ export default function InvoiceNewEditDetails() {
       Dongia: 0,
       Tong: 0,
       Namsx: 0,
-      isDelete: 0
+      isDelete: 0,
     });
   };
 
   const handleRemove = (index: number) => {
     setValue(`phieunxct[${index}].isDelete`, 1);
   };
-
 
   const handleChangeQuantity = useCallback(
     (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, index: number) => {
@@ -100,14 +100,14 @@ export default function InvoiceNewEditDetails() {
     (event: any, newValue: any, index: number) => {
       if (newValue) {
         // Find the selected option from taisan
-        const selectedOption = taisan.find((option) => option.ID_Taisan === newValue.ID_Taisan);
+        const selectedOption = taiSan?.find((option) => option.ID_Taisan === newValue.ID_Taisan);
         if (selectedOption) {
           // Set the corresponding ID_Taisan value in the form state
           setValue(`phieunxct[${index}].ID_Taisan`, selectedOption.ID_Taisan);
         }
       }
     },
-    [setValue, taisan]
+    [setValue, taiSan]
   );
 
   const formatCash = (input: string) => {
@@ -160,7 +160,7 @@ export default function InvoiceNewEditDetails() {
                 control={control}
                 render={() => (
                   <Autocomplete
-                    options={taisan.map((option: any) => option)}
+                    options={taiSan?.map((option: any) => option)}
                     getOptionLabel={(option) =>
                       typeof option.Tents === 'string' ? option.Tents : String(option.Tents)
                     }
@@ -183,7 +183,7 @@ export default function InvoiceNewEditDetails() {
                 )}
               />
 
-<RHFTextField
+              <RHFTextField
                 size="medium"
                 type="number"
                 name={`phieunxct[${index}].Namsx`}
@@ -210,7 +210,6 @@ export default function InvoiceNewEditDetails() {
                 type="number"
                 name={`phieunxct[${index}].Dongia`}
                 label="Đơn giá"
-             
                 onChange={(event) => handleChangePrice(event, index)}
                 InputProps={{
                   startAdornment: (

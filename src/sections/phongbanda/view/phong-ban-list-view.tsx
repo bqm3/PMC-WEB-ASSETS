@@ -124,10 +124,6 @@ export default function GroupPolicyListView() {
 
   const [filters, setFilters] = useState(defaultFilters);
 
-  const { policy } = useGetPolicy();
-
-  const { grouppolicy } = useGetGroupPolicy();
-
   const { chinhanh } = useGetChinhanh();
 
   const { nhompb } = useGetNhomPb();

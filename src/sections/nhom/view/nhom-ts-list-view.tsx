@@ -52,7 +52,7 @@ import { LoadingButton } from '@mui/lab';
 
 import { useSnackbar } from 'src/components/snackbar';
 import {
-  ILoaiNhom,
+  ILoainhom,
   INhomts,
   IPhongBanTableFilterValue,
   IPhongBanTableFilters,
@@ -541,7 +541,7 @@ function NhomTSDialog({
               label="Loại nhóm"
               onChange={handleSelectChange}
             >
-              {loainhom?.map((item: ILoaiNhom) => (
+              {loainhom?.map((item: ILoainhom) => (
                 <MenuItem key={item?.ID_Loainhom} value={item?.ID_Loainhom}>
                   {item?.Loainhom}
                 </MenuItem>
