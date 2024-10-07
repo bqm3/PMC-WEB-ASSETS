@@ -162,6 +162,7 @@ export type ITaisan = {
   Tents: string;
   Thongso: string;
   Nuocsx: string;
+  i_MaQrCode: string;
   Ghichu: string;
   ent_nhomts: INhomts;
   ent_donvi: IDonvi;

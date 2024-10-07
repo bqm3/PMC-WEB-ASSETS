@@ -41,7 +41,7 @@ export default function PhieuNXEditDetails({ taiSan }: Props) {
   const values = watch();
 
   const totalOnRow = values.phieunxct.map((item: any) => {
-    if (item.isDelete === 0) {
+    if (`${item?.isDelete}` === '0') {
       return item.Soluong * item.Dongia;
     }
     return 0; // Return 0 or whatever default value you prefer when isDelete is not 0
@@ -155,7 +155,7 @@ export default function PhieuNXEditDetails({ taiSan }: Props) {
       <Stack divider={<Divider flexItem sx={{ borderStyle: 'dashed' }} />} spacing={3}>
         {fields.map((item, index) => (
           <>
-            {values.phieunxct[index].isDelete === 0 && (
+            {`${values?.phieunxct[index]?.isDelete}` === '0' && (
               <Stack key={item.id} alignItems="flex-end" spacing={1.5}>
                 <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ width: 1 }}>
                   <Controller

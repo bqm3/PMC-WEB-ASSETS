@@ -45,6 +45,8 @@ import DialogContent from '@mui/material/DialogContent';
 import Dialog, { DialogProps } from '@mui/material/Dialog';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import Switch from '@mui/material/Switch';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import Autocomplete from '@mui/material/Autocomplete';
 
 import { useSnackbar } from 'src/components/snackbar';
@@ -164,6 +166,13 @@ export default function GroupPolicyListView() {
     setDataSelect((prev: any) => ({
       ...prev,
       [name]: `${value}`,
+    }));
+  };
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setDataSelect((prev: any) => ({
+      ...prev,
+      i_MaQrCode: event.target.checked ? '0' : '1',
     }));
   };
 
@@ -482,6 +491,7 @@ export default function GroupPolicyListView() {
         handleSelectChange={handleSelectChange}
         methods={methods}
         setDataSelect={setDataSelect}
+        handleChange={handleChange}
       />
 
       <TaiSanDialogAdd open={confirmAdd.value} onClose={confirmAdd.onFalse} />
@@ -539,6 +549,7 @@ interface ConfirmTransferDialogProps {
   dataSelect?: ITaisan;
   onClose: VoidFunction;
   handleUpdate: (id: string) => void;
+  handleChange: any;
   donvi: IDonvi[];
   nhomts: INhomts[];
   onChange: (event: React.FocusEvent<HTMLInputElement>) => void;
@@ -559,6 +570,7 @@ function TaiSanDialog({
   onClose,
   onBlur,
   handleUpdate,
+  handleChange,
   setDataSelect,
 }: ConfirmTransferDialogProps) {
   const idPolicy = dataSelect?.ID_Taisan;
@@ -667,6 +679,16 @@ function TaiSanDialog({
               rows={3}
               onBlur={onBlur}
             />
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={`${dataSelect?.i_MaQrCode}` === '0'}
+                  onChange={handleChange}
+                  color="success"
+                />
+              }
+              label="Qr Code"
+            />
           </Stack>
         </DialogContent>
 
@@ -700,9 +722,9 @@ function TaiSanDialogAdd({ open, onClose }: any) {
           height: 'auto',
           scrollBehavior: 'smooth',
           '&::-webkit-scrollbar': {
-            display: 'none', 
+            display: 'none',
           },
-          '-ms-overflow-style': 'none', 
+          '-ms-overflow-style': 'none',
           'scrollbar-width': 'none',
         }}
       >

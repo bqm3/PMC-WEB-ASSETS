@@ -283,7 +283,7 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
   const renderDetails = (
     <Grid xs={12} md={12}>
       <Card>
-        <Stack spacing={3} sx={{ p: 2, display: 'flex', flexDirection: 'row' }}>
+        <Stack spacing={2} sx={{ p: 2, display: 'flex', flexDirection: 'row' }}>
           {nghiepvu?.length > 0 && (
             <RHFSelect
               name="ID_Nghiepvu"
@@ -329,9 +329,16 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
               ))}
             </RHFSelect>
           )}
+          <Stack width="100%">
+            <DatePicker
+              label="Ngày nhập xuất"
+              value={new Date(values.NgayNX)}
+              onChange={(newValue) => setValue('NgayNX', newValue)}
+            />
+          </Stack>
         </Stack>
         <Stack
-          spacing={3}
+          spacing={2}
           sx={{ p: 2, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
         >
           <Stack width="100%">
@@ -349,41 +356,26 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
               </MenuItem>
             ))}
           </RHFSelect>
-          <Stack width="100%">
-            <DatePicker
-              label="Ngày nhập xuất"
-              value={new Date(values.NgayNX)}
-              onChange={(newValue) => setValue('NgayNX', newValue)}
-            />
-          </Stack>
-          <Stack width="100%">
-            <RHFSelect
-              name="ID_Quy"
-              label="Quý"
-              InputLabelProps={{ shrink: true }}
-              PaperPropsSx={{ textTransform: 'capitalize' }}
-            >
-              {QUARTY?.map((item) => (
-                <MenuItem key={item?.value} value={item?.value}>
-                  {item?.label}
-                </MenuItem>
-              ))}
-            </RHFSelect>
-          </Stack>
-        </Stack>
-        <Stack
-          spacing={3}
-          sx={{ p: 2, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
-        >
-          <Stack width="100%">
-            <RHFTextField
-              name="Ghichu"
-              multiline
-              rows={4}
-              label="Ghi chú"
-              defaultValue={defaultValues.Ghichu}
-            />
-          </Stack>
+
+          <RHFSelect
+            name="ID_Quy"
+            label="Quý"
+            InputLabelProps={{ shrink: true }}
+            PaperPropsSx={{ textTransform: 'capitalize' }}
+          >
+            {QUARTY?.map((item) => (
+              <MenuItem key={item?.value} value={item?.value}>
+                {item?.label}
+              </MenuItem>
+            ))}
+          </RHFSelect>
+          <RHFTextField
+            name="Ghichu"
+            multiline
+            rows={3}
+            label="Ghi chú"
+            defaultValue={defaultValues.Ghichu}
+          />
         </Stack>
       </Card>
     </Grid>
@@ -393,10 +385,10 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
     <FormProvider methods={methods}>
       {renderDetails}
       <Card sx={{ mt: 3 }}>
-        <PhieuNXEditDetails taiSan={taiSan}/>
+        <PhieuNXEditDetails taiSan={taiSan} />
       </Card>
 
-      <Stack justifyContent="flex-end" direction="row" spacing={3} sx={{ mt: 3 }}>
+      <Stack justifyContent="flex-end" direction="row" spacing={2} sx={{ mt: 3 }}>
         {currentPhieuNX && `${currentPhieuNX.iTinhtrang}` === `0` && (
           <>
             <Button size="large" variant="soft" color="primary" onClick={handleClose}>

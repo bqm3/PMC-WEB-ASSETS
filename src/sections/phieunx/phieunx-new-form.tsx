@@ -297,22 +297,8 @@ export default function SuaChuaTSNewForm() {
               ))}
             </RHFSelect>
           )}
-        </Stack>
-        <Stack spacing={3} sx={{ p: 2, display: 'flex', flexDirection: 'row' }}>
-          <RHFTextField name="Sophieu" label="Mã số phiếu *" />
-          <RHFSelect
-            name="ID_Loainhom"
-            label="Loại nhóm *"
-            InputLabelProps={{ shrink: true }}
-            PaperPropsSx={{ textTransform: 'capitalize' }}
-          >
-            {loainhom?.map((item) => (
-              <MenuItem key={item?.ID_Loainhom} value={item?.ID_Loainhom}>
-                {item?.Loainhom}
-              </MenuItem>
-            ))}
-          </RHFSelect>
-          <Controller
+
+<Controller
             name="NgayNX"
             control={control}
             render={({ field, fieldState: { error } }) => (
@@ -332,6 +318,22 @@ export default function SuaChuaTSNewForm() {
               />
             )}
           />
+        </Stack>
+        <Stack spacing={3} sx={{ p: 2, display: 'flex', flexDirection: 'row' }}>
+          <RHFTextField name="Sophieu" label="Mã số phiếu *" />
+          <RHFSelect
+            name="ID_Loainhom"
+            label="Loại nhóm *"
+            InputLabelProps={{ shrink: true }}
+            PaperPropsSx={{ textTransform: 'capitalize' }}
+          >
+            {loainhom?.map((item) => (
+              <MenuItem key={item?.ID_Loainhom} value={item?.ID_Loainhom}>
+                {item?.Loainhom}
+              </MenuItem>
+            ))}
+          </RHFSelect>
+          
           <RHFSelect
             name="ID_Quy"
             label="Quý"
@@ -344,11 +346,11 @@ export default function SuaChuaTSNewForm() {
               </MenuItem>
             ))}
           </RHFSelect>
-          
-        </Stack>
-        <Stack spacing={3} sx={{ p: 1.5 }}>
           <RHFTextField name="Ghichu" multiline rows={3} label="Ghi chú" />
         </Stack>
+        {/* <Stack spacing={3} sx={{ p: 1.5 }}>
+          
+        </Stack> */}
       </Card>
     </Grid>
   );

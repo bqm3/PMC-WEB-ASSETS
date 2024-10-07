@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import { useMemo, useEffect, useState } from 'react';
+import { useMemo, useEffect, useState, useCallback } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, Controller } from 'react-hook-form';
 // @mui
@@ -11,7 +11,8 @@ import MenuItem from '@mui/material/MenuItem';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import CardHeader from '@mui/material/CardHeader';
+import Switch from '@mui/material/Switch';
+import FormControlLabel from '@mui/material/FormControlLabel';
 // routes
 import { paths } from 'src/routes/paths';
 // hooks
@@ -65,6 +66,7 @@ export default function GroupPolicyNewForm() {
     Tents: Yup.string().required('Không được để trống'),
     ID_Nhomts: Yup.string().required('Không được để trống'),
     ID_Donvi: Yup.string().required('Không được để trống'),
+    i_MaQrCode: Yup.string()
   });
 
   const defaultValues = useMemo(
@@ -76,9 +78,12 @@ export default function GroupPolicyNewForm() {
       Tents: '',
       Thongso: '',
       Ghichu: '',
+      i_MaQrCode: '0',
     }),
     []
   );
+
+ 
 
   const methods = useForm({
     resolver: yupResolver(NewProductSchema),
@@ -93,6 +98,13 @@ export default function GroupPolicyNewForm() {
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
+
+  const handleChangeIncludeCheck = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setValue('i_MaQrCode', event.target.checked ? '0' : '1');
+    },
+    [setValue]
+  );
 
   const values = watch();
 
@@ -229,6 +241,14 @@ export default function GroupPolicyNewForm() {
           <Stack spacing={3} sx={{ p: 2 }}>
             <RHFTextField name="Ghichu" multiline rows={3} label="Ghi chú" />
           </Stack>
+          <Stack spacing={3} sx={{ p: 2 }}>
+          <FormControlLabel
+              control={
+                <Switch checked={`${values.i_MaQrCode}` === '0'} onChange={handleChangeIncludeCheck} color='success'/>
+              }
+              label="Qr Code"
+            />
+            </Stack>
         </Card>
       </Grid>
     </>
