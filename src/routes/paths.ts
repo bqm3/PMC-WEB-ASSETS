@@ -288,6 +288,12 @@ export const paths = {
       edit: (id: string) => `${ROOTS.DASHBOARD}/inventory-in-out/${id}/edit`,
       detail: (id: string) => `${ROOTS.DASHBOARD}/inventory-in-out/${id}`,
     },
+    phieuncc: {
+      root: `${ROOTS.DASHBOARD}/inventory-out-in`,
+      new: `${ROOTS.DASHBOARD}/inventory-out-in/new`,
+      edit: (id: string) => `${ROOTS.DASHBOARD}/inventory-out-in/${id}/edit`,
+      detail: (id: string) => `${ROOTS.DASHBOARD}/inventory-out-in/${id}`,
+    },
     suachuats: {
       root: `${ROOTS.DASHBOARD}/property-repair`,
       new: `${ROOTS.DASHBOARD}/property-repair/new`,

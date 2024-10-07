@@ -138,8 +138,17 @@ export function useNavData() {
             path: paths.dashboard.phieunx.root,
             icon: ICONS.invoice,
             children: [
-              { title: t('list'), path: paths.dashboard.phieunx.root },
+              { title: t('list '), path: paths.dashboard.phieunx.root },
               { title: t('create'), path: paths.dashboard.phieunx.new },
+            ],
+          },
+          {
+            title: t('phieuncc'),
+            path: paths.dashboard.phieuncc.root,
+            icon: ICONS.invoice,
+            children: [
+              { title: t('list'), path: paths.dashboard.phieuncc.root },
+              { title: t('create'), path: paths.dashboard.phieuncc.new },
             ],
           },
           {

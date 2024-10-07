@@ -138,6 +138,16 @@ export type IPhieuNXCT = {
   ent_taisan: ITaisan;
 };
 
+export type IPhieuNCCCT = {
+  ID_PhieuNCCCT: string;
+  ID_PhieuNCC: string;
+  ID_Taisan: string;
+  Dongia: string;
+  Soluong: string;
+  isDelete: string;
+  ent_taisan: ITaisan;
+}
+
 export type INghiepvu = {
   ID_Nghiepvu: string;
   Nghiepvu: string;
@@ -239,6 +249,30 @@ export type IPhieuNX = {
   ent_thang: IThang;
   ent_user: IUser;
   tb_phieunxct: IPhieuNXCT;
+};
+
+export type IPhieuNCC = {
+  ID_PhieuNCC: string;
+  ID_Nghiepvu: string;
+  Sophieu: string;
+  ID_NoiNhap: string;
+  ID_NoiXuat: string;
+  ID_Connguoi: string;
+  ID_Loainhom: string;
+  ID_Phongban: string;
+  NgayNX: string;
+  Ghichu: string;
+  ID_Quy: string;
+  ID_Nam: string;
+  ID_Thang: string;
+  iTinhtrang: string;
+  NoiNhap: any;
+  NoiXuat: any;
+  ent_nghiepvu: INghiepvu;
+  ent_nam: INam;
+  ent_thang: IThang;
+  ent_user: IUser;
+  tb_phieunccct: IPhieuNCCCT;
 };
 
 export type ISuaChuaCT = {

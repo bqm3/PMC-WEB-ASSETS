@@ -14,7 +14,6 @@ import { useAuthContext } from 'src/auth/hooks';
 
 // OVERVIEW
 
-
 const GroupPolicyListsPage = lazy(() => import('src/pages/dashboard/grouppolicy/list'));
 const GroupPolicyNewPage = lazy(() => import('src/pages/dashboard/grouppolicy/new'));
 
@@ -42,6 +41,10 @@ const TaiSanNewPage = lazy(() => import('src/pages/dashboard/taisan/new'));
 const PhieuNXListsPage = lazy(() => import('src/pages/dashboard/phieunx/list'));
 const PhieuNXNewPage = lazy(() => import('src/pages/dashboard/phieunx/new'));
 const PhieuNXEditPage = lazy(() => import('src/pages/dashboard/phieunx/edit'));
+
+const PhieuNCCListsPage = lazy(() => import('src/pages/dashboard/phieuncc/list'));
+const PhieuNCCNewPage = lazy(() => import('src/pages/dashboard/phieuncc/new'));
+const PhieuNCCEditPage = lazy(() => import('src/pages/dashboard/phieuncc/edit'));
 
 const SuaChuaTSListsPage = lazy(() => import('src/pages/dashboard/suachuats/list'));
 const SuaChuaTSNewPage = lazy(() => import('src/pages/dashboard/suachuats/new'));
@@ -104,7 +107,7 @@ export const dashboardRoutes = [
         path: 'nhacc',
         children: [
           { element: <NhaCCListsPage />, index: true },
-          { path: 'list', element: <NhaCCListsPage /> },                                                                                                                                                                                                                                                                     
+          { path: 'list', element: <NhaCCListsPage /> },
           { path: 'new', element: <NhaCCNewPage /> },
         ],
       },
@@ -144,6 +147,17 @@ export const dashboardRoutes = [
       },
 
       {
+        path: 'inventory-out-in',
+        children: [
+          { element: <PhieuNCCListsPage />, index: true },
+          { path: 'list', element: <PhieuNCCListsPage /> },
+          { path: 'new', element: <PhieuNCCNewPage /> },
+          { path: ':id/edit', element: <PhieuNCCEditPage /> },
+          { path: ':id', element: <PhieuNCCEditPage /> },
+        ],
+      },
+
+      {
         path: 'property-repair',
         children: [
           { element: <SuaChuaTSListsPage />, index: true },
@@ -168,8 +182,6 @@ export const dashboardRoutes = [
           { path: 'new', element: <NewUserPage /> },
         ],
       },
-
-
     ],
   },
 ];

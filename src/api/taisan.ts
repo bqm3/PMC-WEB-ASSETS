@@ -7,7 +7,8 @@ import { IChinhanh, IConnguoi, IDonvi, IGroupPolicy, INam, INghiepvu, INhompb,
   ITaisanQrCode, INhomts, IPhieuNX, IPhongbanda, IPolicy, ISuachuaTS, ITaisan, IThang, 
   ILoainhom,IUser,
   INhaCC,
-  IChucvu} from 'src/types/taisan';
+  IChucvu,
+  IPhieuNCC} from 'src/types/taisan';
 
 const STORAGE_KEY = 'accessToken';
 
@@ -502,6 +503,62 @@ export function useGetPhieuNX() {
       phieunxValidating: isValidating,
       phieunxEmpty: !isLoading && !data.length,
       mutatePhieuNX: mutate,
+    }),
+    [data, error, isLoading, isValidating, mutate]
+  );
+
+  return memoizedValue;
+}
+
+export function useGetPhieuNCC() {
+  const accessToken = localStorage.getItem(STORAGE_KEY);
+  const URL = 'http://localhost:8888/api/v1/tb_phieuncc/all';
+  const fetCher = (url: string) =>
+    fetch(url, {
+      method: 'get',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }).then((res) => res.json());
+  const { data, isLoading, error, isValidating,mutate } = useSWR(URL, fetCher);
+
+  const memoizedValue = useMemo(
+    () => ({
+      phieuncc: (data?.data as IPhieuNCC[]) || [],
+      phieunccLoading: isLoading,
+      phieunccError: error,
+      phieunccValidating: isValidating,
+      phieunccEmpty: !isLoading && !data.length,
+      mutatePhieuNCC: mutate,
+    }),
+    [data, error, isLoading, isValidating, mutate]
+  );
+
+  return memoizedValue;
+}
+
+export function useGetDetailPhieuNCC(id: string) {
+  const accessToken = localStorage.getItem(STORAGE_KEY);
+  const URL = `http://localhost:8888/api/v1/tb_phieuncc/${id}`;
+  const fetCher = (url: string) =>
+    fetch(url, {
+      method: 'get',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }).then((res) => res.json());
+  const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetCher);
+
+  const memoizedValue = useMemo(
+    () => ({
+      phieuncc: (data?.data as IPhieuNCC) || [],
+      phieunccLoading: isLoading,
+      phieunccError: error,
+      phieunccValidating: isValidating,
+      phieunccEmpty: !isLoading && !data.length,
+      mutate
     }),
     [data, error, isLoading, isValidating, mutate]
   );
