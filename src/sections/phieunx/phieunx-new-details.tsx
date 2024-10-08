@@ -153,6 +153,8 @@ export default function PhieuNXNewEditDetails({ taiSan }: Props) {
 
       <Stack divider={<Divider flexItem sx={{ borderStyle: 'dashed' }} />} spacing={3}>
         {fields.map((item, index) => (
+           <>
+            {`${values?.phieunxct[index]?.isDelete}` === '0' && (
           <Stack key={item.id} alignItems="flex-end" spacing={1.5}>
             <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ width: 1 }}>
               <Controller
@@ -263,6 +265,8 @@ export default function PhieuNXNewEditDetails({ taiSan }: Props) {
               Xóa
             </Button>
           </Stack>
+            )}
+          </>
         ))}
       </Stack>
 

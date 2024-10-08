@@ -179,7 +179,7 @@ export type ITaisan = {
 };
 
 export type ITaisanQrCode = {
-  ID_TaisanQr: string;
+  ID_TaisanQrcode: string;
   ID_Taisan: string;
   Ngaykhoitao: string;
   ID_Donvi: string;
@@ -257,6 +257,8 @@ export type IPhieuNCC = {
   Sophieu: string;
   ID_NoiNhap: string;
   ID_NoiXuat: string;
+  ID_Phieu1: string;
+  ID_Phieu2: string;
   ID_Connguoi: string;
   ID_Loainhom: string;
   ID_Phongban: string;
@@ -273,6 +275,8 @@ export type IPhieuNCC = {
   ent_thang: IThang;
   ent_user: IUser;
   tb_phieunccct: IPhieuNCCCT;
+  ent_nhacc: INhaCC;
+  ent_phongbanda: IPhongbanda;
 };
 
 export type ISuaChuaCT = {

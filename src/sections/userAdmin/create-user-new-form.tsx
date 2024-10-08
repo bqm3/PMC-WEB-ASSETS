@@ -128,7 +128,7 @@ export default function CreateUserNewForm({ currentUser }: Props) {
     try {
       if (currentUser !== undefined) {
         await axios
-          .put(`http://localhost:8888/api/v1/ent_user/update/${currentUser.ID_User}`, data, {
+          .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_user/update/${currentUser.ID_User}`, data, {
             headers: {
               Accept: 'application/json',
               Authorization: `Bearer ${accessToken}`,
@@ -167,7 +167,7 @@ export default function CreateUserNewForm({ currentUser }: Props) {
           });
       } else {
         axios
-          .post(`http://localhost:8888/api/v1/ent_user/create`, data, {
+          .post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_user/create`, data, {
             headers: {
               Accept: 'application/json',
               Authorization: `Bearer ${accessToken}`,

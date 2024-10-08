@@ -35,16 +35,16 @@ export default function PhieuNXEditDetails({ taiSan }: Props) {
 
   const { fields, append, remove } = useFieldArray({
     control,
-    name: 'phieunxct',
+    name: 'phieunccct',
   });
 
   const values = watch();
 
-  const totalOnRow = values.phieunxct.map((item: any) => {
+  const totalOnRow = values?.phieunccct?.map((item: any) => {
     if (`${item?.isDelete}` === '0') {
       return item.Soluong * item.Dongia;
     }
-    return 0; // Return 0 or whatever default value you prefer when isDelete is not 0
+    return 0;
   });
 
   const subTotal = sum(totalOnRow);
@@ -61,38 +61,38 @@ export default function PhieuNXEditDetails({ taiSan }: Props) {
   };
 
   const handleRemove = (index: number) => {
-    setValue(`phieunxct[${index}].isDelete`, 1);
+    setValue(`phieunccct[${index}].isDelete`, 1);
   };
 
   const handleChangeQuantity = useCallback(
     (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, index: number) => {
-      setValue(`phieunxct[${index}].Soluong`, Number(event.target.value));
+      setValue(`phieunccct[${index}].Soluong`, Number(event.target.value));
       setValue(
-        `phieunxct[${index}].Tong`,
-        values.phieunxct.map((item: any) => item.Soluong * item.Dongia)[index]
+        `phieunccct[${index}].Tong`,
+        values.phieunccct.map((item: any) => item.Soluong * item.Dongia)[index]
       );
     },
-    [setValue, values.phieunxct]
+    [setValue, values.phieunccct]
   );
 
   const handleChangePrice = useCallback(
     (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, index: number) => {
       const inputValue = event.target.value;
       // const numericString = inputValue.replace(/[^\d]/g, '');
-      setValue(`phieunxct[${index}].Dongia`, inputValue);
+      setValue(`phieunccct[${index}].Dongia`, inputValue);
 
       setValue(
-        `phieunxct[${index}].Tong`,
-        values.phieunxct.map((item: any) => item.Soluong * item.Dongia)[index]
+        `phieunccct[${index}].Tong`,
+        values?.phieunccct?.map((item: any) => item.Soluong * item.Dongia)[index]
       );
     },
-    [setValue, values.phieunxct]
+    [setValue, values?.phieunccct]
   );
 
   const handleChangeYear = useCallback(
     (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, index: number) => {
       const inputValue = event.target.value;
-      setValue(`phieunxct[${index}].Namsx`, Number(inputValue));
+      setValue(`phieunccct[${index}].Namsx`, Number(inputValue));
     },
     [setValue]
   );
@@ -104,7 +104,7 @@ export default function PhieuNXEditDetails({ taiSan }: Props) {
         const selectedOption = taiSan.find((option) => option.ID_Taisan === newValue.ID_Taisan);
         if (selectedOption) {
           // Set the corresponding ID_Taisan value in the form state
-          setValue(`phieunxct[${index}].ID_Taisan`, selectedOption.ID_Taisan);
+          setValue(`phieunccct[${index}].ID_Taisan`, selectedOption.ID_Taisan);
         }
       }
     },
@@ -153,15 +153,15 @@ export default function PhieuNXEditDetails({ taiSan }: Props) {
       </Typography>
 
       <Stack divider={<Divider flexItem sx={{ borderStyle: 'dashed' }} />} spacing={3}>
-        {fields.map((item, index) => (
+        {fields?.map((item, index) => (
           <>
-            {`${values?.phieunxct[index]?.isDelete}` === '0' && (
+            {`${values?.phieunccct[index]?.isDelete}` === '0' && (
               <Stack key={item.id} alignItems="flex-end" spacing={1.5}>
                 <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ width: 1 }}>
                   <Controller
-                    name={`phieunxct[${index}].ID_Taisan`}
+                    name={`phieunccct[${index}].ID_Taisan`}
                     control={control}
-                    defaultValue={`phieunxct[${index}].ent_taisan` || ''} // Ensure item?.ID_Taisan is correctly populated
+                    defaultValue={`phieunccct[${index}].ent_taisan` || ''} // Ensure item?.ID_Taisan is correctly populated
                     render={({ field }) => (
                       <Autocomplete
                         {...field}
@@ -191,7 +191,7 @@ export default function PhieuNXEditDetails({ taiSan }: Props) {
                   <RHFTextField
                     size="medium"
                     type="number"
-                    name={`phieunxct[${index}].Namsx`}
+                    name={`phieunccct[${index}].Namsx`}
                     label="Năm sản xuất"
                     placeholder="0"
                     onChange={(event) => handleChangeYear(event, index)}
@@ -202,7 +202,7 @@ export default function PhieuNXEditDetails({ taiSan }: Props) {
                   <RHFTextField
                     size="medium"
                     type="number"
-                    name={`phieunxct[${index}].Soluong`}
+                    name={`phieunccct[${index}].Soluong`}
                     label="Số lượng"
                     placeholder="0"
                     onChange={(event) => handleChangeQuantity(event, index)}
@@ -213,7 +213,7 @@ export default function PhieuNXEditDetails({ taiSan }: Props) {
                   <RHFTextField
                     size="medium"
                     type="number"
-                    name={`phieunxct[${index}].Dongia`}
+                    name={`phieunccct[${index}].Dongia`}
                     label="Đơn giá"
                     onChange={(event) => handleChangePrice(event, index)}
                     InputProps={{
@@ -231,14 +231,14 @@ export default function PhieuNXEditDetails({ taiSan }: Props) {
                     disabled
                     size="medium"
                     type="string"
-                    name={`phieunxct[${index}].Tong`}
+                    name={`phieunccct[${index}].Tong`}
                     label="Tổng tiền"
                     placeholder="0.00"
                     value={
-                      values.phieunxct[index]?.Tong === 0 ||
-                      values.phieunxct[index]?.Tong === undefined
-                        ? values.phieunxct[index].Soluong * values.phieunxct[index].Dongia
-                        : formatCash(values.phieunxct[index]?.Tong)
+                      values.phieunccct[index]?.Tong === 0 ||
+                      values.phieunccct[index]?.Tong === undefined
+                        ? values.phieunccct[index].Soluong * values.phieunccct[index].Dongia
+                        : formatCash(values.phieunccct[index]?.Tong)
                     }
                     onChange={(event) => handleChangePrice(event, index)}
                     InputProps={{

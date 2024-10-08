@@ -62,6 +62,8 @@ export default function CalvTableRow({
     ent_nam,
     ent_thang,
     ent_user,
+    ent_nhacc,
+    ent_phongbanda
   } = row;
 
   const confirm1 = useBoolean();
@@ -98,8 +100,8 @@ export default function CalvTableRow({
       <TableCell> {NgayNX} </TableCell>
       <TableCell sx={{ alignItems: 'center' }}>
         <ListItemText
-          primary={NoiNhap?.Tenphongban}
-          secondary={NoiNhap?.Mapb}
+          primary= { `${ID_Nghiepvu}` === "5" ? ent_nhacc?.TenNhacc : ent_phongbanda?.Tenphongban}
+          secondary={ `${ID_Nghiepvu}` === "5" ? ent_nhacc?.MaNhacc : ent_phongbanda?.Mapb}
           primaryTypographyProps={{ typography: 'body2' }}
           secondaryTypographyProps={{
             component: 'span',
@@ -109,8 +111,8 @@ export default function CalvTableRow({
       </TableCell>
       <TableCell sx={{ alignItems: 'center' }}>
         <ListItemText
-          primary={NoiXuat?.Tenphongban}
-          secondary={NoiXuat?.Mapb}
+          primary= { `${ID_Nghiepvu}` === "5" ? ent_phongbanda?.Tenphongban : ent_nhacc?.TenNhacc }
+          secondary={ `${ID_Nghiepvu}` === "5" ? ent_phongbanda?.Mapb : ent_nhacc?.MaNhacc }
           primaryTypographyProps={{ typography: 'body2' }}
           secondaryTypographyProps={{
             component: 'span',

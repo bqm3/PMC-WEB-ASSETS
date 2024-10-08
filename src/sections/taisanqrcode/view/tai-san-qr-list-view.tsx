@@ -43,8 +43,6 @@ import {
   emptyRows,
   TableNoData,
   TableEmptyRows,
-  TableHeadCustom,
-  TableSelectedAction,
   TablePaginationCustom,
 } from 'src/components/table';
 import Stack from '@mui/material/Stack';
@@ -55,9 +53,6 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import Dialog, { DialogProps } from '@mui/material/Dialog';
 import Image from 'src/components/image';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
@@ -68,7 +63,6 @@ import FormProvider, { RHFEditor } from 'src/components/hook-form';
 
 import {
   IDonvi,
-  IGroupPolicy,
   INhomts,
   ITaisan,
   ITaisanQrCode,
@@ -76,14 +70,16 @@ import {
   ITaisanTableFilters,
 } from 'src/types/taisan';
 //
-import GroupPolicyTableRow from '../tai-san-qr-table-row';
-import GiamsatTableToolbar from '../tai-san-qr-table-toolbar';
-import GiamsatTableFiltersResult from '../tai-san-qr-table-filters-result';
+import TaiSanTableRow from '../tai-san-qr-table-row';
+import TaiSanQrTableToolbar from '../tai-san-qr-table-toolbar';
+import TaiSanQrTableFiltersResult from '../tai-san-qr-table-filters-result';
+import TableSelectedAction from '../table-selected-action';
+import TableHeadCustom from '../table-head-custom';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'ID_TaisanQr', label: 'Mã', width: 100 },
+  { id: 'ID_TaisanQrcode', label: 'Mã', width: 100 },
   { id: 'ID_Taisan', label: 'Tên tài sản', width: 200 },
   { id: 'Ngaykhoitao', label: 'Ngày', width: 200 },
   { id: 'MaQrCode', label: 'Mã Qr Code', width: 150 },
@@ -98,7 +94,7 @@ const defaultFilters: ITaisanTableFilters = {
   name: '',
   status: 'all',
   startDate: null,
-  endDate: null
+  endDate: null,
 };
 
 const STORAGE_KEY = 'accessToken';
@@ -115,6 +111,8 @@ export default function GroupPolicyListView() {
 
   const confirm = useBoolean();
 
+  const confirmDownload = useBoolean();
+
   const confirmQr = useBoolean();
 
   const { enqueueSnackbar } = useSnackbar();
@@ -130,8 +128,6 @@ export default function GroupPolicyListView() {
   const { donvi } = useGetDonvi();
 
   const [tableData, setTableData] = useState<ITaisanQrCode[]>([]);
-
-  const [qrCodeUrl, setQrCodeUrl] = useState('');
 
   const [dataSelect, setDataSelect] = useState<ITaisanQrCode>();
 
@@ -219,7 +215,7 @@ export default function GroupPolicyListView() {
   const handleDeleteRow = useCallback(
     async (id: string) => {
       await axios
-        .put(`http://localhost:8888/api/v1/tb_taisanqrcode/delete/${id}`, {
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_taisanqrcode/delete/${id}`, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -227,7 +223,7 @@ export default function GroupPolicyListView() {
         })
         .then((res) => {
           // reset();
-          const deleteRow = tableData?.filter((row) => row.ID_TaisanQr !== id);
+          const deleteRow = tableData?.filter((row) => row.ID_TaisanQrcode !== id);
           setTableData(deleteRow);
 
           table.onUpdatePageDeleteRow(dataInPage.length);
@@ -278,7 +274,7 @@ export default function GroupPolicyListView() {
       confirm.onTrue();
       popover.onClose();
       await axios
-        .get(`http://localhost:8888/api/v1/tb_taisanqrcode/${data.ID_TaisanQr}`, {
+        .get(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_taisanqrcode/${data.ID_TaisanQrcode}`, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -304,10 +300,44 @@ export default function GroupPolicyListView() {
     document.body.removeChild(link);
   };
 
+  const handleDownloadImages = async () => {
+    try {
+      const selectedRows = table.selected;
+      const selectedQrCodes = dataInPage
+        .filter((row) => selectedRows.includes(row.ID_TaisanQrcode))
+        .map((row) => row.MaQrCode);
+
+      const maQrCodes = selectedQrCodes.join(',');
+
+      const response = await axios.post(
+        `https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_taisanqrcode/generate-qr-codes?maQrCodes=${maQrCodes}`,
+        {},
+        {
+          headers: {
+            Accept: 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+          responseType: 'blob', // Specify the response type as blob to handle the file download
+        }
+      );
+
+      // Create a blob link to download
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'qr_codes.zip'); // Set the name for the downloaded file
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Error while generating QR codes:', error);
+    }
+  };
+
   const handleUpdate = useCallback(
     async (id: string) => {
       await axios
-        .put(`http://localhost:8888/api/v1/tb_taisanqrcode/update/${id}`, dataSelect, {
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_taisanqrcode/update/${id}`, dataSelect, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -417,7 +447,7 @@ export default function GroupPolicyListView() {
             ))}
           </Tabs>
 
-          <GiamsatTableToolbar
+          <TaiSanQrTableToolbar
             filters={filters}
             onFilters={handleFilters}
             //
@@ -427,7 +457,7 @@ export default function GroupPolicyListView() {
           />
 
           {canReset && (
-            <GiamsatTableFiltersResult
+            <TaiSanQrTableFiltersResult
               filters={filters}
               onFilters={handleFilters}
               //
@@ -444,12 +474,12 @@ export default function GroupPolicyListView() {
               numSelected={table.selected.length}
               rowCount={tableData?.length}
               onSelectAllRows={(checked) =>
-                table.onSelectAllRows(checked, tableData?.map((row) => row?.ID_TaisanQr))
+                table.onSelectAllRows(checked, tableData?.map((row) => row?.ID_TaisanQrcode))
               }
               action={
-                <Tooltip title="Delete">
-                  <IconButton color="primary" onClick={confirm.onTrue}>
-                    <Iconify icon="solar:trash-bin-trash-bold" />
+                <Tooltip title="Download">
+                  <IconButton color="primary" onClick={handleDownloadImages}>
+                    <Iconify icon="solar:download-square-bold" />
                   </IconButton>
                 </Tooltip>
               }
@@ -464,9 +494,9 @@ export default function GroupPolicyListView() {
                   rowCount={tableData?.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
-                  // onSelectAllRows={(checked) =>
-                  //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_TaisanQr))
-                  // }
+                  onSelectAllRows={(checked) =>
+                    table.onSelectAllRows(checked, tableData?.map((row) => row.ID_TaisanQrcode))
+                  }
                 />
 
                 <TableBody>
@@ -476,12 +506,12 @@ export default function GroupPolicyListView() {
                       table.page * table.rowsPerPage + table.rowsPerPage
                     )
                     .map((row) => (
-                      <GroupPolicyTableRow
-                        key={row.ID_TaisanQr}
+                      <TaiSanTableRow
+                        key={row.ID_TaisanQrcode}
                         row={row}
-                        selected={table.selected.includes(row.ID_TaisanQr)}
-                        onSelectRow={() => table.onSelectRow(row.ID_TaisanQr)}
-                        onDeleteRow={() => handleDeleteRow(row.ID_TaisanQr)}
+                        selected={table.selected.includes(row.ID_TaisanQrcode)}
+                        onSelectRow={() => table.onSelectRow(row.ID_TaisanQrcode)}
+                        onDeleteRow={() => handleDeleteRow(row.ID_TaisanQrcode)}
                         onCreateRow={() => handleCreateRow(row)}
                         onViewRow={() => handleViewRow(row)}
                       />
@@ -637,7 +667,7 @@ function GroupPolicyDialog({
   handleUpdate,
   setDataSelect,
 }: ConfirmTransferDialogProps) {
-  const idPolicy = dataSelect?.ID_TaisanQr;
+  const idPolicy = dataSelect?.ID_TaisanQrcode;
   const { taisan } = useGetTaisan();
   const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
 
@@ -696,16 +726,16 @@ function GroupPolicyDialog({
             </Stack>
 
             <Stack style={{ display: 'flex', flexDirection: 'row' }} spacing={3}>
-            <TextField
-              name="Ghichu"
-              label="Ghi chú"
-              value={dataSelect?.Ghichu}
-              onChange={onChange}
-              fullWidth
-              multiline
-              rows={3}
-              onBlur={onBlur}
-            />
+              <TextField
+                name="Ghichu"
+                label="Ghi chú"
+                value={dataSelect?.Ghichu}
+                onChange={onChange}
+                fullWidth
+                multiline
+                rows={3}
+                onBlur={onBlur}
+              />
             </Stack>
           </Stack>
         </DialogContent>

@@ -23,7 +23,13 @@ import FormProvider, { RHFSelect, RHFTextField } from 'src/components/hook-form'
 // types
 import { IPhieuNCC, IPhongbanda, ITaisan } from 'src/types/taisan';
 // api
-import { useGetNghiepvu, useGetPhongBanDa, useGetLoaiNhom, useGetTaisan, useGetNhacc } from 'src/api/taisan';
+import {
+  useGetNghiepvu,
+  useGetPhongBanDa,
+  useGetLoaiNhom,
+  useGetTaisan,
+  useGetNhacc,
+} from 'src/api/taisan';
 // components
 import { useSnackbar } from 'src/components/snackbar';
 // types
@@ -33,7 +39,7 @@ import { useSettingsContext } from 'src/components/settings';
 import axios from 'axios';
 import { useBoolean } from 'src/hooks/use-boolean';
 
-import PhieuNXEditDetails from './phieuncc-edit-details';
+import PhieuNCCEditDetails from './phieuncc-edit-details';
 
 // ----------------------------------------------------------------------
 
@@ -56,6 +62,19 @@ const QUARTY = [
   },
 ];
 
+const QUARTYFILTER = [
+  {
+    value: 1,
+    label: 'Quý I',
+  },
+
+  {
+    value: 4,
+    label: 'Quý IV',
+  },
+];
+
+
 const STORAGE_KEY = 'accessToken';
 
 type Props = {
@@ -74,11 +93,13 @@ export default function PhieuNXNewForm({ currentPhieuNCC, mutate }: Props) {
 
   const accessToken = localStorage.getItem(STORAGE_KEY);
 
-  const [noiXuat, setNoiXuat] = useState<IPhongbanda[]>([]);
-  const [noiNhap, setNoiNhap] = useState<IPhongbanda[]>([]);
+  const [noiXuat, setNoiXuat] = useState<any[]>([]);
+  const [noiNhap, setNoiNhap] = useState<any[]>([]);
   const [taiSan, setTaiSan] = useState<ITaisan[]>([]);
 
   const mdUp = useResponsive('up', 'md');
+
+  const [filteredQuarty, setFilteredQuarty] = useState(QUARTY); // Default is QUARTY
 
   const { phongbanda } = useGetPhongBanDa();
 
@@ -103,8 +124,14 @@ export default function PhieuNXNewForm({ currentPhieuNCC, mutate }: Props) {
       ID_PhieuNCC: currentPhieuNCC?.ID_PhieuNCC || '',
       ID_Nghiepvu: currentPhieuNCC?.ID_Nghiepvu || '',
       Sophieu: currentPhieuNCC?.Sophieu || '',
-      ID_NoiNhap: currentPhieuNCC?.ID_NoiNhap || null,
-      ID_NoiXuat: currentPhieuNCC?.ID_NoiXuat || null,
+      ID_NoiNhap:
+        `${currentPhieuNCC?.ID_Nghiepvu}` === '5'
+          ? currentPhieuNCC?.ent_nhacc?.ID_Nhacc
+          : currentPhieuNCC?.ent_phongbanda?.ID_Phongban || null,
+      ID_NoiXuat:
+        `${currentPhieuNCC?.ID_Nghiepvu}` === '2'
+          ? currentPhieuNCC?.ent_nhacc?.ID_Nhacc
+          : currentPhieuNCC?.ent_phongbanda?.ID_Phongban || null,
       ID_Loainhom: currentPhieuNCC?.ID_Loainhom || null,
       iTinhtrang: currentPhieuNCC?.iTinhtrang || '',
       NgayNX: currentPhieuNCC?.NgayNX || new Date(),
@@ -139,6 +166,14 @@ export default function PhieuNXNewForm({ currentPhieuNCC, mutate }: Props) {
   } = methods;
 
   const values = watch();
+
+  useEffect(() => {
+    if (values.ID_Loainhom === 1 || values.ID_Loainhom === 4) {
+      setFilteredQuarty(QUARTYFILTER);
+    } else {
+      setFilteredQuarty(QUARTY);
+    }
+  }, [values.ID_Loainhom]);
 
   useEffect(() => {
     if (currentPhieuNCC) {
@@ -176,12 +211,16 @@ export default function PhieuNXNewForm({ currentPhieuNCC, mutate }: Props) {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .put(`http://localhost:8888/api/v1/tb_phieuncc/update/${currentPhieuNCC?.ID_PhieuNCC}`, data, {
-        headers: {
-          Accept: 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-        },
-      })
+      .put(
+        `https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieuncc/update/${currentPhieuNCC?.ID_PhieuNCC}`,
+        data,
+        {
+          headers: {
+            Accept: 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      )
       .then(async (res) => {
         setLoading(false);
         await mutate();
@@ -220,7 +259,7 @@ export default function PhieuNXNewForm({ currentPhieuNCC, mutate }: Props) {
   const handleClose = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`http://localhost:8888/api/v1/tb_phieunx/close/${currentPhieuNCC?.ID_PhieuNCC}`, data, {
+      .post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieunx/close/${currentPhieuNCC?.ID_PhieuNCC}`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -282,33 +321,63 @@ export default function PhieuNXNewForm({ currentPhieuNCC, mutate }: Props) {
                 ))}
             </RHFSelect>
           )}
-          {noiNhap?.length > 0 && (
-            <RHFSelect
-              name="ID_NoiNhap"
-              label="Nơi nhập *"
-              InputLabelProps={{ shrink: true }}
-              PaperPropsSx={{ textTransform: 'capitalize' }}
-            >
-              {noiNhap?.map((item) => (
-                <MenuItem key={item?.ID_Phongban} value={item?.ID_Phongban}>
-                  {item?.Tenphongban}
-                </MenuItem>
-              ))}
-            </RHFSelect>
+          {noiNhap?.length > 0 && noiXuat?.length > 0 && `${values?.ID_Nghiepvu}` === '2' && (
+            <>
+              <RHFSelect
+                name="ID_NoiNhap"
+                label="Nơi nhập *"
+                InputLabelProps={{ shrink: true }}
+                PaperPropsSx={{ textTransform: 'capitalize' }}
+              >
+                {noiNhap?.map((item) => (
+                  <MenuItem key={item?.ID_Phongban} value={item?.ID_Phongban}>
+                    {item?.Tenphongban}
+                  </MenuItem>
+                ))}
+              </RHFSelect>
+
+              <RHFSelect
+                name="ID_NoiXuat"
+                label="Nơi xuất *"
+                InputLabelProps={{ shrink: true }}
+                PaperPropsSx={{ textTransform: 'capitalize' }}
+              >
+                {noiXuat?.map((item: any) => (
+                  <MenuItem key={item?.ID_Nhacc} value={item?.ID_Nhacc}>
+                    {item?.TenNhacc}
+                  </MenuItem>
+                ))}
+              </RHFSelect>
+            </>
           )}
-          {noiXuat?.length > 0 && (
-            <RHFSelect
-              name="ID_NoiXuat"
-              label="Nơi xuất *"
-              InputLabelProps={{ shrink: true }}
-              PaperPropsSx={{ textTransform: 'capitalize' }}
-            >
-              {noiXuat?.map((item) => (
-                <MenuItem key={item?.ID_Phongban} value={item?.ID_Phongban}>
-                  {item?.Tenphongban}
-                </MenuItem>
-              ))}
-            </RHFSelect>
+          {noiNhap?.length > 0 && noiXuat?.length > 0 && `${values?.ID_Nghiepvu}` === '5' && (
+            <>
+              <RHFSelect
+                name="ID_NoiNhap"
+                label="Nơi nhập *"
+                InputLabelProps={{ shrink: true }}
+                PaperPropsSx={{ textTransform: 'capitalize' }}
+              >
+                {noiNhap?.map((item: any) => (
+                  <MenuItem key={item?.ID_Nhacc} value={item?.ID_Nhacc}>
+                    {item?.TenNhacc}
+                  </MenuItem>
+                ))}
+              </RHFSelect>
+
+              <RHFSelect
+                name="ID_NoiXuat"
+                label="Nơi xuất *"
+                InputLabelProps={{ shrink: true }}
+                PaperPropsSx={{ textTransform: 'capitalize' }}
+              >
+                {noiXuat?.map((item: any) => (
+                  <MenuItem key={item?.ID_Phongban} value={item?.ID_Phongban}>
+                    {item?.Tenphongban}
+                  </MenuItem>
+                ))}
+              </RHFSelect>
+            </>
           )}
           <Stack width="100%">
             <DatePicker
@@ -344,7 +413,7 @@ export default function PhieuNXNewForm({ currentPhieuNCC, mutate }: Props) {
             InputLabelProps={{ shrink: true }}
             PaperPropsSx={{ textTransform: 'capitalize' }}
           >
-            {QUARTY?.map((item) => (
+           {filteredQuarty?.map((item) => (
               <MenuItem key={item?.value} value={item?.value}>
                 {item?.label}
               </MenuItem>
@@ -366,7 +435,7 @@ export default function PhieuNXNewForm({ currentPhieuNCC, mutate }: Props) {
     <FormProvider methods={methods}>
       {renderDetails}
       <Card sx={{ mt: 3 }}>
-        <PhieuNXEditDetails taiSan={taiSan} />
+        <PhieuNCCEditDetails taiSan={taiSan} />
       </Card>
 
       <Stack justifyContent="flex-end" direction="row" spacing={2} sx={{ mt: 3 }}>

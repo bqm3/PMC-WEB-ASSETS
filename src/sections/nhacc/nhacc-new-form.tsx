@@ -80,7 +80,7 @@ export default function NhaCCNewForm() {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`http://localhost:8888/api/v1/ent_nhacc/create`, data, {
+      .post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_nhacc/create`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,

@@ -64,6 +64,18 @@ const QUARTY = [
   },
 ];
 
+const QUARTYFILTER = [
+  {
+    value: 1,
+    label: 'Quý I',
+  },
+
+  {
+    value: 4,
+    label: 'Quý IV',
+  },
+];
+
 const STORAGE_KEY = 'accessToken';
 
 export default function SuaChuaTSNewForm() {
@@ -93,6 +105,8 @@ export default function SuaChuaTSNewForm() {
   const { taisan } = useGetTaisan();
 
   const { enqueueSnackbar } = useSnackbar();
+
+  const [filteredQuarty, setFilteredQuarty] = useState(QUARTY); // Default is QUARTY
 
   const NewProductSchema = Yup.object().shape({
     Sophieu: Yup.string().required('Không được để trống'),
@@ -142,6 +156,14 @@ export default function SuaChuaTSNewForm() {
   } = methods;
 
   const values = watch();
+
+  useEffect(() => {
+    if (values.ID_Loainhom === 1 || values.ID_Loainhom === 4) {
+      setFilteredQuarty(QUARTYFILTER);
+    } else {
+      setFilteredQuarty(QUARTY);
+    }
+  }, [values.ID_Loainhom]);
 
   // 1: Phiếu hàng tồn đầu kỳ
   // 2: Phiếu nhập ngoài
@@ -198,9 +220,11 @@ export default function SuaChuaTSNewForm() {
   useEffect(() => {
     let dataTaiSan: any = [];
     if (values.ID_Loainhom) {
-      dataTaiSan = taisan.filter((item) => `${item.ent_nhomts.ent_loainhom.ID_Loainhom}` === `${values.ID_Loainhom}`);
+      dataTaiSan = taisan.filter(
+        (item) => `${item.ent_nhomts.ent_loainhom.ID_Loainhom}` === `${values.ID_Loainhom}`
+      );
     } else {
-      dataTaiSan = taisan
+      dataTaiSan = taisan;
     }
     setTaiSan(dataTaiSan);
   }, [values.ID_Loainhom, taisan, setValue]);
@@ -208,7 +232,7 @@ export default function SuaChuaTSNewForm() {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`http://localhost:8888/api/v1/tb_phieunx/create`, data, {
+      .post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieunx/create`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -298,7 +322,7 @@ export default function SuaChuaTSNewForm() {
             </RHFSelect>
           )}
 
-<Controller
+          <Controller
             name="NgayNX"
             control={control}
             render={({ field, fieldState: { error } }) => (
@@ -333,14 +357,14 @@ export default function SuaChuaTSNewForm() {
               </MenuItem>
             ))}
           </RHFSelect>
-          
+
           <RHFSelect
             name="ID_Quy"
             label="Quý"
             InputLabelProps={{ shrink: true }}
             PaperPropsSx={{ textTransform: 'capitalize' }}
           >
-            {QUARTY?.map((item) => (
+            {filteredQuarty?.map((item) => (
               <MenuItem key={item?.value} value={item?.value}>
                 {item?.label}
               </MenuItem>
@@ -359,7 +383,7 @@ export default function SuaChuaTSNewForm() {
     <FormProvider methods={methods}>
       {renderDetails}
       <Card sx={{ mt: 3 }}>
-        <PhieuNXNewEditDetails taiSan={taiSan}/>
+        <PhieuNXNewEditDetails taiSan={taiSan} />
       </Card>
 
       <Stack justifyContent="flex-end" direction="row" spacing={2} sx={{ mt: 3 }}>

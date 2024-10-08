@@ -36,7 +36,7 @@ export default function InvoiceNewEditDetails() {
 
   const handleAdd = () => {
     append({
-      ID_TaisanQr: null,
+      ID_TaisanQrcode: null,
       ID_Taisan: null,
       Ngaynhan: new Date(),
       Sotien: 0,
@@ -72,10 +72,10 @@ export default function InvoiceNewEditDetails() {
     (event: any, newValue: any, index: number) => {
       if (newValue) {
         // Find the selected option from taisan
-        const selectedOption = taisanqr.find((option) => option.ID_TaisanQr === newValue.ID_TaisanQr);
+        const selectedOption = taisanqr.find((option) => option.ID_TaisanQrcode === newValue.ID_TaisanQrcode);
         if (selectedOption) {
           // Set the corresponding ID_Taisan value in the form state
-          setValue(`suachuact[${index}].ID_TaisanQr`, selectedOption.ID_TaisanQr);
+          setValue(`suachuact[${index}].ID_TaisanQrcode`, selectedOption.ID_TaisanQrcode);
         }
       }
     },
@@ -106,7 +106,7 @@ export default function InvoiceNewEditDetails() {
           <Stack key={item.id} alignItems="flex-end" spacing={1.5}>
             <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ width: 1 }}>
               <Controller
-                name={`suachuact[${index}].ID_TaisanQr`}
+                name={`suachuact[${index}].ID_TaisanQrcode`}
                 control={control}
                 render={() => (
                   <Autocomplete
@@ -125,7 +125,7 @@ export default function InvoiceNewEditDetails() {
                       />
                     )}
                     renderOption={(props, option) => (
-                      <li {...props} key={option.ID_TaisanQr}>
+                      <li {...props} key={option.ID_TaisanQrcode}>
                         {option.ent_taisan.Tents}
                       </li>
                     )}

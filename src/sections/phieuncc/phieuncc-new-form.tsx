@@ -64,16 +64,21 @@ const QUARTY = [
   },
 ];
 
+const QUARTYFILTER = [
+  {
+    value: 1,
+    label: 'Quý I',
+  },
+
+  {
+    value: 4,
+    label: 'Quý IV',
+  },
+];
+
 const STORAGE_KEY = 'accessToken';
 
 export default function SuaChuaTSNewForm() {
-  const router = useRouter();
-
-  const settings = useSettingsContext();
-
-  const loadingSave = useBoolean();
-
-  const loadingSend = useBoolean();
 
   const [loading, setLoading] = useState<Boolean | any>(false);
 
@@ -92,6 +97,9 @@ export default function SuaChuaTSNewForm() {
   const { nghiepvu } = useGetNghiepvu();
   const { loainhom } = useGetLoaiNhom();
   const { taisan } = useGetTaisan();
+
+  const [filteredQuarty, setFilteredQuarty] = useState(QUARTY); // Default is QUARTY
+
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -144,6 +152,14 @@ export default function SuaChuaTSNewForm() {
 
   const values = watch();
 
+  useEffect(() => {
+    if (values.ID_Loainhom === 1 || values.ID_Loainhom === 4) {
+      setFilteredQuarty(QUARTYFILTER);
+    } else {
+      setFilteredQuarty(QUARTY);
+    }
+  }, [values.ID_Loainhom]);
+
   // 1: Phiếu hàng tồn đầu kỳ
   // 2: Phiếu nhập ngoài
   // 3: Phiếu nhập xuất nội bộ
@@ -191,7 +207,7 @@ export default function SuaChuaTSNewForm() {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`http://localhost:8888/api/v1/tb_phieuncc/create`, data, {
+      .post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieuncc/create`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -353,7 +369,7 @@ export default function SuaChuaTSNewForm() {
             InputLabelProps={{ shrink: true }}
             PaperPropsSx={{ textTransform: 'capitalize' }}
           >
-            {QUARTY?.map((item) => (
+         {filteredQuarty?.map((item) => (
               <MenuItem key={item?.value} value={item?.value}>
                 {item?.label}
               </MenuItem>

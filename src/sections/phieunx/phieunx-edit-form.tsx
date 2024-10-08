@@ -56,6 +56,18 @@ const QUARTY = [
   },
 ];
 
+const QUARTYFILTER = [
+  {
+    value: 1,
+    label: 'Quý I',
+  },
+
+  {
+    value: 4,
+    label: 'Quý IV',
+  },
+];
+
 const STORAGE_KEY = 'accessToken';
 
 type Props = {
@@ -78,14 +90,14 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
   const [noiNhap, setNoiNhap] = useState<IPhongbanda[]>([]);
   const [taiSan, setTaiSan] = useState<ITaisan[]>([]);
 
-  const mdUp = useResponsive('up', 'md');
-
   const { phongbanda } = useGetPhongBanDa();
 
   const { nghiepvu } = useGetNghiepvu();
   const { loainhom } = useGetLoaiNhom();
   const { taisan } = useGetTaisan();
 
+  const [filteredQuarty, setFilteredQuarty] = useState(QUARTY); // Default is QUARTY
+  
   const { enqueueSnackbar } = useSnackbar();
 
   const NewProductSchema = Yup.object().shape({
@@ -138,6 +150,15 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
   } = methods;
 
   const values = watch();
+
+  useEffect(() => {
+    if (values.ID_Loainhom === 1 || values.ID_Loainhom === 4) {
+      setFilteredQuarty(QUARTYFILTER);
+    } else {
+      setFilteredQuarty(QUARTY);
+    }
+  }, [values.ID_Loainhom]);
+
 
   useEffect(() => {
     if (currentPhieuNX) {
@@ -195,7 +216,7 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .put(`http://localhost:8888/api/v1/tb_phieunx/update/${currentPhieuNX?.ID_PhieuNX}`, data, {
+      .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieunx/update/${currentPhieuNX?.ID_PhieuNX}`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -239,7 +260,7 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
   const handleClose = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`http://localhost:8888/api/v1/tb_phieunx/close/${currentPhieuNX?.ID_PhieuNX}`, data, {
+      .post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieunx/close/${currentPhieuNX?.ID_PhieuNX}`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -363,7 +384,7 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
             InputLabelProps={{ shrink: true }}
             PaperPropsSx={{ textTransform: 'capitalize' }}
           >
-            {QUARTY?.map((item) => (
+            {filteredQuarty?.map((item) => (
               <MenuItem key={item?.value} value={item?.value}>
                 {item?.label}
               </MenuItem>

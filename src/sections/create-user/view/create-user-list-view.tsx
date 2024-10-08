@@ -103,7 +103,6 @@ const defaultFilters: IUserTableFilters = {
   endDate: null,
   chinhanh: [],
   phongban: [],
-
 };
 
 const STORAGE_KEY = 'accessToken';
@@ -164,8 +163,6 @@ export default function GroupPolicyListView() {
     }
   }, [chinhanh, nhompb]);
 
-  
-
   useEffect(() => {
     if (connguoi?.length > 0) {
       setTableData(connguoi);
@@ -200,6 +197,17 @@ export default function GroupPolicyListView() {
     }
   };
 
+  const handleInputShowChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    if (dataShow) {
+      // Update the corresponding field in `dataSelect`
+      setDataShow({
+        ...dataShow,
+        [name]: value,
+      });
+    }
+  };
+
   const handleAutocompleteChange = (event: any, value: any) => {
     if (typeof value === 'object' && value !== null) {
       // Lưu ID_Phongban vào dataSelect
@@ -220,6 +228,16 @@ export default function GroupPolicyListView() {
       // Update the corresponding field in `dataSelect`
       setDataSelect({
         ...dataSelect,
+        NgayGhinhan: date,
+      });
+    }
+  };
+
+  const handleInputShowDate = (date: any) => {
+    if (dataShow) {
+      // Update the corresponding field in `dataSelect`
+      setDataShow({
+        ...dataShow,
         NgayGhinhan: date,
       });
     }
@@ -247,7 +265,7 @@ export default function GroupPolicyListView() {
   const handleDeleteRow = useCallback(
     async (id: string) => {
       await axios
-        .put(`http://localhost:8888/api/v1/ent_connguoi/delete/${id}`, [], {
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_connguoi/delete/${id}`, [], {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -306,7 +324,7 @@ export default function GroupPolicyListView() {
       setLoadingShow(true);
       confirmShow.onTrue();
       await axios
-        .get(`http://localhost:8888/api/v1/ent_connguoi/${id}`, {
+        .get(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_connguoi/${id}`, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -348,7 +366,7 @@ export default function GroupPolicyListView() {
   const handleUpdate = useCallback(
     async (id: string) => {
       await axios
-        .put(`http://localhost:8888/api/v1/ent_connguoi/update/${id}`, dataSelect, {
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_connguoi/update/${id}`, dataSelect, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -390,6 +408,55 @@ export default function GroupPolicyListView() {
         });
     },
     [enqueueSnackbar, accessToken, dataSelect, confirm, popover, mutateConnguoi] // Add accessToken and enqueueSnackbar as dependencies
+  );
+
+  const handleUpdateStatus = useCallback(
+    async (id: string, status: string) => {
+      setLoadingShow(true);
+      await axios
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_connguoi/status/${id}/${status}`, dataShow, {
+          headers: {
+            Accept: 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
+        .then(async (res) => {
+          confirmShow.onFalse();
+          popoverShow.onClose();
+          await mutateConnguoi();
+          setLoadingShow(false);
+          enqueueSnackbar({
+            variant: 'success',
+            autoHideDuration: 2000,
+            message: 'Cập nhật thành công',
+          });
+        })
+        .catch((error) => {
+          setLoadingShow(false);
+          if (error.response) {
+            enqueueSnackbar({
+              variant: 'error',
+              autoHideDuration: 2000,
+              message: `${error.response.data.message}`,
+            });
+          } else if (error.request) {
+            // Lỗi không nhận được phản hồi từ server
+            enqueueSnackbar({
+              variant: 'error',
+              autoHideDuration: 2000,
+              message: `Không nhận được phản hồi từ máy chủ`,
+            });
+          } else {
+            // Lỗi khi cấu hình request
+            enqueueSnackbar({
+              variant: 'error',
+              autoHideDuration: 2000,
+              message: `Lỗi gửi yêu cầu`,
+            });
+          }
+        });
+    },
+    [enqueueSnackbar, accessToken, dataShow, confirmShow, popoverShow, mutateConnguoi] // Add accessToken and enqueueSnackbar as dependencies
   );
 
   const handleViewAdd = useCallback(() => {
@@ -541,13 +608,11 @@ export default function GroupPolicyListView() {
         open={confirmShow.value}
         dataSelect={dataShow}
         onClose={confirmShow.onFalse}
-        onChange={handleInputChange}
+        onChange={handleInputShowChange}
         loadingShow={loadingShow}
-        // handleInputDate={handleInputDate}
-        // handleUpdate={handleUpdate}
-        // nhompb={nhompb}
-        // handleSelectChange={handleSelectChange}
-        handleAutocompleteChange={handleAutocompleteChange}
+        handleInputDate={handleInputShowDate}
+        handleUpdate={handleUpdateStatus}
+        nhompb={nhompb}
       />
 
       <UserDialogAdd open={confirmAdd.value} onClose={confirmAdd.onFalse} />
@@ -602,8 +667,7 @@ function applyFilter({
     inputData = inputData.filter((product) =>
       product.ent_nhansupbda.some(
         (item) =>
-          `${item.iTinhtrang}` === '1' &&
-        phongban.includes(item.ent_phongbanda.ent_nhompb.Nhompb)
+          `${item.iTinhtrang}` === '1' && phongban.includes(item.ent_phongbanda.ent_nhompb.Nhompb)
       )
     );
   }
@@ -784,17 +848,20 @@ function UserShowDialog({
   onChange,
   onClose,
   loadingShow,
-  // onBlur,
-  // handleUpdate,
-  // handleSelectChange,
-  // handleInputDate,
-  handleAutocompleteChange,
+  onBlur,
+  handleUpdate,
+  handleInputDate,
 }: any) {
   const ID_Connguoi = dataSelect?.ID_Connguoi;
   const { phongbanda } = useGetPhongBanDa();
   const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
+  const { enqueueSnackbar } = useSnackbar();
 
   const sortedData = dataSelect?.ent_nhansupbda?.sort((a: any, b: any) => {
+    if (a.iTinhtrang !== b.iTinhtrang) {
+      return b.iTinhtrang - a.iTinhtrang;
+    }
+
     const dateA = new Date(a.Ngayvao).getTime();
     const dateB = new Date(b.Ngayvao).getTime();
     return dateA - dateB;
@@ -816,7 +883,7 @@ function UserShowDialog({
             <CircularProgress />
           </Stack>
         ) : (
-          <Stack spacing={3} sx={{ p: 3 }}>
+          <Stack spacing={2} sx={{ p: 2 }}>
             <Timeline position="alternate">
               {sortedData?.map((item: any, index: number) => {
                 let color: any;
@@ -857,7 +924,7 @@ function UserShowDialog({
                       <TimelineDot color={color} />
                       {index < sortedData.length - 1 && <TimelineConnector />}
                     </TimelineSeparator>
-                    <TimelineContent sx={{ py: '12px', px: 2 }}>
+                    <TimelineContent sx={{ px: 2 }}>
                       <Typography variant="subtitle1">{item.ent_phongbanda.Tenphongban}</Typography>
                       <Typography variant="body2" color="text.secondary">
                         {item.ent_phongbanda.Diachi}
@@ -867,51 +934,57 @@ function UserShowDialog({
                 );
               })}
             </Timeline>
-            <FormControl>
-              <FormLabel id="demo-radio-buttons-group-label">Trạng thái</FormLabel>
-              <RadioGroup
-                aria-labelledby="demo-radio-buttons-group-label"
-                value={selectedValue}
-                onChange={handleRadioChange}
-                name="radio-buttons-group"
-              >
-                <FormControlLabel value="1" control={<Radio />} label="Chuyển công tác" />
-                <FormControlLabel value="2" control={<Radio />} label="Nghỉ việc" />
-              </RadioGroup>
-            </FormControl>
+            {dataSelect?.ent_nhansupbda?.length > 0 ? (
+              <FormControl>
+                <FormLabel id="demo-radio-buttons-group-label">Trạng thái</FormLabel>
+                <RadioGroup
+                  aria-labelledby="demo-radio-buttons-group-label"
+                  value={selectedValue}
+                  onChange={handleRadioChange}
+                  name="radio-buttons-group"
+                >
+                  <FormControlLabel value="2" control={<Radio />} label="Chuyển công tác" />
+                  <FormControlLabel value="3" control={<Radio />} label="Nghỉ việc" />
+                </RadioGroup>
+              </FormControl>
+            ) : (
+              <FormControl>
+                <FormLabel id="demo-radio-buttons-group-label">Trạng thái</FormLabel>
+                <RadioGroup
+                  aria-labelledby="demo-radio-buttons-group-label"
+                  value={selectedValue}
+                  onChange={handleRadioChange}
+                  name="radio-buttons-group"
+                >
+                  <FormControlLabel value="1" control={<Radio />} label="Đang làm việc" />
+                </RadioGroup>
+              </FormControl>
+            )}
 
-            {selectedValue === '1' && (
+            {(selectedValue === '2' || selectedValue === '1') && (
               <Grid container spacing={2}>
                 <Grid item xs={6}>
-                  <Autocomplete
-                    disablePortal
-                    options={phongbanda}
-                    getOptionLabel={(option) =>
-                      typeof option === 'string' ? option : option?.Tenphongban || ''
-                    }
-                    value={
-                      phongbanda.find(
-                        (option) =>
-                          option.ID_Phongban ===
-                          dataSelect?.ent_nhansupbda[0]?.ent_phongbanda?.ID_Phongban
-                      ) || null
-                    }
-                    onChange={handleAutocompleteChange}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Phòng ban dự án"
-                        name="ID_Phongban"
-                        onChange={onChange}
-                      />
-                    )}
-                  />
+                  <FormControl fullWidth>
+                    <InputLabel id="demo-simple-select-label">Phòng ban</InputLabel>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      name="ID_Phongban"
+                      value={dataSelect.ID_Phongban}
+                      label="Age"
+                      onChange={onChange}
+                    >
+                      {phongbanda.map((item) => (
+                        <MenuItem value={item.ID_Phongban}>{item.Tenphongban}</MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
                 </Grid>
                 <Grid item xs={6}>
                   <DatePicker
                     sx={{ width: '100%' }}
                     label="Ngày ghi nhận"
-                    // onChange={(val) => handleInputDate(val)}
+                    onChange={(val) => handleInputDate(val)}
                     value={dataSelect?.NgayGhinhan ? new Date(dataSelect.NgayGhinhan) : null}
                   />
                 </Grid>
@@ -922,22 +995,30 @@ function UserShowDialog({
       </DialogContent>
 
       <DialogActions>
-        <Button
+        <LoadingButton
           variant="contained"
           color="info"
-          // onClick={() => {
-          //   if (ID_Connguoi) {
-          //     handleUpdate(ID_Connguoi);
-          //   }
-          // }}
+          loading={loadingShow}
+          onClick={() => {
+            if (ID_Connguoi && dataSelect.ID_Phongban) {
+              handleUpdate(ID_Connguoi, selectedValue);
+            } else {
+              enqueueSnackbar({
+                variant: 'error',
+                autoHideDuration: 2000,
+                message: `Thiếu phòng ban dự án`,
+              });
+            }
+          }}
         >
           Cập nhật
-        </Button>
+        </LoadingButton>
         <Button onClick={onClose}>Hủy</Button>
       </DialogActions>
     </Dialog>
   );
 }
+
 function UserDialogAdd({ open, onClose }: any) {
   return (
     <Dialog open={open} fullWidth maxWidth="md" onClose={onClose}>

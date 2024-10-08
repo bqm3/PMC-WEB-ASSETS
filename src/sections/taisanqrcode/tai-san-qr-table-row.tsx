@@ -45,7 +45,7 @@ export default function TaiSanQrTableRow({
   onCreateRow,
 }: Props) {
   const {
-    ID_TaisanQr,
+    ID_TaisanQrcode,
     ID_Taisan,
     Ngaykhoitao,
     ID_Donvi,
@@ -72,6 +72,9 @@ export default function TaiSanQrTableRow({
         borderBottom: '2px solid rgba(0, 0, 0, 0.05)', // Thicker border
       },
     }}>
+       <TableCell padding="checkbox">
+        <Checkbox checked={selected} onClick={onSelectRow} />
+      </TableCell>
       <TableCell>
         <Box
           onClick={onViewRow}
@@ -82,7 +85,7 @@ export default function TaiSanQrTableRow({
             },
           }}
         >
-          TS-{ID_Taisan}
+          TS-{ID_TaisanQrcode}
         </Box>
       </TableCell>
       <TableCell> {ent_taisan.Tents} </TableCell>
