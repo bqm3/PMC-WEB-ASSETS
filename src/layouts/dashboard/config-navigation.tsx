@@ -132,7 +132,15 @@ export function useNavData() {
               { title: t('create'), path: paths.dashboard.taisan.new },
             ],
           },
-
+          {
+            title: t('giaonhants'),
+            path: paths.dashboard.giaonhants.root,
+            icon: ICONS.invoice,
+            children: [
+              { title: t('list'), path: paths.dashboard.giaonhants.root },
+              { title: t('create'), path: paths.dashboard.giaonhants.new },
+            ],
+          },
           {
             title: t('phieunx'),
             path: paths.dashboard.phieunx.root,

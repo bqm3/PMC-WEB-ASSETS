@@ -8,26 +8,16 @@ import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Unstable_Grid2';
 import MenuItem from '@mui/material/MenuItem';
-import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import CardHeader from '@mui/material/CardHeader';
-// routes
-import { paths } from 'src/routes/paths';
-// hooks
-import { useRouter } from 'src/routes/hooks';
+import { Button } from '@mui/material';
 import { useResponsive } from 'src/hooks/use-responsive';
 // _mock
-import { _tags, _roles, USER_GENDER_OPTIONS } from 'src/_mock';
 import FormProvider, { RHFSelect, RHFTextField } from 'src/components/hook-form';
 // types
 // api
-import { IPhongbanda, ITaisan } from 'src/types/taisan';
+import { IPhieuNCC, ITaisan } from 'src/types/taisan';
 import {
   useGetNghiepvu,
   useGetPhongBanDa,
-  useGetNam,
-  useGetThang,
   useGetNhacc,
   useGetLoaiNhom,
   useGetTaisan,
@@ -36,8 +26,6 @@ import {
 import { useSnackbar } from 'src/components/snackbar';
 // types
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-// components
-import { useSettingsContext } from 'src/components/settings';
 import axios from 'axios';
 import { useBoolean } from 'src/hooks/use-boolean';
 
@@ -79,8 +67,10 @@ const QUARTYFILTER = [
 const STORAGE_KEY = 'accessToken';
 
 export default function SuaChuaTSNewForm() {
-
   const [loading, setLoading] = useState<Boolean | any>(false);
+  const [loadingFilter, setLoadingFilter] = useState<Boolean | any>(false);
+
+  const [currentPhieuNCC, setCurrentPhieuNCC] = useState<IPhieuNCC>();
 
   const [noiXuat, setNoiXuat] = useState<any>([]);
   const [taiSan, setTaiSan] = useState<ITaisan[]>([]);
@@ -100,40 +90,61 @@ export default function SuaChuaTSNewForm() {
 
   const [filteredQuarty, setFilteredQuarty] = useState(QUARTY); // Default is QUARTY
 
-
   const { enqueueSnackbar } = useSnackbar();
 
   const NewProductSchema = Yup.object().shape({
-    Sophieu: Yup.string().required('Không được để trống'),
+    Sophieu: Yup.mixed<any>().nullable().required('Không được để trống'),
     NgayNX: Yup.mixed<any>().nullable().required('Phải có ngày nhập xuất'),
-    ID_Nghiepvu: Yup.string().required('Không được để trống'),
+    ID_Nghiepvu: Yup.mixed<any>().required('Không được để trống'),
     ID_NoiXuat: Yup.mixed<any>().required('Không được để trống'),
     ID_NoiNhap: Yup.mixed<any>().required('Không được để trống'),
     ID_Loainhom: Yup.mixed<any>().required('Không được để trống'),
+    ID_Quy: Yup.mixed<any>().required('Không được để trống'),
+    phieunccct: Yup.array()
+      .of(
+        Yup.object().shape({
+          ID_Taisan: Yup.mixed<any>(),
+          Dongia: Yup.mixed<any>().nullable(),
+          Soluong: Yup.mixed<any>().nullable(),
+          Namsx: Yup.mixed<any>().nullable(),
+          Tong: Yup.mixed<any>().nullable(),
+          isDelete: Yup.mixed<any>().nullable(),
+        })
+      )
+      .nullable(),
   });
 
   const defaultValues = useMemo(
     () => ({
-      ID_Nghiepvu: '',
-      Sophieu: '',
-      ID_NoiNhap: null,
-      ID_NoiXuat: null,
-      ID_Loainhom: null,
-      NgayNX: new Date(),
-      Ghichu: '',
-      ID_Quy: null,
-      phieunxct: [
+      // ID_PhieuNCC: currentPhieuNCC?.ID_PhieuNCC || null,
+      ID_Nghiepvu: currentPhieuNCC?.ID_Nghiepvu || null,
+      Sophieu: currentPhieuNCC?.Sophieu || '',
+      ID_NoiNhap:
+        `${currentPhieuNCC?.ID_Nghiepvu}` === '5'
+          ? currentPhieuNCC?.ent_nhacc?.ID_Nhacc
+          : currentPhieuNCC?.ent_phongbanda?.ID_Phongban || null,
+      ID_NoiXuat:
+        `${currentPhieuNCC?.ID_Nghiepvu}` === '2'
+          ? currentPhieuNCC?.ent_nhacc?.ID_Nhacc
+          : currentPhieuNCC?.ent_phongbanda?.ID_Phongban || null,
+      ID_Loainhom: currentPhieuNCC?.ID_Loainhom || null,
+      NgayNX: currentPhieuNCC?.NgayNX || new Date(),
+      Ghichu: currentPhieuNCC?.Ghichu || '',
+      ID_Quy: currentPhieuNCC?.ID_Quy || null,
+      phieunccct: currentPhieuNCC?.tb_phieunccct || [
         {
           ID_Taisan: null,
+          ID_TaisanQrcode: null,
           Dongia: 0,
           Soluong: 0,
-          Tong: 0,
           Namsx: 0,
+          Tong: 0,
           isDelete: 0,
+          isUpdate: 0,
         },
       ],
     }),
-    []
+    [currentPhieuNCC]
   );
 
   const methods = useForm({
@@ -151,42 +162,35 @@ export default function SuaChuaTSNewForm() {
   } = methods;
 
   const values = watch();
+  const LOAINHOM_OPTIONS = useMemo(
+    () => [
+      { ID_Loainhom: null, Loainhom: 'Tất cả' },
+      ...loainhom.map((item) => ({
+        ID_Loainhom: item.ID_Loainhom,
+        Loainhom: item.Loainhom,
+      })),
+    ],
+    [loainhom]
+  );
 
   useEffect(() => {
-    if (values.ID_Loainhom === 1 || values.ID_Loainhom === 4) {
+    if (`${values.ID_Loainhom}` === '1' || `${values.ID_Loainhom}` === '4') {
       setFilteredQuarty(QUARTYFILTER);
     } else {
       setFilteredQuarty(QUARTY);
     }
   }, [values.ID_Loainhom]);
 
-  // 1: Phiếu hàng tồn đầu kỳ
-  // 2: Phiếu nhập ngoài
-  // 3: Phiếu nhập xuất nội bộ
-  // 4: Phiếu nhập khác
-  // 5: Phiếu xuất trả nhà cung cấp
-  // 6: Phiếu xuất thanh lý
-  // 7: Phiếu xuất hủy
-  // 8: Phiếu xuất khác
-  // 9: Phiếu kiểm kê // }
-
-  // 1-9 ID_NX = ID_NN
-  // 3 ID_NX !== ID_NN
-  // 4-8 (vẫn là phongbanda) random
-  // 7 - 6 ID_NX = ID_NN
-
-  // 2-5 là của bảng ENT_PhieuNCC
-
   useEffect(() => {
     let dataNoiNhap: any = [];
     let dataNoiXuat: any = [];
 
-    if (`${values.ID_Nghiepvu}` === '5') {
-      dataNoiXuat = phongbanda;
-      dataNoiNhap = nhacc;
-    } else {
+    if (`${values.ID_Nghiepvu}` === '2') {
       dataNoiXuat = nhacc;
       dataNoiNhap = phongbanda;
+    } else {
+      dataNoiXuat = phongbanda;
+      dataNoiNhap = nhacc;
     }
     setNoiNhap(dataNoiNhap);
     setNoiXuat(dataNoiXuat);
@@ -207,7 +211,7 @@ export default function SuaChuaTSNewForm() {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieuncc/create`, data, {
+      .post(`http://localhost:8888/api/v1/tb_phieuncc/create`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -248,6 +252,62 @@ export default function SuaChuaTSNewForm() {
       });
   });
 
+  const handleFilter = async () => {
+    setLoadingFilter(true);
+  
+    // Kiểm tra xem các trường bắt buộc có giá trị hay không
+    const { ID_Loainhom, ID_NoiNhap, ID_NoiXuat, ID_Nghiepvu, ID_Quy } = values;
+  
+    // Nếu thiếu bất kỳ trường nào thì không thực hiện tìm kiếm, thông báo bằng snackbar
+    if (!ID_Loainhom || !ID_NoiNhap || !ID_NoiXuat || !ID_Nghiepvu || !ID_Quy) {
+      setLoadingFilter(false); // Dừng quá trình loading
+  
+      enqueueSnackbar({
+        variant: 'warning',
+        autoHideDuration: 2000,
+        message: 'Vui lòng điền đầy đủ thông tin trước khi tìm kiếm',
+      });
+      return; // Dừng quá trình tìm kiếm
+    }
+  
+    // Nếu tất cả các trường đều có giá trị, thực hiện tìm kiếm
+    const dataReq = {
+      ID_Loainhom,
+      ID_NoiNhap,
+      ID_NoiXuat,
+      ID_Nghiepvu,
+      ID_Quy,
+    };
+  
+    try {
+      const res = await axios.post(`http://localhost:8888/api/v1/tb_phieuncc/taisan`, dataReq, {
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+  
+      if (res.status === 200) {
+        setValue('phieunccct', res.data.data);
+      } else {
+        enqueueSnackbar({
+          variant: 'warning',
+          autoHideDuration: 2000,
+          message: 'Tìm kiếm thất bại',
+        });
+      }
+    } catch (error) {
+      enqueueSnackbar({
+        variant: 'error',
+        autoHideDuration: 2000,
+        message: 'Có lỗi xảy ra khi tìm kiếm',
+      });
+    } finally {
+      setLoadingFilter(false); // Dừng loading khi quá trình tìm kiếm hoàn tất
+    }
+  };
+  
+
   const renderDetails = (
     <Grid xs={12} md={12}>
       <Card>
@@ -260,7 +320,7 @@ export default function SuaChuaTSNewForm() {
               PaperPropsSx={{ textTransform: 'capitalize' }}
             >
               {nghiepvu
-                ?.filter((item) => ['2', '5'].includes(`${item?.ID_Nghiepvu}`))
+                ?.filter((item) => ['2', '5', '6', '7'].includes(`${item?.ID_Nghiepvu}`))
                 .map((item) => (
                   <MenuItem key={item?.ID_Nghiepvu} value={item?.ID_Nghiepvu}>
                     {item?.Nghiepvu}
@@ -268,7 +328,7 @@ export default function SuaChuaTSNewForm() {
                 ))}
             </RHFSelect>
           )}
-          {noiNhap?.length > 0 && noiXuat?.length > 0 && `${values?.ID_Nghiepvu}` === '2' && (
+          {noiNhap?.length > 0 && noiXuat?.length > 0 && `${values?.ID_Nghiepvu}` === '2' ? (
             <>
               <RHFSelect
                 name="ID_NoiNhap"
@@ -296,8 +356,7 @@ export default function SuaChuaTSNewForm() {
                 ))}
               </RHFSelect>
             </>
-          )}
-          {noiNhap?.length > 0 && noiXuat?.length > 0 && `${values?.ID_Nghiepvu}` === '5' && (
+          ) : (
             <>
               <RHFSelect
                 name="ID_NoiNhap"
@@ -326,7 +385,6 @@ export default function SuaChuaTSNewForm() {
               </RHFSelect>
             </>
           )}
-
           <Controller
             name="NgayNX"
             control={control}
@@ -352,11 +410,11 @@ export default function SuaChuaTSNewForm() {
           <RHFTextField name="Sophieu" label="Mã số phiếu *" />
           <RHFSelect
             name="ID_Loainhom"
-            label="Loại nhóm *"
+            label="Loại nhóm"
             InputLabelProps={{ shrink: true }}
             PaperPropsSx={{ textTransform: 'capitalize' }}
           >
-            {loainhom?.map((item) => (
+            {LOAINHOM_OPTIONS?.map((item: any) => (
               <MenuItem key={item?.ID_Loainhom} value={item?.ID_Loainhom}>
                 {item?.Loainhom}
               </MenuItem>
@@ -369,17 +427,29 @@ export default function SuaChuaTSNewForm() {
             InputLabelProps={{ shrink: true }}
             PaperPropsSx={{ textTransform: 'capitalize' }}
           >
-         {filteredQuarty?.map((item) => (
+            {filteredQuarty?.map((item) => (
               <MenuItem key={item?.value} value={item?.value}>
                 {item?.label}
               </MenuItem>
             ))}
           </RHFSelect>
-          <RHFTextField name="Ghichu" multiline rows={3} label="Ghi chú" />
+          <RHFTextField name="Ghichu" multiline rows={2} label="Ghi chú" />
         </Stack>
-        {/* <Stack spacing={3} sx={{ p: 1.5 }}>
-          
-        </Stack> */}
+        {`${values.ID_Nghiepvu}` === '5' && (
+          <LoadingButton
+            size="large"
+            color="success"
+            variant="contained"
+            loading={loadingFilter}
+            onClick={handleFilter}
+            sx={{
+              float: 'right',
+              m: 2,
+            }}
+          >
+            Tìm kiếm
+          </LoadingButton>
+        )}
       </Card>
     </Grid>
   );
@@ -388,7 +458,7 @@ export default function SuaChuaTSNewForm() {
     <FormProvider methods={methods}>
       {renderDetails}
       <Card sx={{ mt: 3 }}>
-        <PhieuNXNewEditDetails taiSan={taiSan} />
+        <PhieuNXNewEditDetails taiSan={taiSan} ID_Nghiepvu={values.ID_Nghiepvu} />
       </Card>
 
       <Stack justifyContent="flex-end" direction="row" spacing={2} sx={{ mt: 3 }}>

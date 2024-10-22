@@ -282,6 +282,12 @@ export const paths = {
       root: `${ROOTS.DASHBOARD}/asset`,
       new: `${ROOTS.DASHBOARD}/asset/new`,
     },
+    giaonhants: {
+      root: `${ROOTS.DASHBOARD}/delivery`,
+      new: `${ROOTS.DASHBOARD}/delivery/new`,
+      edit: (id: string) => `${ROOTS.DASHBOARD}/delivery/${id}/edit`,
+      detail: (id: string) => `${ROOTS.DASHBOARD}/delivery/${id}`,
+    },
     phieunx: {
       root: `${ROOTS.DASHBOARD}/inventory-in-out`,
       new: `${ROOTS.DASHBOARD}/inventory-in-out/new`,

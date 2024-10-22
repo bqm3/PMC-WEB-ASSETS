@@ -193,7 +193,7 @@ export default function GroupPolicyListView() {
     async (id: string) => {
       await axios
         .put(
-          `https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_nhacc/delete/${id}`,
+          `http://localhost:8888/api/v1/ent_nhacc/delete/${id}`,
 
           {
             headers: {
@@ -269,7 +269,7 @@ export default function GroupPolicyListView() {
       };
 
       await axios
-        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_nhacc/update/${id}`, dataInsert, {
+        .put(`http://localhost:8888/api/v1/ent_nhacc/update/${id}`, dataInsert, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -578,7 +578,7 @@ function NhaCCDialog({
           <TextField
             name="Ghichu"
             multiline
-            rows={3}
+            rows={2}
             label="Ghi chu"
             value={dataSelect?.Ghichu}
             onChange={onChange}

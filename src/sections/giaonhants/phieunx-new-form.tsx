@@ -41,7 +41,7 @@ import { useSettingsContext } from 'src/components/settings';
 import axios from 'axios';
 import { useBoolean } from 'src/hooks/use-boolean';
 
-import PhieuNXNewEditDetails from './phieunx-new-details';
+import PhieuNXNewDetails from './phieunx-new-details';
 
 // ----------------------------------------------------------------------
 
@@ -64,26 +64,13 @@ const QUARTY = [
   },
 ];
 
-const QUARTYFILTER = [
-  {
-    value: 1,
-    label: 'Quý I',
-  },
-
-  {
-    value: 4,
-    label: 'Quý IV',
-  },
-];
-
 const STORAGE_KEY = 'accessToken';
 
 export default function SuaChuaTSNewForm() {
-
   const [loading, setLoading] = useState<Boolean | any>(false);
   const [loadingFilter, setLoadingFilter] = useState<Boolean | any>(false);
 
-
+  const [dataPhieu, setDataPhieu] = useState<any>([]);
   const [noiXuat, setNoiXuat] = useState<any>([]);
   const [taiSan, setTaiSan] = useState<ITaisan[]>([]);
 
@@ -91,44 +78,44 @@ export default function SuaChuaTSNewForm() {
 
   const accessToken = localStorage.getItem(STORAGE_KEY);
 
-  const mdUp = useResponsive('up', 'md');
-
   const { phongbanda } = useGetPhongBanDa();
 
-  const { nghiepvu } = useGetNghiepvu();
-  const { loainhom } = useGetLoaiNhom();
-  const { taisan } = useGetTaisan();
+  const { nam } = useGetNam();
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const [filteredQuarty, setFilteredQuarty] = useState(QUARTY); // Default is QUARTY
-
   const NewProductSchema = Yup.object().shape({
-    Sophieu: Yup.mixed<any>().nullable(),
-    NgayNX: Yup.mixed<any>().required('Phải có ngày nhập xuất'),
-    ID_Nghiepvu: Yup.string().required('Không được để trống'),
-    ID_NoiXuat: Yup.mixed<any>().required('Không được để trống'),
-    ID_NoiNhap: Yup.mixed<any>().required('Không được để trống'),
-    ID_Loainhom: Yup.mixed<any>().required('Không được để trống'),
+    // Sophieu: Yup.string().required('Không được để trống'),
+    Ngay: Yup.mixed<any>().nullable().required('Phải có ngày giao nhận'),
+    ID_Quy: Yup.mixed<any>().nullable().required('Phải có quý giao nhận'),
+    ID_Nam: Yup.mixed<any>().nullable().required('Phải có năm giao nhận'),
+    ID_Phongban: Yup.mixed<any>().nullable().required('Phải có phòng ban'),
+    Nguoinhan: Yup.mixed<any>().required('Không được để trống'),
+    Nguoigiao: Yup.mixed<any>().required('Không được để trống'),
+    // ID_NoiNhap: Yup.mixed<any>().required('Không được để trống'),
+    // ID_Loainhom: Yup.mixed<any>().required('Không được để trống'),
   });
 
   const defaultValues = useMemo(
     () => ({
-      ID_Nghiepvu: '',
-      Sophieu: '',
-      ID_NoiNhap: null,
-      ID_NoiXuat: null,
-      ID_Loainhom: null,
-      NgayNX: new Date(),
+      ID_Giaonhan: null,
+      Nguoigiao: null,
+      Nguoinhan: null,
+      ID_Phongban: null,
+      iGiaonhan: '',
+      Ngay: new Date(),
       Ghichu: '',
       ID_Quy: null,
-      phieunxct: [
+      ID_Nam: null,
+      giaonhantsct: [
         {
           ID_Taisan: null,
-          Dongia: 0,
+          ID_TaisanQrcode: null,
+          Tinhtrangmay: '',
+          Cacttlienquan: '',
+          isUpdate: 0,
           Soluong: 0,
           Tong: 0,
-          Namsx: 0,
           isDelete: 0,
         },
       ],
@@ -152,14 +139,6 @@ export default function SuaChuaTSNewForm() {
 
   const values = watch();
 
-  useEffect(() => {
-    if (values.ID_Loainhom === 1 || values.ID_Loainhom === 4) {
-      setFilteredQuarty(QUARTYFILTER);
-    } else {
-      setFilteredQuarty(QUARTY);
-    }
-  }, [values.ID_Loainhom]);
-
   // 1: Phiếu hàng tồn đầu kỳ
   // 2: Phiếu nhập ngoài
   // 3: Phiếu nhập xuất nội bộ
@@ -177,52 +156,17 @@ export default function SuaChuaTSNewForm() {
 
   // 2-5 là của bảng ENT_PhieuNCC
 
-  useEffect(() => {
-    let dataNoiNhap: any = [];
-    let dataNoiXuat: any = [];
-
-    if (
-      `${values.ID_Nghiepvu}` === '1' ||
-      `${values.ID_Nghiepvu}` === '9' ||
-      `${values.ID_Nghiepvu}` === '7' ||
-      `${values.ID_Nghiepvu}` === '6'
-    ) {
-      dataNoiXuat = phongbanda;
-      dataNoiNhap = phongbanda;
-
-      if (values.ID_NoiNhap) {
-        setValue('ID_NoiXuat', values.ID_NoiNhap);
-      } else if (values.ID_NoiXuat) {
-        setValue('ID_NoiNhap', values.ID_NoiXuat);
-      }
-
-      if (values.ID_NoiNhap === values.ID_NoiXuat) {
-        if (values.ID_NoiNhap && values.ID_NoiXuat) {
-          setValue('ID_NoiNhap', values.ID_NoiXuat); // Đồng bộ giá trị
-        }
-      }
-    } else if (`${values.ID_Nghiepvu}` === '3') {
-      dataNoiNhap = phongbanda;
-      dataNoiXuat = dataNoiNhap.filter((item: any) => item.ID_Phongban !== values.ID_NoiNhap);
-    } else {
-      dataNoiXuat = phongbanda;
-      dataNoiNhap = phongbanda;
-    }
-    setNoiNhap(dataNoiNhap);
-    setNoiXuat(dataNoiXuat);
-  }, [values.ID_Nghiepvu, phongbanda, values.ID_NoiNhap, values.ID_NoiXuat, setValue]);
-
-  useEffect(() => {
-    let dataTaiSan: any = [];
-    if (values.ID_Loainhom) {
-      dataTaiSan = taisan.filter(
-        (item) => `${item.ent_nhomts.ent_loainhom.ID_Loainhom}` === `${values.ID_Loainhom}`
-      );
-    } else {
-      dataTaiSan = taisan;
-    }
-    setTaiSan(dataTaiSan);
-  }, [values.ID_Loainhom, taisan, setValue]);
+  // useEffect(() => {
+  //   let dataTaiSan: any = [];
+  //   if (values.ID_Phongban) {
+  //     dataTaiSan = taisan.filter(
+  //       (item) => `${item.ent_nhomts.ent_loainhom.ID_Loainhom}` === `${values.ID_Loainhom}`
+  //     );
+  //   } else {
+  //     dataTaiSan = taisan;
+  //   }
+  //   setTaiSan(dataTaiSan);
+  // }, [values.ID_Phongban, taisan, setValue]);
 
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
@@ -269,76 +213,96 @@ export default function SuaChuaTSNewForm() {
   });
 
   const handleFilter = handleSubmit(async (data) => {
-    // setLoadingFilter(true)
-    const res = await axios.post(
-      `http://localhost:8888/api/v1/tb_phieunx/filter/${values.ID_Nghiepvu}`,
-      data,
-      {
-        headers: {
-          Accept: 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
-    console.log('res', res.data);
-    // setLoadingFilter(false)
+    setLoadingFilter(true);
+    const res = await axios.post(`http://localhost:8888/api/v1/tb_giaonhants/filter`, data, {
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    setDataPhieu(res.data.data);
+    setLoadingFilter(false);
   });
 
   const renderDetails = (
     <Grid xs={12} md={12}>
       <Card>
         <Stack spacing={3} sx={{ p: 2, display: 'flex', flexDirection: 'row' }}>
-          {nghiepvu?.length > 0 && (
+          <RHFSelect
+            name="ID_Phongban"
+            label="Phòng ban dự án *"
+            InputLabelProps={{ shrink: true }}
+            PaperPropsSx={{ textTransform: 'capitalize' }}
+          >
+            {phongbanda?.map((item) => (
+              <MenuItem key={item?.ID_Phongban} value={item?.ID_Phongban}>
+                {item?.Tenphongban}
+              </MenuItem>
+            ))}
+          </RHFSelect>
+
+          <RHFSelect
+            name="ID_Quy"
+            label="Quý *"
+            InputLabelProps={{ shrink: true }}
+            PaperPropsSx={{ textTransform: 'capitalize' }}
+          >
+            {QUARTY?.map((item) => (
+              <MenuItem key={item?.value} value={item?.value}>
+                {item?.label}
+              </MenuItem>
+            ))}
+          </RHFSelect>
+
+          <RHFSelect
+            name="ID_Nam"
+            label="Năm *"
+            InputLabelProps={{ shrink: true }}
+            PaperPropsSx={{ textTransform: 'capitalize' }}
+          >
+            {nam?.map((item) => (
+              <MenuItem key={item?.ID_Nam} value={item?.ID_Nam}>
+                {item?.Nam}
+              </MenuItem>
+            ))}
+          </RHFSelect>
+        </Stack>
+        <Stack spacing={3} sx={{ p: 2, display: 'flex', flexDirection: 'row' }}>
+          {dataPhieu?.resNSPB?.length > 0 && (
             <RHFSelect
-              name="ID_Nghiepvu"
-              label="Nghiệp vụ *"
+              name="Nguoinhan"
+              label="Nguời nhận *"
               InputLabelProps={{ shrink: true }}
               PaperPropsSx={{ textTransform: 'capitalize' }}
             >
-              {nghiepvu
-                ?.filter((item) => ['1', '9', '7', '6', '3'].includes(`${item?.ID_Nghiepvu}`))
-                .map((item) => (
-                  <MenuItem key={item?.ID_Nghiepvu} value={item?.ID_Nghiepvu}>
-                    {item?.Nghiepvu}
-                  </MenuItem>
-                ))}
-            </RHFSelect>
-          )}
-          {noiNhap?.length > 0 && (
-            <RHFSelect
-              name="ID_NoiNhap"
-              label="Nơi nhập *"
-              InputLabelProps={{ shrink: true }}
-              PaperPropsSx={{ textTransform: 'capitalize' }}
-            >
-              {noiNhap?.map((item) => (
-                <MenuItem key={item?.ID_Phongban} value={item?.ID_Phongban}>
-                  {item?.Tenphongban}
+              {dataPhieu?.resNSPB?.map((item: any) => (
+                <MenuItem key={item?.ID_NSPB} value={item?.ID_NSPB}>
+                  {item?.ent_connguoi?.Hoten}
                 </MenuItem>
               ))}
             </RHFSelect>
           )}
-          {noiXuat?.length > 0 && (
+          {dataPhieu?.resNSPB?.length > 0 && (
             <RHFSelect
-              name="ID_NoiXuat"
-              label="Nơi xuất *"
+              name="Nguoigiao"
+              label="Người giao *"
               InputLabelProps={{ shrink: true }}
               PaperPropsSx={{ textTransform: 'capitalize' }}
             >
-              {noiXuat?.map((item: any) => (
-                <MenuItem key={item?.ID_Phongban} value={item?.ID_Phongban}>
-                  {item?.Tenphongban}
+              {dataPhieu?.resNSPB?.map((item: any) => (
+                <MenuItem key={item?.ID_NSPB} value={item?.ID_NSPB}>
+                  {item?.ent_connguoi?.Hoten}
                 </MenuItem>
               ))}
             </RHFSelect>
           )}
 
           <Controller
-            name="NgayNX"
+            name="Ngay"
             control={control}
             render={({ field, fieldState: { error } }) => (
               <DatePicker
-                label="Ngày nhập xuất "
+                label="Ngày giao nhận "
                 value={field.value}
                 onChange={(newValue) => {
                   field.onChange(newValue);
@@ -354,36 +318,7 @@ export default function SuaChuaTSNewForm() {
             )}
           />
         </Stack>
-        <Stack spacing={3} sx={{ p: 2, display: 'flex', flexDirection: 'row' }}>
-          <RHFTextField name="Sophieu" label="Mã số phiếu *" />
-          <RHFSelect
-            name="ID_Loainhom"
-            label="Loại nhóm *"
-            InputLabelProps={{ shrink: true }}
-            PaperPropsSx={{ textTransform: 'capitalize' }}
-          >
-            {loainhom?.map((item) => (
-              <MenuItem key={item?.ID_Loainhom} value={item?.ID_Loainhom}>
-                {item?.Loainhom}
-              </MenuItem>
-            ))}
-          </RHFSelect>
-
-          <RHFSelect
-            name="ID_Quy"
-            label="Quý"
-            InputLabelProps={{ shrink: true }}
-            PaperPropsSx={{ textTransform: 'capitalize' }}
-          >
-            {filteredQuarty?.map((item) => (
-              <MenuItem key={item?.value} value={item?.value}>
-                {item?.label}
-              </MenuItem>
-            ))}
-          </RHFSelect>
-          <RHFTextField name="Ghichu" multiline rows={2} label="Ghi chú" />
-        </Stack>
-        {`${values.ID_Nghiepvu}` === '3' && (
+        {values.ID_Phongban !== null && values.ID_Quy !== null && values.ID_Nam !== null && (
           <LoadingButton
             type="submit"
             size="large"
@@ -407,7 +342,7 @@ export default function SuaChuaTSNewForm() {
     <FormProvider methods={methods}>
       {renderDetails}
       <Card sx={{ mt: 3 }}>
-        <PhieuNXNewEditDetails taiSan={taiSan} />
+        <PhieuNXNewDetails dataPhieu={dataPhieu} />
       </Card>
 
       <Stack justifyContent="flex-end" direction="row" spacing={2} sx={{ mt: 3 }}>

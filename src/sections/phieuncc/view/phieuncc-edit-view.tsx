@@ -25,7 +25,7 @@ export default function PhieuNCCEditView({ id }: Props) {
   return (
     <Container maxWidth={settings.themeStretch ? false : 'xl'}>
       <CustomBreadcrumbs
-        heading="Cập nhật"
+        heading="Cập nhập phiếu nhập xuất hàng nhà cung cấp"
         links={[
           {
             name: 'Dashboard',

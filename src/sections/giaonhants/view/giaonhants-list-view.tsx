@@ -24,7 +24,8 @@ import { fTimestamp } from 'src/utils/format-time';
 import {
   useGetChinhanh,
   useGetNhomPb,
-  useGetPhieuNX,
+  useGetPhieuGiaoNhanTS,
+  useGetPhongBanDa,
 } from 'src/api/taisan';
 // components
 import Label from 'src/components/label';
@@ -55,40 +56,41 @@ import { useSnackbar } from 'src/components/snackbar';
 import {
   IChinhanh,
   INhompb,
-  IPhieuNX,
-  ITaisanTableFilterValue,
-  ITaisanTableFilters,
+  IPhieuGN,
+  IPhongBanTableFilterValue,
+  IPhongBanTableFilters,
 } from 'src/types/taisan';
 //
-import PhieuNXTableRow from '../phieunx-table-row';
-import PhieuNXTableToolbar from '../phieunx-table-toolbar';
-import PhieuNXTableFiltersResult from '../phieunx-table-filters-result';
+import PhieuGNTableRow from '../phieunx-table-row';
+import PhieuGNTableToolbar from '../phieunx-table-toolbar';
+import PhieuGNTableFiltersResult from '../phieunx-table-filters-result';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'ID_PhieuNX', label: 'Mã', width: 100 },
-  { id: 'ID_Nghiepvu', label: 'Nghiệp vụ', width: 180 },
-  { id: 'Sophieu', label: 'Số phiếu', width: 100 },
-  { id: 'NgayNX', label: 'Ngày nhập', width: 120 },
-  { id: 'ID_NoiNhap', label: 'Nơi nhập', width: 180 },
-  { id: 'ID_NoiXuat', label: 'Nơi xuất', width: 180 },
-  { id: 'ID_Connguoi', label: 'Người nhập', width: 150 },
-  { id: 'iTinhtrang', label: 'Tình trạng', width: 100 },
+  { id: 'ID_Giaonhan', label: 'Mã', width: 60 },
+  { id: 'iGiaonhan', label: 'Giao nhận', width: 100 },
+  { id: 'ID_Phongban', label: 'Phòng ban', width: 140 },
+  { id: 'Nguoinhan', label: 'Người nhận', width: 120 },
+  { id: 'Nguoigiao', label: 'Người giao', width: 120 },
+  { id: 'Ngay', label: 'Ngày nhận', width: 80 },
+  { id: 'ID_Quy', label: 'Quý', width: 60 },
+  { id: 'ID_Nam', label: 'Năm', width: 60 },
   { id: '', width: 50 },
 ];
 
-const defaultFilters: ITaisanTableFilters = {
+const defaultFilters: IPhongBanTableFilters = {
   name: '',
   status: 'all',
   startDate: null,
   endDate: null,
+  publish: []
 };
 
 const STORAGE_KEY = 'accessToken';
 // ----------------------------------------------------------------------
 
-export default function PhieuNXListView() {
+export default function PhieuGNListView() {
   const table = useTable();
 
   const settings = useSettingsContext();
@@ -105,26 +107,36 @@ export default function PhieuNXListView() {
 
   const [filters, setFilters] = useState(defaultFilters);
 
-  const { chinhanh } = useGetChinhanh();
+  const { phieugn, mutatePhieuGN } = useGetPhieuGiaoNhanTS();
+  const { phongbanda } = useGetPhongBanDa();
 
-  const { nhompb } = useGetNhomPb();
+  const [tableData, setTableData] = useState<IPhieuGN[]>([]);
 
-  const { phieunx, mutatePhieuNX } = useGetPhieuNX();
-
-  const [tableData, setTableData] = useState<IPhieuNX[]>([]);
-
-  const [dataSelect, setDataSelect] = useState<IPhieuNX>();
+  const [dataSelect, setDataSelect] = useState<IPhieuGN>();
 
   useEffect(() => {
-    if (phieunx?.length > 0) {
-      setTableData(phieunx);
+    if (phieugn?.length > 0) {
+      setTableData(phieugn);
     }
-  }, [phieunx, mutatePhieuNX]);
+  }, [phieugn, mutatePhieuGN]);
+
+  const [STATUS_OPTIONS_PB, set_STATUS_OPTIONS_PB] = useState<any>([]);
+
+  useEffect(() => {
+    if (phongbanda) {
+      set_STATUS_OPTIONS_PB(
+        phongbanda.map((data: any) => ({
+          value: data.Tenphongban,
+          label: data.Tenphongban,
+        }))
+      );
+    }
+  }, [phongbanda]);
 
   const [STATUS_OPTIONS, set_STATUS_OPTIONS] = useState([
     { value: 'all', label: 'Tất cả' },
-    { value: '0', label: 'Mở' },
-    { value: '1', label: 'Khóa' },
+    { value: '1', label: 'Giao tài sản' },
+    { value: '2', label: 'Trả tài sản' },
   ]);
 
   const dateError =
@@ -169,7 +181,7 @@ export default function PhieuNXListView() {
   };
 
   const handleFilters = useCallback(
-    (name: string, value: ITaisanTableFilterValue) => {
+    (name: string, value: IPhongBanTableFilterValue) => {
       table.onResetPage();
       setFilters((prevState) => ({
         ...prevState,
@@ -179,16 +191,16 @@ export default function PhieuNXListView() {
     [table]
   );
 
-  const GroupPolicySchema = Yup.object().shape({
-    GroupPolicy: Yup.string().required('Không được để trống'),
+  const PhieuGNSchema = Yup.object().shape({
+    PhieuGN: Yup.string().required('Không được để trống'),
   });
 
   const defaultValues = {
-    GroupPolicy: '',
+    PhieuGN: '',
   };
 
   const methods = useForm({
-    resolver: yupResolver(GroupPolicySchema),
+    resolver: yupResolver(PhieuGNSchema),
     defaultValues,
   });
 
@@ -201,7 +213,7 @@ export default function PhieuNXListView() {
   const handleDeleteRow = useCallback(
     async (id: string) => {
       await axios
-        .put(`http://localhost:8888/api/v1/tb_phieunx/delete/${id}`,[], {
+        .put(`http://localhost:8888/api/v1/tb_giaonhan/delete/${id}`,[], {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -209,7 +221,7 @@ export default function PhieuNXListView() {
         })
         .then((res) => {
           // reset();
-          const deleteRow = tableData?.filter((row) => row.ID_PhieuNX !== id);
+          const deleteRow = tableData?.filter((row) => row.ID_Giaonhan !== id);
           setTableData(deleteRow);
 
           table.onUpdatePageDeleteRow(dataInPage.length);
@@ -245,7 +257,7 @@ export default function PhieuNXListView() {
   const handleCloseRow = useCallback(
     async (id: string) => {
       await axios
-        .put(`http://localhost:8888/api/v1/tb_phieunx/close-fast/${id}`,[], {
+        .put(`http://localhost:8888/api/v1/tb_giaonhan/close-fast/${id}`,[], {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -254,7 +266,7 @@ export default function PhieuNXListView() {
         .then((res) => {
           // reset();
           const updatedTableData = tableData?.map((row) =>
-            row.ID_PhieuNX === id ? { ...row, iTinhtrang: '1' } : row
+            row.ID_Giaonhan === id ? { ...row, iTinhtrang: '1' } : row
           );
           confirm.onFalse()
           setTableData(updatedTableData);
@@ -295,7 +307,7 @@ export default function PhieuNXListView() {
 
   const handleViewRow = useCallback(
     (id: string) => {
-      router.push(paths.dashboard.phieunx.detail(id));
+      router.push(paths.dashboard.giaonhants.detail(id));
     },
     [router]
   );
@@ -303,7 +315,7 @@ export default function PhieuNXListView() {
   const handleUpdate = useCallback(
     async (id: string) => {
       await axios
-        .put(`http://localhost:8888/api/v1/tb_phieunx/update/${id}`, dataSelect, {
+        .put(`http://localhost:8888/api/v1/tb_phieuGN/update/${id}`, dataSelect, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -313,7 +325,7 @@ export default function PhieuNXListView() {
           reset();
           confirm.onFalse();
           popover.onClose();
-          await mutatePhieuNX();
+          await mutatePhieuGN();
 
           enqueueSnackbar({
             variant: 'success',
@@ -345,7 +357,7 @@ export default function PhieuNXListView() {
           }
         });
     },
-    [accessToken, enqueueSnackbar, dataSelect, reset, confirm, popover, mutatePhieuNX] // Add accessToken and enqueueSnackbar as dependencies
+    [accessToken, enqueueSnackbar, dataSelect, reset, confirm, popover, mutatePhieuGN] // Add accessToken and enqueueSnackbar as dependencies
   );
 
   const handleFilterStatus = useCallback(
@@ -359,7 +371,7 @@ export default function PhieuNXListView() {
     <>
       <Container maxWidth={settings.themeStretch ? false : 'xl'}>
         <CustomBreadcrumbs
-          heading="Danh sách phiếu nhập xuất"
+          heading="Danh sách phiếu giao nhận"
           links={[
             {
               name: 'Dashboard',
@@ -393,34 +405,35 @@ export default function PhieuNXListView() {
                       ((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'
                     }
                     color={
-                      (tab.value === '0' && 'success') ||
-                      (tab.value === '1' && 'default') ||
+                      (tab.value === '1' && 'success') ||
+                      (tab.value === '2' && 'info') ||
                       'default'
                     }
                   >
-                    {tab.value === 'all' && phieunx?.length}
-                    {tab.value === '0' &&
-                      phieunx?.filter((item) => `${item.iTinhtrang}` === '0').length}
-
+                    {tab.value === 'all' && phieugn?.length}
                     {tab.value === '1' &&
-                      phieunx?.filter((item) => `${item.iTinhtrang}` === '1').length}
+                      phieugn?.filter((item) => `${item.iGiaonhan}` === '1').length}
+
+                    {tab.value === '2' &&
+                      phieugn?.filter((item) => `${item.iGiaonhan}` === '2').length}
                   </Label>
                 }
               />
             ))}
           </Tabs>
 
-          <PhieuNXTableToolbar
+          <PhieuGNTableToolbar
             filters={filters}
             onFilters={handleFilters}
             dateError={dateError}
             //
             canReset={canReset}
             onResetFilters={handleResetFilters}
+            statusOptions={STATUS_OPTIONS_PB}
           />
 
           {canReset && (
-            <PhieuNXTableFiltersResult
+            <PhieuGNTableFiltersResult
               filters={filters}
               onFilters={handleFilters}
               //
@@ -437,7 +450,7 @@ export default function PhieuNXListView() {
               numSelected={table.selected.length}
               rowCount={tableData?.length}
               onSelectAllRows={(checked) =>
-                table.onSelectAllRows(checked, tableData?.map((row) => row?.ID_PhieuNX))
+                table.onSelectAllRows(checked, tableData?.map((row) => row?.ID_Giaonhan))
               }
               action={
                 <Tooltip title="Delete">
@@ -458,20 +471,20 @@ export default function PhieuNXListView() {
                   numSelected={table.selected.length}
                   onSort={table.onSort}
                   // onSelectAllRows={(checked) =>
-                  //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_PhieuNX))
+                  //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_Giaonhan))
                   // }
                 />
 
                 <TableBody>
                   {dataInPage.map((row) => (
-                      <PhieuNXTableRow
-                        key={row.ID_PhieuNX}
+                      <PhieuGNTableRow
+                        key={row.ID_Giaonhan}
                         row={row}
-                        selected={table.selected.includes(row.ID_PhieuNX)}
-                        onSelectRow={() => table.onSelectRow(row.ID_PhieuNX)}
-                        onDeleteRow={() => handleDeleteRow(row.ID_PhieuNX)}
-                        onViewRow={() => handleViewRow(row.ID_PhieuNX)}
-                        onCloseRow={()=>handleCloseRow(row.ID_PhieuNX)}
+                        selected={table.selected.includes(row.ID_Giaonhan)}
+                        onSelectRow={() => table.onSelectRow(row.ID_Giaonhan)}
+                        onDeleteRow={() => handleDeleteRow(row.ID_Giaonhan)}
+                        onViewRow={() => handleViewRow(row.ID_Giaonhan)}
+                        onCloseRow={()=>handleCloseRow(row.ID_Giaonhan)}
                       />
                     ))}
 
@@ -499,7 +512,7 @@ export default function PhieuNXListView() {
         </Card>
       </Container>
 
-      <PhieuNXDialog
+      {/* <PhieuGNDialog
         open={confirm.value}
         dataSelect={dataSelect}
         chinhanh={chinhanh}
@@ -508,7 +521,7 @@ export default function PhieuNXListView() {
         onChange={handleInputChange}
         handleUpdate={handleUpdate}
         handleSelectChange={handleSelectChange}
-      />
+      /> */}
 
     </>
   );
@@ -522,12 +535,12 @@ function applyFilter({
   filters,
   dateError,
 }: {
-  inputData: IPhieuNX[];
+  inputData: IPhieuGN[];
   comparator: (a: any, b: any) => number;
-  filters: ITaisanTableFilters;
+  filters: IPhongBanTableFilters;
   dateError: boolean;
 }) {
-  const { status, name, startDate, endDate } = filters;
+  const { status, name, startDate, endDate, publish } = filters;
 
   // console.log('startDate, endDate', startDate, endDate)
 
@@ -544,15 +557,9 @@ function applyFilter({
   if (name) {
     inputData = inputData?.filter(
       (item) =>
-        item.Sophieu.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        item.ent_nghiepvu.Nghiepvu.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        item.NoiNhap.Tenphongban.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        item.NoiNhap.Mapb.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        item.NoiXuat.Tenphongban.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        item.NoiXuat.Mapb.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        item.ent_user.Hoten.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        item.ent_user.MaPMC.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        item.ent_user.Sodienthoai.toLowerCase().indexOf(name.toLowerCase()) !== -1
+        `${item.NguoigiaoInfo.ent_connguoi.Hoten}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        `${item.NguoinhanInfo.ent_connguoi.Hoten}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        `${item.ent_phongbanda.Tenphongban}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 
     );
   }
 
@@ -566,14 +573,18 @@ function applyFilter({
       const startTimestamp = fTimestamp(startDate);
       const endTimestamp = fTimestamp(endDate);
       inputData = inputData.filter((item) => {
-        const nxTimestamp = fTimestamp(item.NgayNX);
+        const nxTimestamp = fTimestamp(item.Ngay);
         return nxTimestamp >= startTimestamp && nxTimestamp < endTimestamp;
       });
     }
   }
 
+  if (publish.length) {
+    inputData = inputData.filter((product) => publish.includes(product?.ent_phongbanda?.Tenphongban));
+  }
+
   if (status !== 'all') {
-    inputData = inputData?.filter((order) => `${order?.iTinhtrang}` === status);
+    inputData = inputData?.filter((item) => `${item?.iGiaonhan}` === status);
   }
 
   return inputData;
@@ -581,7 +592,7 @@ function applyFilter({
 
 interface ConfirmTransferDialogProps {
   open: boolean;
-  dataSelect?: IPhieuNX;
+  dataSelect?: IPhieuGN;
   onClose: VoidFunction;
   handleUpdate: (id: string) => void;
   chinhanh: IChinhanh[];
@@ -591,109 +602,109 @@ interface ConfirmTransferDialogProps {
   handleSelectChange: any;
 }
 
-function PhieuNXDialog({
-  open,
-  dataSelect,
-  chinhanh,
-  nhompb,
-  handleSelectChange,
-  onChange,
-  onClose,
-  onBlur,
-  handleUpdate,
-}: ConfirmTransferDialogProps) {
-  const idPolicy = dataSelect?.ID_PhieuNX;
+// function PhieuGNDialog({
+//   open,
+//   dataSelect,
+//   chinhanh,
+//   nhompb,
+//   handleSelectChange,
+//   onChange,
+//   onClose,
+//   onBlur,
+//   handleUpdate,
+// }: ConfirmTransferDialogProps) {
+//   const idPolicy = dataSelect?.ID_Giaonhan;
 
-  return (
-    <Dialog open={open} fullWidth maxWidth="md" onClose={onClose}>
-      <DialogTitle>Cập nhật</DialogTitle>
-      <Stack spacing={3} sx={{ px: 3 }}>
-        {/* {chinhanh?.length > 0 && (
-          <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label-chi-nhanh">Thuộc chi nhánh</InputLabel>
-            <Select
-              name="ID_Chinhanh"
-              labelId="demo-simple-select-label-chi-nhanh"
-              id="demo-simple-select"
-              value={dataSelect?.ID_Chinhanh}
-              label="Chi nhánh"
-              onChange={handleSelectChange}
-            >
-              {chinhanh?.map((item) => (
-                <MenuItem key={item?.ID_Chinhanh} value={item?.ID_Chinhanh}>
-                  {item?.Tenchinhanh}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        )}
+//   return (
+//     <Dialog open={open} fullWidth maxWidth="md" onClose={onClose}>
+//       <DialogTitle>Cập nhật</DialogTitle>
+//       <Stack spacing={3} sx={{ px: 3 }}>
+//         {/* {chinhanh?.length > 0 && (
+//           <FormControl fullWidth>
+//             <InputLabel id="demo-simple-select-label-chi-nhanh">Thuộc chi nhánh</InputLabel>
+//             <Select
+//               name="ID_Chinhanh"
+//               labelId="demo-simple-select-label-chi-nhanh"
+//               id="demo-simple-select"
+//               value={dataSelect?.ID_Chinhanh}
+//               label="Chi nhánh"
+//               onChange={handleSelectChange}
+//             >
+//               {chinhanh?.map((item) => (
+//                 <MenuItem key={item?.ID_Chinhanh} value={item?.ID_Chinhanh}>
+//                   {item?.Tenchinhanh}
+//                 </MenuItem>
+//               ))}
+//             </Select>
+//           </FormControl>
+//         )}
 
-        {nhompb?.length > 0 && (
-          <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label-phong-ban">Thuộc phòng ban</InputLabel>
-            <Select
-              name="ID_Nhompb"
-              labelId="demo-simple-select-label-phong-ban"
-              id="demo-simple-select"
-              value={dataSelect?.ID_Nhompb}
-              label="Phòng ban"
-              onChange={handleSelectChange}
-            >
-              {nhompb?.map((item) => (
-                <MenuItem key={item?.ID_Nhompb} value={item?.ID_Nhompb}>
-                  {item?.Nhompb}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        )}
+//         {nhompb?.length > 0 && (
+//           <FormControl fullWidth>
+//             <InputLabel id="demo-simple-select-label-phong-ban">Thuộc phòng ban</InputLabel>
+//             <Select
+//               name="ID_Nhompb"
+//               labelId="demo-simple-select-label-phong-ban"
+//               id="demo-simple-select"
+//               value={dataSelect?.ID_Nhompb}
+//               label="Phòng ban"
+//               onChange={handleSelectChange}
+//             >
+//               {nhompb?.map((item) => (
+//                 <MenuItem key={item?.ID_Nhompb} value={item?.ID_Nhompb}>
+//                   {item?.Nhompb}
+//                 </MenuItem>
+//               ))}
+//             </Select>
+//           </FormControl>
+//         )}
 
-        <TextField
-          name="Mapb"
-          label="Mã phòng ban" // Vietnamese for "Category Name"
-          value={dataSelect?.Mapb}
-          onChange={onChange} // Update local state and notify parent
-          fullWidth
-          onBlur={onBlur}
-        />
-        <TextField
-          name="Tenphongban"
-          label="Tên danh mục" // Vietnamese for "Category Name"
-          value={dataSelect?.Tenphongban}
-          onChange={onChange} // Update local state and notify parent
-          fullWidth
-        />
-        <TextField
-          name="Diachi"
-          label="Địa chỉ" // Vietnamese for "Category Name"
-          value={dataSelect?.Diachi}
-          onChange={onChange} // Update local state and notify parent
-          fullWidth
-        />
-        <TextField
-          name="Ghichu"
-          multiline
-          rows={4}
-          value={dataSelect?.Ghichu}
-          onChange={onChange}
-          label="Ghi chú"
-        /> */}
-      </Stack>
+//         <TextField
+//           name="Mapb"
+//           label="Mã phòng ban" // Vietnamese for "Category Name"
+//           value={dataSelect?.Mapb}
+//           onChange={onChange} // Update local state and notify parent
+//           fullWidth
+//           onBlur={onBlur}
+//         />
+//         <TextField
+//           name="Tenphongban"
+//           label="Tên danh mục" // Vietnamese for "Category Name"
+//           value={dataSelect?.Tenphongban}
+//           onChange={onChange} // Update local state and notify parent
+//           fullWidth
+//         />
+//         <TextField
+//           name="Diachi"
+//           label="Địa chỉ" // Vietnamese for "Category Name"
+//           value={dataSelect?.Diachi}
+//           onChange={onChange} // Update local state and notify parent
+//           fullWidth
+//         />
+//         <TextField
+//           name="Ghichu"
+//           multiline
+//           rows={4}
+//           value={dataSelect?.Ghichu}
+//           onChange={onChange}
+//           label="Ghi chú"
+//         /> */}
+//       </Stack>
 
-      <DialogActions>
-        <Button
-          variant="contained"
-          color="info"
-          onClick={() => {
-            if (idPolicy) {
-              handleUpdate(idPolicy);
-            }
-          }}
-        >
-          Cập nhật
-        </Button>
-        <Button onClick={onClose}>Hủy</Button>
-      </DialogActions>
-    </Dialog>
-  );
-}
+//       <DialogActions>
+//         <Button
+//           variant="contained"
+//           color="info"
+//           onClick={() => {
+//             if (idPolicy) {
+//               handleUpdate(idPolicy);
+//             }
+//           }}
+//         >
+//           Cập nhật
+//         </Button>
+//         <Button onClick={onClose}>Hủy</Button>
+//       </DialogActions>
+//     </Dialog>
+//   );
+// }

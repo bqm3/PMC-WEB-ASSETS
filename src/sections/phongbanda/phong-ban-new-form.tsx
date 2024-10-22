@@ -66,7 +66,7 @@ export default function GroupPolicyNewForm() {
     Tenphongban: Yup.string().required('Không được để trống'),
     Diachi: Yup.string().required('Không được để trống'),
     Thuoc: Yup.string(),
-    ID_Nhompb: Yup.mixed<any>(),
+    ID_Nhompb: Yup.mixed<any>().required('Không được để trống'),
   });
 
   const defaultValues = useMemo(
@@ -101,7 +101,7 @@ export default function GroupPolicyNewForm() {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_phongbanda/create`, data, {
+      .post(`http://localhost:8888/api/v1/ent_phongbanda/create`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -150,7 +150,7 @@ export default function GroupPolicyNewForm() {
             {nhompb?.length > 0 && (
               <RHFSelect
                 name="ID_Nhompb"
-                label="Phòng ban"
+                label="Phòng ban *"
                 InputLabelProps={{ shrink: true }}
                 PaperPropsSx={{ textTransform: 'capitalize' }}
               >
@@ -194,7 +194,7 @@ export default function GroupPolicyNewForm() {
           <Stack sx={{ pt: 2, px: 2 }}>
             <RHFTextField
               name="Mapb"
-              label={`${values.ID_Nhompb}` === '101' ? 'Mã công ty' : 'Mã phòng ban'}
+              label={`${values.ID_Nhompb}` === '101' ? 'Mã công ty *' : 'Mã phòng ban *'}
             />
           </Stack>
         </Grid>
@@ -203,20 +203,20 @@ export default function GroupPolicyNewForm() {
           <Stack sx={{ pt: 2, px: 2 }}>
             <RHFTextField
               name="Tenphongban"
-              label={`${values.ID_Nhompb}` === '101' ? 'Tên công ty' : 'Tên phòng ban'}
+              label={`${values.ID_Nhompb}` === '101' ? 'Tên công ty *' : 'Tên phòng ban *'}
             />
           </Stack>
         </Grid>
 
         <Grid xs={4}>
           <Stack sx={{ pt: 2, px: 2 }}>
-            <RHFTextField name="Diachi" label="Địa chỉ" />
+            <RHFTextField name="Diachi" label="Địa chỉ *" />
           </Stack>
         </Grid>
 
         <Grid xs={4}>
           <Stack sx={{ p: 2}}>
-            <RHFTextField name="Ghichu" multiline rows={3} label="Ghi chú" />
+            <RHFTextField name="Ghichu" multiline rows={2} label="Ghi chú" />
           </Stack>
         </Grid>
       </Grid>

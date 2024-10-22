@@ -57,11 +57,13 @@ export default function PhieuNXEditDetails({ taiSan }: Props) {
       Namsx: 0,
       Tong: 0,
       isDelete: 0,
+      isUpdate: 0,
     });
   };
 
   const handleRemove = (index: number) => {
     setValue(`phieunxct[${index}].isDelete`, 1);
+    setValue(`phieunxct[${index}].isUpdate`, 1);
   };
 
   const handleChangeQuantity = useCallback(
@@ -71,6 +73,7 @@ export default function PhieuNXEditDetails({ taiSan }: Props) {
         `phieunxct[${index}].Tong`,
         values.phieunxct.map((item: any) => item.Soluong * item.Dongia)[index]
       );
+      setValue(`phieunxct[${index}].isUpdate`, 1);
     },
     [setValue, values.phieunxct]
   );
@@ -85,6 +88,7 @@ export default function PhieuNXEditDetails({ taiSan }: Props) {
         `phieunxct[${index}].Tong`,
         values.phieunxct.map((item: any) => item.Soluong * item.Dongia)[index]
       );
+      setValue(`phieunxct[${index}].isUpdate`, 1);
     },
     [setValue, values.phieunxct]
   );
@@ -93,6 +97,7 @@ export default function PhieuNXEditDetails({ taiSan }: Props) {
     (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, index: number) => {
       const inputValue = event.target.value;
       setValue(`phieunxct[${index}].Namsx`, Number(inputValue));
+      setValue(`phieunxct[${index}].isUpdate`, 1);
     },
     [setValue]
   );
@@ -105,6 +110,7 @@ export default function PhieuNXEditDetails({ taiSan }: Props) {
         if (selectedOption) {
           // Set the corresponding ID_Taisan value in the form state
           setValue(`phieunxct[${index}].ID_Taisan`, selectedOption.ID_Taisan);
+          setValue(`phieunxct[${index}].isUpdate`, 1);
         }
       }
     },
@@ -148,12 +154,12 @@ export default function PhieuNXEditDetails({ taiSan }: Props) {
 
   return (
     <Box sx={{ p: 3 }}>
-      <Typography variant="h6" sx={{ color: 'text.disabled', mb: 3 }}>
+      <Typography variant="h6" sx={{  mb: 3 }}>
         Phiếu nhập xuất chi tiết:
       </Typography>
 
       <Stack divider={<Divider flexItem sx={{ borderStyle: 'dashed' }} />} spacing={3}>
-        {fields.map((item, index) => (
+        {fields?.map((item, index) => (
           <>
             {`${values?.phieunxct[index]?.isDelete}` === '0' && (
               <Stack key={item.id} alignItems="flex-end" spacing={1.5}>
@@ -176,7 +182,7 @@ export default function PhieuNXEditDetails({ taiSan }: Props) {
                             label="Tài sản"
                             variant="outlined"
                             size="medium"
-                            sx={{ minWidth: { md: 400, xs: 250 } }}
+                            sx={{ minWidth: { md: 300, xs: 200 } }}
                           />
                         )}
                         renderOption={(props, option) => (

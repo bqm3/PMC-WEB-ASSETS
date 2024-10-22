@@ -38,6 +38,10 @@ const CreateUserNewPage = lazy(() => import('src/pages/dashboard/create-user/new
 const TaiSanListsPage = lazy(() => import('src/pages/dashboard/taisan/list'));
 const TaiSanNewPage = lazy(() => import('src/pages/dashboard/taisan/new'));
 
+const GiaoNhanTSListsPage = lazy(() => import('src/pages/dashboard/giaonhants/list'));
+const GiaoNhanTSNewPage = lazy(() => import('src/pages/dashboard/giaonhants/new'));
+const GiaoNhanTSEditPage = lazy(() => import('src/pages/dashboard/giaonhants/edit'));
+
 const PhieuNXListsPage = lazy(() => import('src/pages/dashboard/phieunx/list'));
 const PhieuNXNewPage = lazy(() => import('src/pages/dashboard/phieunx/new'));
 const PhieuNXEditPage = lazy(() => import('src/pages/dashboard/phieunx/edit'));
@@ -133,6 +137,16 @@ export const dashboardRoutes = [
           { element: <TaiSanListsPage />, index: true },
           { path: 'list', element: <TaiSanListsPage /> },
           { path: 'new', element: <TaiSanNewPage /> },
+        ],
+      },
+      {
+        path: 'delivery',
+        children: [
+          { element: <GiaoNhanTSListsPage />, index: true },
+          { path: 'list', element: <GiaoNhanTSListsPage /> },
+          { path: 'new', element: <GiaoNhanTSNewPage /> },
+          { path: ':id/edit', element: <GiaoNhanTSEditPage /> },
+          { path: ':id', element: <GiaoNhanTSEditPage /> },
         ],
       },
       {

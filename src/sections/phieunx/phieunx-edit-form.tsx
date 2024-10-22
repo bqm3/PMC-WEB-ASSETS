@@ -8,15 +8,9 @@ import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Unstable_Grid2';
 import MenuItem from '@mui/material/MenuItem';
-import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import CardHeader from '@mui/material/CardHeader';
-// routes
-import { paths } from 'src/routes/paths';
 // hooks
 import { useRouter } from 'src/routes/hooks';
-import { useResponsive } from 'src/hooks/use-responsive';
 // _mock
 import { _tags, _roles, USER_GENDER_OPTIONS } from 'src/_mock';
 import FormProvider, { RHFSelect, RHFTextField } from 'src/components/hook-form';
@@ -101,8 +95,8 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
   const { enqueueSnackbar } = useSnackbar();
 
   const NewProductSchema = Yup.object().shape({
-    Sophieu: Yup.string().required('Không được để trống'),
-    NgayNX: Yup.mixed<any>().nullable().required('Phải có ngày nhập xuất'),
+    Sophieu: Yup.mixed<any>().nullable(),
+    NgayNX: Yup.mixed<any>().nullable(),
     ID_Nghiepvu: Yup.string().required('Không được để trống'),
     ID_NoiXuat: Yup.mixed<any>().required('Không được để trống'),
     ID_NoiNhap: Yup.mixed<any>().required('Không được để trống'),
@@ -128,6 +122,7 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
           Soluong: 0,
           Namsx: 0,
           Tong: 0,
+          isUpdate: 0,
           isDelete: 0,
         },
       ],
@@ -216,7 +211,7 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieunx/update/${currentPhieuNX?.ID_PhieuNX}`, data, {
+      .put(`http://localhost:8888/api/v1/tb_phieunx/update/${currentPhieuNX?.ID_PhieuNX}`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -260,7 +255,7 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
   const handleClose = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieunx/close/${currentPhieuNX?.ID_PhieuNX}`, data, {
+      .post(`http://localhost:8888/api/v1/tb_phieunx/close/${currentPhieuNX?.ID_PhieuNX}`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -393,7 +388,7 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
           <RHFTextField
             name="Ghichu"
             multiline
-            rows={3}
+            rows={2}
             label="Ghi chú"
             defaultValue={defaultValues.Ghichu}
           />

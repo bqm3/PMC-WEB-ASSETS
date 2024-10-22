@@ -111,6 +111,11 @@ export type IThang = {
   iThang: string;
 };
 
+export type IQuy = {
+  ID_Quy: string;
+  Quy: string;
+};
+
 export type INhomts = {
   ID_Nhomts: string;
   ID_Loainhom: string;
@@ -143,9 +148,22 @@ export type IPhieuNCCCT = {
   ID_PhieuNCC: string;
   ID_Taisan: string;
   Dongia: string;
+  Namsx: string;
+  Tong: string;
   Soluong: string;
   isDelete: string;
   ent_taisan: ITaisan;
+}
+
+export type IPhieuGNCT = {
+  ID_Taisan: string;
+  ID_TaisanQrcode: string;
+  Tinhtrangmay: string;
+  Cacttlienquan: string;
+  Soluong: string;
+  isDelete: string;
+  TaisanInfo: ITaisan;
+  tb_taisanqrcode: ITaisanQrCode;
 }
 
 export type INghiepvu = {
@@ -157,11 +175,13 @@ export type INghiepvu = {
 export type INhansuPBDA = {
   ID_NSPB: string;
   ID_Phongban: string;
+  ID_Connguoi: string;
   Ngayvao: string;
   iTinhtrang: string;
   Ngay: string;
   isDelete: string;
   ent_phongbanda: IPhongbanda;
+  ent_connguoi: IConnguoi;
 };
 
 export type ITaisan = {
@@ -227,6 +247,26 @@ export type IChucvu = {
   Chucvu: string;
 };
 
+export type IPhieuGN = {
+  ID_Giaonhan: string;
+  ID_Phongban: string;
+  iGiaonhan: string;
+  Ngay: string;
+  Ghichu: string;
+  ID_Quy: string;
+  ID_Nam: string;
+  Nguoinhan: string;
+  Nguoigiao: string;
+  ent_nam: INam;
+  ent_quy: IQuy;
+  giaoNhanCT: IPhieuGNCT[];
+  ent_phongbanda: IPhongbanda;
+  NguoinhanInfo: INhansuPBDA;
+  NguoigiaoInfo: INhansuPBDA;
+  tb_giaonhantsct: IPhieuGNCT[];
+  giaonhantsct:IPhieuGNCT[];
+};
+
 export type IPhieuNX = {
   ID_PhieuNX: string;
   ID_Nghiepvu: string;
@@ -274,7 +314,8 @@ export type IPhieuNCC = {
   ent_nam: INam;
   ent_thang: IThang;
   ent_user: IUser;
-  tb_phieunccct: IPhieuNCCCT;
+  tb_phieunccct: IPhieuNCCCT[];
+  phieunccct: IPhieuNCCCT[];
   ent_nhacc: INhaCC;
   ent_phongbanda: IPhongbanda;
 };
@@ -287,7 +328,7 @@ export type ISuaChuaCT = {
   Sotien: string;
   Ghichu: string;
   isDelete: string;
-  tb_taisanqr: ITaisanQrCode;
+  tb_taisanqrcode: ITaisanQrCode;
 };
 
 export type ISuachuaTS = {

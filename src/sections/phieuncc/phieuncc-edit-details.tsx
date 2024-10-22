@@ -57,11 +57,13 @@ export default function PhieuNXEditDetails({ taiSan }: Props) {
       Namsx: 0,
       Tong: 0,
       isDelete: 0,
+      isUpdate: 0,
     });
   };
 
   const handleRemove = (index: number) => {
     setValue(`phieunccct[${index}].isDelete`, 1);
+    setValue(`phieunccct[${index}].isUpdate`, 1);
   };
 
   const handleChangeQuantity = useCallback(
@@ -71,6 +73,7 @@ export default function PhieuNXEditDetails({ taiSan }: Props) {
         `phieunccct[${index}].Tong`,
         values.phieunccct.map((item: any) => item.Soluong * item.Dongia)[index]
       );
+      setValue(`phieunccct[${index}].isUpdate`, 1);
     },
     [setValue, values.phieunccct]
   );
@@ -80,6 +83,7 @@ export default function PhieuNXEditDetails({ taiSan }: Props) {
       const inputValue = event.target.value;
       // const numericString = inputValue.replace(/[^\d]/g, '');
       setValue(`phieunccct[${index}].Dongia`, inputValue);
+      setValue(`phieunccct[${index}].isUpdate`, 1);
 
       setValue(
         `phieunccct[${index}].Tong`,
@@ -93,6 +97,7 @@ export default function PhieuNXEditDetails({ taiSan }: Props) {
     (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, index: number) => {
       const inputValue = event.target.value;
       setValue(`phieunccct[${index}].Namsx`, Number(inputValue));
+      setValue(`phieunccct[${index}].isUpdate`, 1);
     },
     [setValue]
   );
@@ -105,6 +110,7 @@ export default function PhieuNXEditDetails({ taiSan }: Props) {
         if (selectedOption) {
           // Set the corresponding ID_Taisan value in the form state
           setValue(`phieunccct[${index}].ID_Taisan`, selectedOption.ID_Taisan);
+          setValue(`phieunccct[${index}].isUpdate`, 1);
         }
       }
     },
@@ -137,22 +143,22 @@ export default function PhieuNXEditDetails({ taiSan }: Props) {
     <Stack
       spacing={2}
       alignItems="flex-end"
-      sx={{ mt: 3, textAlign: 'right', typography: 'body2' }}
+      sx={{ mt: 2, textAlign: 'right', typography: 'body2' }}
     >
-      <Stack direction="row" sx={{ typography: 'subtitle1' }}>
-        <Box>Tổng tiền</Box>
-        <Box sx={{ width: 160 }}>{fCurrency(subTotal) || '-'}</Box>
+      <Stack direction="row" sx={{ typography: 'subtitle1', gap: 1 }}>
+        <Box>Tổng tiền:</Box>
+        <Box>{fCurrency(subTotal) || '-'}</Box>
       </Stack>
     </Stack>
   );
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h6" sx={{ color: 'text.disabled', mb: 3 }}>
+    <Box sx={{ p: 2 }}>
+      <Typography variant="h6" sx={{  mb: 2 }}>
         Phiếu nhập xuất chi tiết:
       </Typography>
 
-      <Stack divider={<Divider flexItem sx={{ borderStyle: 'dashed' }} />} spacing={3}>
+      <Stack divider={<Divider flexItem sx={{ borderStyle: 'dashed' }} />} spacing={2}>
         {fields?.map((item, index) => (
           <>
             {`${values?.phieunccct[index]?.isDelete}` === '0' && (
@@ -176,7 +182,7 @@ export default function PhieuNXEditDetails({ taiSan }: Props) {
                             label="Tài sản"
                             variant="outlined"
                             size="medium"
-                            sx={{ minWidth: { md: 400, xs: 250 } }}
+                            sx={{ minWidth: { md: 300, xs: 200 } }}
                           />
                         )}
                         renderOption={(props, option) => (
@@ -278,10 +284,10 @@ export default function PhieuNXEditDetails({ taiSan }: Props) {
 
       {(values.iTinhtrang === '0' || values.iTinhtrang === '') && (
         <>
-          <Divider sx={{ my: 3, borderStyle: 'dashed' }} />
+          <Divider sx={{ my: 1, borderStyle: 'dashed' }} />
 
           <Stack
-            spacing={3}
+            spacing={2}
             direction={{ xs: 'column', md: 'row' }}
             alignItems={{ xs: 'flex-end', md: 'center' }}
           >

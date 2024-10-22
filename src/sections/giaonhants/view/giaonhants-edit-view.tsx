@@ -2,12 +2,12 @@
 import Container from '@mui/material/Container';
 // routes
 import { paths } from 'src/routes/paths';
-import { useGetDetailPhieuNX } from 'src/api/taisan';
+import { useGetDetailPhieuGNCT } from 'src/api/taisan';
 // components
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 //
-import PhieuNXNewForm from '../phieunx-edit-form';
+import PhieuGNNewForm from '../giaonhants-edit-form';
 
 
 // ----------------------------------------------------------------------
@@ -17,15 +17,15 @@ type Props = {
 };
 
 
-export default function PhieuNXEditView({ id }: Props) {
+export default function PhieuGNEditView({ id }: Props) {
   const settings = useSettingsContext();
 
-  const { phieunx: currentPhieuNX, mutate } = useGetDetailPhieuNX(id);
+  const { phieugn: currentPhieuGN, mutate } = useGetDetailPhieuGNCT(id);
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'xl'}>
       <CustomBreadcrumbs
-        heading="Sửa phiếu nhập xuất"
+        heading="Cập nhật"
         links={[
           {
             name: 'Dashboard',
@@ -39,7 +39,7 @@ export default function PhieuNXEditView({ id }: Props) {
         }}
       />
 
-      <PhieuNXNewForm currentPhieuNX={currentPhieuNX} mutate={mutate}/>
+      <PhieuGNNewForm currentPhieuGN={currentPhieuGN} mutate={mutate}/>
     </Container>
   );
 }

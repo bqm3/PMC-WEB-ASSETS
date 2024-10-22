@@ -111,7 +111,7 @@ export default function GroupPolicyNewForm() {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_taisan/create`, data, {
+      .post(`http://localhost:8888/api/v1/ent_taisan/create`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -239,7 +239,7 @@ export default function GroupPolicyNewForm() {
             <RHFEditor simple name="Thongso" />
           </Stack>
           <Stack spacing={3} sx={{ p: 2 }}>
-            <RHFTextField name="Ghichu" multiline rows={3} label="Ghi chú" />
+            <RHFTextField name="Ghichu" multiline rows={2} label="Ghi chú" />
           </Stack>
           <Stack spacing={3} sx={{ p: 2 }}>
           <FormControlLabel

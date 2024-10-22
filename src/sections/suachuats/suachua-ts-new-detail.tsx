@@ -97,7 +97,7 @@ export default function InvoiceNewEditDetails() {
 
   return (
     <Box sx={{ p: 3 }}>
-      <Typography variant="h6" sx={{ color: 'text.disabled', mb: 3 }}>
+      <Typography variant="h6" sx={{  mb: 3 }}>
         Sửa chữa chi tiết:
       </Typography>
 
@@ -121,7 +121,7 @@ export default function InvoiceNewEditDetails() {
                         label="Tài sản Qr Code"
                         variant="outlined"
                         size="medium"
-                        sx={{ minWidth: { md: 400, xs: 250 } }}
+                        sx={{ minWidth: { md: 300, xs: 200 } }}
                       />
                     )}
                     renderOption={(props, option) => (

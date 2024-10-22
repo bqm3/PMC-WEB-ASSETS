@@ -5,7 +5,7 @@ import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import Stack, { StackProps } from '@mui/material/Stack';
 // types
-import { ITaisanTableFilters, ITaisanTableFilterValue } from 'src/types/taisan';
+import { IPhongBanTableFilters, IPhongBanTableFilterValue } from 'src/types/taisan';
 // components
 import Iconify from 'src/components/iconify';
 import { shortDateLabel } from 'src/components/custom-date-range-picker';
@@ -13,8 +13,8 @@ import { shortDateLabel } from 'src/components/custom-date-range-picker';
 // ----------------------------------------------------------------------
 
 type Props = StackProps & {
-  filters: ITaisanTableFilters;
-  onFilters: (name: string, value: ITaisanTableFilterValue) => void;
+  filters: IPhongBanTableFilters;
+  onFilters: (name: string, value: IPhongBanTableFilterValue) => void;
   //
   onResetFilters: VoidFunction;
   //
@@ -40,7 +40,6 @@ export default function InvoiceTableFiltersResult({
     onFilters('startDate', null);
     onFilters('endDate', null);
   };
-
   return (
     <Stack spacing={1.5} {...other}>
       <Box sx={{ typography: 'body2' }}>
@@ -58,8 +57,8 @@ export default function InvoiceTableFiltersResult({
             <Chip
               size="small"
               label={
-                (`${filters.status}` === '0' && 'Mở') ||
-                (`${filters.status}` === '1' && 'Khóa')
+                (`${filters.status}` === '1' && 'Giao tài sản') ||
+                (`${filters.status}` === '2' && 'Trả tài sản')
               }
               onDelete={handleRemoveStatus}
             />
