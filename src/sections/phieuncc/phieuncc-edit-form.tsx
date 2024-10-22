@@ -124,7 +124,7 @@ export default function PhieuNXNewForm({ currentPhieuNCC, mutate }: Props) {
       ID_Nghiepvu: currentPhieuNCC?.ID_Nghiepvu || '',
       Sophieu: currentPhieuNCC?.Sophieu || '',
       ID_NoiNhap:
-        `${currentPhieuNCC?.ID_Nghiepvu}` === '5'
+        `${currentPhieuNCC?.ID_Nghiepvu}` === '5' || `${currentPhieuNCC?.ID_Nghiepvu}` === '6' || `${currentPhieuNCC?.ID_Nghiepvu}` === '7'
           ? currentPhieuNCC?.ent_nhacc?.ID_Nhacc
           : currentPhieuNCC?.ent_phongbanda?.ID_Phongban || null,
       ID_NoiXuat:

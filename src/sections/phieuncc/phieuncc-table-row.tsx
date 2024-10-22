@@ -63,7 +63,7 @@ export default function CalvTableRow({
     ent_thang,
     ent_user,
     ent_nhacc,
-    ent_phongbanda
+    ent_phongbanda,
   } = row;
 
   const confirm1 = useBoolean();
@@ -75,11 +75,15 @@ export default function CalvTableRow({
   const popover2 = usePopover();
 
   const renderPrimary = (
-    <TableRow hover selected={selected}  sx={{
-      '& .MuiTableCell-root': {
-        borderBottom: '2px solid rgba(0, 0, 0, 0.05)', // Thicker border
-      },
-    }}>
+    <TableRow
+      hover
+      selected={selected}
+      sx={{
+        '& .MuiTableCell-root': {
+          borderBottom: '2px solid rgba(0, 0, 0, 0.05)', // Thicker border
+        },
+      }}
+    >
       <TableCell>
         <Box
           onClick={onViewRow}
@@ -100,8 +104,16 @@ export default function CalvTableRow({
       <TableCell> {NgayNX} </TableCell>
       <TableCell sx={{ alignItems: 'center' }}>
         <ListItemText
-          primary= { `${ID_Nghiepvu}` === "5" ? ent_nhacc?.TenNhacc : ent_phongbanda?.Tenphongban}
-          secondary={ `${ID_Nghiepvu}` === "5" ? ent_nhacc?.MaNhacc : ent_phongbanda?.Mapb}
+          primary={
+            `${ID_Nghiepvu}` === '2'
+              ? ent_phongbanda?.Tenphongban
+              : ent_nhacc?.TenNhacc
+          }
+          secondary={
+            `${ID_Nghiepvu}` === '2' 
+              ? ent_phongbanda?.Mapb
+              : ent_nhacc?.MaNhacc
+          }
           primaryTypographyProps={{ typography: 'body2' }}
           secondaryTypographyProps={{
             component: 'span',
@@ -111,8 +123,16 @@ export default function CalvTableRow({
       </TableCell>
       <TableCell sx={{ alignItems: 'center' }}>
         <ListItemText
-          primary= { `${ID_Nghiepvu}` === "5" ? ent_phongbanda?.Tenphongban : ent_nhacc?.TenNhacc }
-          secondary={ `${ID_Nghiepvu}` === "5" ? ent_phongbanda?.Mapb : ent_nhacc?.MaNhacc }
+          primary={
+            `${ID_Nghiepvu}` === '2' 
+              ? ent_nhacc?.TenNhacc
+              : ent_phongbanda?.Tenphongban
+          }
+          secondary={
+            `${ID_Nghiepvu}` === '2'
+              ? ent_nhacc?.MaNhacc
+              : ent_phongbanda?.Mapb
+          }
           primaryTypographyProps={{ typography: 'body2' }}
           secondaryTypographyProps={{
             component: 'span',
