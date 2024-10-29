@@ -52,6 +52,8 @@ export default function PhieuNXEditDetails({ taiSan }: Props) {
   const handleAdd = () => {
     append({
       ID_Taisan: null,
+      ID_TaisanQrcode: null,
+      Tents: '',
       Soluong: 0,
       Dongia: 0,
       Namsx: 0,
@@ -110,6 +112,7 @@ export default function PhieuNXEditDetails({ taiSan }: Props) {
         if (selectedOption) {
           // Set the corresponding ID_Taisan value in the form state
           setValue(`phieunxct[${index}].ID_Taisan`, selectedOption.ID_Taisan);
+          setValue(`phieunxct[${index}].Tents`, selectedOption.Tents);
           setValue(`phieunxct[${index}].isUpdate`, 1);
         }
       }
@@ -154,7 +157,7 @@ export default function PhieuNXEditDetails({ taiSan }: Props) {
 
   return (
     <Box sx={{ p: 3 }}>
-      <Typography variant="h6" sx={{  mb: 3 }}>
+      <Typography variant="h6" sx={{ mb: 3 }}>
         Phiếu nhập xuất chi tiết:
       </Typography>
 
@@ -202,7 +205,7 @@ export default function PhieuNXEditDetails({ taiSan }: Props) {
                     placeholder="0"
                     onChange={(event) => handleChangeYear(event, index)}
                     InputLabelProps={{ shrink: true }}
-                    // sx={{ maxWidth: { md: 96 } }}
+                  // sx={{ maxWidth: { md: 96 } }}
                   />
 
                   <RHFTextField
@@ -213,7 +216,7 @@ export default function PhieuNXEditDetails({ taiSan }: Props) {
                     placeholder="0"
                     onChange={(event) => handleChangeQuantity(event, index)}
                     InputLabelProps={{ shrink: true }}
-                    // sx={{ maxWidth: { md: 96 } }}
+                  // sx={{ maxWidth: { md: 96 } }}
                   />
 
                   <RHFTextField
@@ -242,7 +245,7 @@ export default function PhieuNXEditDetails({ taiSan }: Props) {
                     placeholder="0.00"
                     value={
                       values.phieunxct[index]?.Tong === 0 ||
-                      values.phieunxct[index]?.Tong === undefined
+                        values.phieunxct[index]?.Tong === undefined
                         ? values.phieunxct[index].Soluong * values.phieunxct[index].Dongia
                         : formatCash(values.phieunxct[index]?.Tong)
                     }

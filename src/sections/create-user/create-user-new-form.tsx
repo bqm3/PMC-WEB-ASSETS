@@ -92,13 +92,13 @@ export default function CreateUserNewForm() {
   const values = watch();
 
   const onSubmit = handleSubmit(async (data) => {
-    const dataInsert= {
+    const dataInsert = {
       ...data,
       ID_Phongban: selectedPhongbanID
     }
     setLoading(true);
     await axios
-      .post(`http://localhost:8888/api/v1/ent_connguoi/create`, dataInsert, {
+      .post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_connguoi/create`, dataInsert, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,

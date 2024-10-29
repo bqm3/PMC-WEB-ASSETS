@@ -83,6 +83,7 @@ export default function PhieuNXNewEditDetails({ taiSan, ID_Nghiepvu }: Props) {
       ID_TaisanQrcode: null,
       Soluong: 0,
       Dongia: 0,
+      Tents: "",
       Tong: 0,
       Namsx: 0,
       isDelete: 0,
@@ -139,6 +140,7 @@ export default function PhieuNXNewEditDetails({ taiSan, ID_Nghiepvu }: Props) {
         if (selectedOption) {
           // Set the corresponding ID_Taisan value in the form state
           setValue(`phieunccct[${index}].ID_Taisan`, selectedOption.ID_Taisan);
+          setValue(`phieunccct[${index}].Tents`, selectedOption.Tents);
           setValue(`phieunccct[${index}].isUpdate`, 1);
         }
       }
@@ -203,7 +205,7 @@ export default function PhieuNXNewEditDetails({ taiSan, ID_Nghiepvu }: Props) {
                     control={control}
                     render={({ field }) => (
                       <Autocomplete
-                        disabled={ID_Nghiepvu === 5 && true}
+                        disabled={ID_Nghiepvu !== 2 && true}
                         options={taiSan?.map((option: any) => option)}
                         getOptionLabel={(option) =>
                           typeof option.Tents === 'string' ? option.Tents : String(option.Tents)
@@ -221,7 +223,7 @@ export default function PhieuNXNewEditDetails({ taiSan, ID_Nghiepvu }: Props) {
                             label="Tài sản"
                             variant="outlined"
                             size="medium"
-                            sx={{ minWidth: { md: 300, xs: 200 } }}
+                            sx={{ minWidth: { md: 400, xs: 300 } }}
                           />
                         )}
                         renderOption={(props, option) => (
@@ -234,7 +236,7 @@ export default function PhieuNXNewEditDetails({ taiSan, ID_Nghiepvu }: Props) {
                   />
 
                   <RHFTextField
-                    disabled={ID_Nghiepvu === 5 && true}
+                    disabled={ID_Nghiepvu !== 2 && true}
                     size="medium"
                     type="number"
                     name={`phieunccct[${index}].Namsx`}
@@ -242,12 +244,12 @@ export default function PhieuNXNewEditDetails({ taiSan, ID_Nghiepvu }: Props) {
                     placeholder="0"
                     onChange={(event) => handleChangeYear(event, index)}
                     InputLabelProps={{ shrink: true }}
-                    // sx={{ maxWidth: { md: 96 } }}
+                    sx={{ maxWidth: { md: 120 } }}
                   />
 
                   <RHFTextField
                     disabled={
-                      ID_Nghiepvu === 5 &&
+                      ID_Nghiepvu !== 2 &&
                       values?.phieunccct[index]?.ID_TaisanQrcode !== null &&
                       true
                     }
@@ -259,15 +261,16 @@ export default function PhieuNXNewEditDetails({ taiSan, ID_Nghiepvu }: Props) {
                     onChange={(event) => handleChangeQuantity(event, index)}
                     InputLabelProps={{ shrink: true }}
 
-                    // sx={{ maxWidth: { md: 96 } }}
+                    sx={{ maxWidth: { md: 120 } }}
                   />
 
                   <RHFTextField
-                    disabled={ID_Nghiepvu === 5 && true}
+                    disabled={ID_Nghiepvu !== 2 && true}
                     size="medium"
                     type="number"
                     name={`phieunccct[${index}].Dongia`}
                     label="Đơn giá"
+                    sx={{ maxWidth: { md: 180 } }}
                     onChange={(event) => handleChangePrice(event, index)}
                     InputProps={{
                       startAdornment: (

@@ -190,6 +190,9 @@ export type ITaisan = {
   ID_Donvi: string;
   Mats: string;
   Tents: string;
+  Tentscu: string;
+  Model:string;
+  SerialNumber:string;
   Thongso: string;
   Nuocsx: string;
   i_MaQrCode: string;

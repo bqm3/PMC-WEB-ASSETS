@@ -136,17 +136,7 @@ export default function PhieuNXNewForm({ currentPhieuNCC, mutate }: Props) {
       NgayNX: currentPhieuNCC?.NgayNX || new Date(),
       Ghichu: currentPhieuNCC?.Ghichu || '',
       ID_Quy: currentPhieuNCC?.ID_Quy || '',
-      phieunccct: currentPhieuNCC?.tb_phieunccct || [
-        {
-          ID_Taisan: null,
-          Dongia: 0,
-          Soluong: 0,
-          Namsx: 0,
-          Tong: 0,
-          isDelete: 0,
-          isUpdate: 0,
-        },
-      ],
+      phieunccct: currentPhieuNCC?.tb_phieunccct || [],
     }),
     [currentPhieuNCC]
   );
@@ -182,8 +172,7 @@ export default function PhieuNXNewForm({ currentPhieuNCC, mutate }: Props) {
   }, [currentPhieuNCC, defaultValues, reset]);
 
   useEffect(() => {
-    
-  console.log('run')
+
     let dataNoiNhap: any = [];
     let dataNoiXuat: any = [];
 
@@ -199,8 +188,7 @@ export default function PhieuNXNewForm({ currentPhieuNCC, mutate }: Props) {
   }, [values.ID_Nghiepvu, phongbanda, nhacc]);
 
   useEffect(() => {
-    
-  console.log('run')
+
     let dataTaiSan: any = [];
     if (values?.ID_Loainhom) {
       dataTaiSan = taisan.filter(
@@ -216,7 +204,7 @@ export default function PhieuNXNewForm({ currentPhieuNCC, mutate }: Props) {
     setLoading(true);
     await axios
       .put(
-        `http://localhost:8888/api/v1/tb_phieuncc/update/${currentPhieuNCC?.ID_PhieuNCC}`,
+        `https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieuncc/update/${currentPhieuNCC?.ID_PhieuNCC}`,
         data,
         {
           headers: {
@@ -263,7 +251,7 @@ export default function PhieuNXNewForm({ currentPhieuNCC, mutate }: Props) {
   const handleClose = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`http://localhost:8888/api/v1/tb_phieunx/close/${currentPhieuNCC?.ID_PhieuNCC}`, data, {
+      .post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieunx/close/${currentPhieuNCC?.ID_PhieuNCC}`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -359,6 +347,7 @@ export default function PhieuNXNewForm({ currentPhieuNCC, mutate }: Props) {
           ) : (
             <>
               <RHFSelect
+                disabled
                 name="ID_NoiNhap"
                 label="Nơi nhập *"
                 InputLabelProps={{ shrink: true }}
@@ -372,6 +361,7 @@ export default function PhieuNXNewForm({ currentPhieuNCC, mutate }: Props) {
               </RHFSelect>
 
               <RHFSelect
+                disabled
                 name="ID_NoiXuat"
                 label="Nơi xuất *"
                 InputLabelProps={{ shrink: true }}
@@ -469,3 +459,32 @@ export default function PhieuNXNewForm({ currentPhieuNCC, mutate }: Props) {
     </FormProvider>
   );
 }
+// Ban đầu tạo pheiesu là 100 k qr, 10 có qr,
+// tạo phiếu khác là 50 và 1 qr
+// mở pheiesu cũ ra sao còn 50
+// Phiếu này phiếu nhập mà ?\
+// Chưa khóa phiếu mà bh đổi số lượng thfi sao
+
+// Nhập 100 sau đó đổi thành 1
+// Phiếu kia xuất 10
+// thì phải lỗi chứ
+
+// Giờ phải check api xem phòng ban xuất, phiếu khác đã khóa hay chưa
+
+// Phòng ban nhập từ nha cc => Khóa => Mới xuất dc
+// Phòng ban đó chưa khóa phiếu => Thoogn báo
+// Check hết chứ
+
+// Nhưng mà chưa khóa vẫn sửa dc
+// Vẫn ăn vào tồn kho, bảng kia thì vẫn cập nhật
+
+// tạo phiếu xuất cũng phả check các phiếu phòng ban xuất đã khóa chưa
+// Nhưng mà phiếu nhập chưa khóa vẫn htay đổi dc, nhập xong kiểm tra oke => khóa
+
+// Nhập ngoài ID_Phieu1 là gì NoiNhap, auto kiểm tra ID_Phieu1 đúng k. La phòng ban của mifh thây
+// kiểm tra hết cả pheiesu tạo, update tát cả các phiếu
+// Các phiếu phòng ban khóa thf mới cho tạo tiếp
+// Phiếu nhập nhà cc thì lấy ID_Noinhap check xem các IDPong ban = IDNoinhap đã khóa chưa
+// Check hết, ví dụ có 2 pheiesu nhập. Thì muốn nhập phiếu thứ 2 thfi phải khóa phiếu 1 đi
+// Nch là bh, thì check phòng ban thây. Kể cả xuất nhà cc khác thì phòng ban xuất phải check
+

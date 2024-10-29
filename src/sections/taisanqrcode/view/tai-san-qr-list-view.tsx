@@ -215,7 +215,7 @@ export default function GroupPolicyListView() {
   const handleDeleteRow = useCallback(
     async (id: string) => {
       await axios
-        .put(`http://localhost:8888/api/v1/tb_taisanqrcode/delete/${id}`, {
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_taisanqrcode/delete/${id}`, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -274,7 +274,7 @@ export default function GroupPolicyListView() {
       confirm.onTrue();
       popover.onClose();
       await axios
-        .get(`http://localhost:8888/api/v1/tb_taisanqrcode/${data.ID_TaisanQrcode}`, {
+        .get(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_taisanqrcode/${data.ID_TaisanQrcode}`, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -310,7 +310,7 @@ export default function GroupPolicyListView() {
       const maQrCodes = selectedQrCodes.join(',');
 
       const response = await axios.post(
-        `http://localhost:8888/api/v1/tb_taisanqrcode/generate-qr-codes?maQrCodes=${maQrCodes}`,
+        `https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_taisanqrcode/generate-qr-codes?maQrCodes=${maQrCodes}`,
         {},
         {
           headers: {
@@ -337,7 +337,7 @@ export default function GroupPolicyListView() {
   const handleUpdate = useCallback(
     async (id: string) => {
       await axios
-        .put(`http://localhost:8888/api/v1/tb_taisanqrcode/update/${id}`, dataSelect, {
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_taisanqrcode/update/${id}`, dataSelect, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -393,7 +393,7 @@ export default function GroupPolicyListView() {
     <>
       <Container maxWidth={settings.themeStretch ? false : 'xl'}>
         <CustomBreadcrumbs
-          heading="Danh sách tài sản"
+          heading="Danh sách tài sản qrcode"
           links={[
             {
               name: 'Dashboard',

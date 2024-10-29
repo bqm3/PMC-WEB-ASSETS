@@ -70,10 +70,10 @@ const TABLE_HEAD = [
   { id: '', width: 88 },
 ];
 
-const defaultFilters: ITaisanTableFilters= {
+const defaultFilters: ITaisanTableFilters = {
   name: '',
   status: 'all',
-  startDate: null, 
+  startDate: null,
   endDate: null
 };
 
@@ -97,7 +97,7 @@ export default function GroupPolicyListView() {
 
   const [filters, setFilters] = useState(defaultFilters);
 
-  const {suachuats, mutateSuachuaTS} = useGetSuachuaTs()
+  const { suachuats, mutateSuachuaTS } = useGetSuachuaTs()
 
   const [tableData, setTableData] = useState<ISuachuaTS[]>([]);
 
@@ -181,7 +181,7 @@ export default function GroupPolicyListView() {
     async (id: string) => {
       await axios
         .put(
-          `http://localhost:8888/api/v1/tb_suachuats/delete/${id}`,
+          `https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_suachuats/delete/${id}`,
 
           {
             headers: {
@@ -246,149 +246,149 @@ export default function GroupPolicyListView() {
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'xl'}>
-    <CustomBreadcrumbs
-      heading="Danh sách tài sản sửa chữa"
-      links={[
-        {
-          name: 'Dashboard',
-          href: paths.dashboard.root,
-        },
-        { name: 'Danh sách' },
-      ]}
-      sx={{
-        mb: { xs: 3, md: 5 },
-      }}
-    />
-
-    <Card>
-    <Tabs
-        value={filters.status}
-        onChange={handleFilterStatus}
+      <CustomBreadcrumbs
+        heading="Danh sách tài sản sửa chữa"
+        links={[
+          {
+            name: 'Dashboard',
+            href: paths.dashboard.root,
+          },
+          { name: 'Danh sách' },
+        ]}
         sx={{
-          px: 2.5,
-          boxShadow: (theme) => `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
+          mb: { xs: 3, md: 5 },
         }}
-      >
-        {STATUS_OPTIONS.map((tab) => (
-          <Tab
-            key={tab.value}
-            iconPosition="end"
-            value={tab.value}
-            label={tab.label}
-            icon={
-              <Label
-                variant={
-                  ((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'
-                }
-                color={
-                  (tab.value === '0' && 'success') ||
-                  (tab.value === '1' && 'default') ||
-                  'default'
-                }
-              >
-                {tab.value === 'all' && suachuats?.length}
-                {tab.value === '0' &&
-                  suachuats?.filter((item) => `${item.iTinhtrang}` === '0').length}
-
-                {tab.value === '1' &&
-                  suachuats?.filter((item) => `${item.iTinhtrang}` === '1').length}
-              </Label>
-            }
-          />
-        ))}
-      </Tabs>
-      <SuaChuaTSTableToolbar
-        filters={filters}
-        onFilters={handleFilters}
-        dateError={dateError}
-        canReset={canReset}
-        onResetFilters={handleResetFilters}
       />
 
-      {canReset && (
-        <SuaChuaTSTableFiltersResult
-        filters={filters}
-              onFilters={handleFilters}
-              //
-              dateError={dateError}
-              onResetFilters={handleResetFilters}
-              //
-              results={dataFiltered?.length}
-              sx={{ p: 2.5, pt: 0 }}
-        />
-      )}
+      <Card>
+        <Tabs
+          value={filters.status}
+          onChange={handleFilterStatus}
+          sx={{
+            px: 2.5,
+            boxShadow: (theme) => `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
+          }}
+        >
+          {STATUS_OPTIONS.map((tab) => (
+            <Tab
+              key={tab.value}
+              iconPosition="end"
+              value={tab.value}
+              label={tab.label}
+              icon={
+                <Label
+                  variant={
+                    ((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'
+                  }
+                  color={
+                    (tab.value === '0' && 'success') ||
+                    (tab.value === '1' && 'default') ||
+                    'default'
+                  }
+                >
+                  {tab.value === 'all' && suachuats?.length}
+                  {tab.value === '0' &&
+                    suachuats?.filter((item) => `${item.iTinhtrang}` === '0').length}
 
-      <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
-        <TableSelectedAction
-          dense={table.dense}
-          numSelected={table.selected.length}
-          rowCount={tableData?.length}
-          onSelectAllRows={(checked) =>
-            table.onSelectAllRows(checked, tableData?.map((row) => row?.ID_SuachuaTS))
-          }
-          action={
-            <Tooltip title="Xóa">
-              <IconButton color="primary" onClick={confirm.onTrue}>
-                <Iconify icon="solar:trash-bin-trash-bold" />
-              </IconButton>
-            </Tooltip>
-          }
+                  {tab.value === '1' &&
+                    suachuats?.filter((item) => `${item.iTinhtrang}` === '1').length}
+                </Label>
+              }
+            />
+          ))}
+        </Tabs>
+        <SuaChuaTSTableToolbar
+          filters={filters}
+          onFilters={handleFilters}
+          dateError={dateError}
+          canReset={canReset}
+          onResetFilters={handleResetFilters}
         />
 
-        <Scrollbar>
-          <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 960 }}>
-            <TableHeadCustom
-              order={table.order}
-              orderBy={table.orderBy}
-              headLabel={TABLE_HEAD}
-              rowCount={tableData?.length}
-              numSelected={table.selected.length}
-              onSort={table.onSort}
+        {canReset && (
+          <SuaChuaTSTableFiltersResult
+            filters={filters}
+            onFilters={handleFilters}
+            //
+            dateError={dateError}
+            onResetFilters={handleResetFilters}
+            //
+            results={dataFiltered?.length}
+            sx={{ p: 2.5, pt: 0 }}
+          />
+        )}
+
+        <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
+          <TableSelectedAction
+            dense={table.dense}
+            numSelected={table.selected.length}
+            rowCount={tableData?.length}
+            onSelectAllRows={(checked) =>
+              table.onSelectAllRows(checked, tableData?.map((row) => row?.ID_SuachuaTS))
+            }
+            action={
+              <Tooltip title="Xóa">
+                <IconButton color="primary" onClick={confirm.onTrue}>
+                  <Iconify icon="solar:trash-bin-trash-bold" />
+                </IconButton>
+              </Tooltip>
+            }
+          />
+
+          <Scrollbar>
+            <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 960 }}>
+              <TableHeadCustom
+                order={table.order}
+                orderBy={table.orderBy}
+                headLabel={TABLE_HEAD}
+                rowCount={tableData?.length}
+                numSelected={table.selected.length}
+                onSort={table.onSort}
               // onSelectAllRows={(checked) =>
               //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_SuachuaTS))
               // }
-            />
-
-            <TableBody>
-              {dataFiltered
-                .slice(
-                  table.page * table.rowsPerPage,
-                  table.page * table.rowsPerPage + table.rowsPerPage
-                )
-                .map((row) => (
-                  <SuaChuaTSTableRow
-                    key={row.ID_SuachuaTS}
-                    row={row}
-                    selected={table.selected.includes(row.ID_SuachuaTS)}
-                    onSelectRow={() => table.onSelectRow(row.ID_SuachuaTS)}
-                    onDeleteRow={() => handleDeleteRow(row.ID_SuachuaTS)}
-                    onViewRow={() => handleViewRow(row.ID_SuachuaTS)}
-                  />
-                ))}
-
-              <TableEmptyRows
-                height={denseHeight}
-                emptyRows={emptyRows(table.page, table.rowsPerPage, tableData?.length)}
               />
 
-              <TableNoData notFound={notFound} />
-            </TableBody>
-          </Table>
-        </Scrollbar>
-      </TableContainer>
+              <TableBody>
+                {dataFiltered
+                  .slice(
+                    table.page * table.rowsPerPage,
+                    table.page * table.rowsPerPage + table.rowsPerPage
+                  )
+                  .map((row) => (
+                    <SuaChuaTSTableRow
+                      key={row.ID_SuachuaTS}
+                      row={row}
+                      selected={table.selected.includes(row.ID_SuachuaTS)}
+                      onSelectRow={() => table.onSelectRow(row.ID_SuachuaTS)}
+                      onDeleteRow={() => handleDeleteRow(row.ID_SuachuaTS)}
+                      onViewRow={() => handleViewRow(row.ID_SuachuaTS)}
+                    />
+                  ))}
 
-      <TablePaginationCustom
-        count={dataFiltered?.length}
-        page={table.page}
-        rowsPerPage={table.rowsPerPage}
-        onPageChange={table.onChangePage}
-        onRowsPerPageChange={table.onChangeRowsPerPage}
-        //
-        dense={table.dense}
-        onChangeDense={table.onChangeDense}
-      />
-    </Card>
-  </Container>
+                <TableEmptyRows
+                  height={denseHeight}
+                  emptyRows={emptyRows(table.page, table.rowsPerPage, tableData?.length)}
+                />
+
+                <TableNoData notFound={notFound} />
+              </TableBody>
+            </Table>
+          </Scrollbar>
+        </TableContainer>
+
+        <TablePaginationCustom
+          count={dataFiltered?.length}
+          page={table.page}
+          rowsPerPage={table.rowsPerPage}
+          onPageChange={table.onChangePage}
+          onRowsPerPageChange={table.onChangeRowsPerPage}
+          //
+          dense={table.dense}
+          onChangeDense={table.onChangeDense}
+        />
+      </Card>
+    </Container>
   );
 }
 
@@ -397,7 +397,7 @@ export default function GroupPolicyListView() {
 function applyFilter({
   inputData,
   comparator,
-  filters, // 
+  filters, //
   dateError,
 }: {
   inputData: ISuachuaTS[];

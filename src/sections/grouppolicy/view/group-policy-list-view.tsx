@@ -171,7 +171,7 @@ export default function GroupPolicyListView() {
     async (id: string) => {
       await axios
         .put(
-          `http://localhost:8888/api/v1/ent_grouppolicy/delete/${id}`,
+          `https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_grouppolicy/delete/${id}`,
           {
             GroupPolicy: dataSelect?.GroupPolicy,
           },
@@ -239,7 +239,7 @@ export default function GroupPolicyListView() {
     async (id: string) => {
       await axios
         .put(
-          `http://localhost:8888/api/v1/ent_grouppolicy/update/${id}`,
+          `https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_grouppolicy/update/${id}`,
           {
             GroupPolicy: dataSelect?.GroupPolicy,
           },
@@ -375,9 +375,9 @@ export default function GroupPolicyListView() {
                   rowCount={tableData?.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
-                  // onSelectAllRows={(checked) =>
-                  //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_GroupPolicy))
-                  // }
+                // onSelectAllRows={(checked) =>
+                //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_GroupPolicy))
+                // }
                 />
 
                 <TableBody>
@@ -432,8 +432,8 @@ export default function GroupPolicyListView() {
       <GroupPolicyDialogAdd
         open={confirmAdd.value}
         onClose={confirmAdd.onFalse}
-        // onChange={handleInputChange}
-        // handleUpdate={handleUpdate}
+      // onChange={handleInputChange}
+      // handleUpdate={handleUpdate}
       />
 
       {/* <ConfirmDialog

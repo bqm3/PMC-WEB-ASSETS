@@ -222,7 +222,7 @@ export default function GroupPolicyListView() {
   const handleDeleteRow = useCallback(
     async (id: string) => {
       await axios
-        .put(`http://localhost:8888/api/v1/ent_policy/delete/${id}`, {
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_policy/delete/${id}`, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -279,7 +279,7 @@ export default function GroupPolicyListView() {
   const handleUpdate = useCallback(
     async (id: string) => {
       await axios
-        .put(`http://localhost:8888/api/v1/ent_phongbanda/update/${id}`, dataSelect, {
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_phongbanda/update/${id}`, dataSelect, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -410,9 +410,9 @@ export default function GroupPolicyListView() {
                   rowCount={tableData?.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
-                  // onSelectAllRows={(checked) =>
-                  //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_Phongban))
-                  // }
+                // onSelectAllRows={(checked) =>
+                //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_Phongban))
+                // }
                 />
 
                 <TableBody>
@@ -657,7 +657,7 @@ function RoomDialogAdd({ open, onClose }: any) {
     <Dialog open={open} fullWidth maxWidth="lg" onClose={onClose}>
       <DialogTitle>Thêm mới</DialogTitle>
 
-      <DialogContent sx={{ overflow: 'hidden',  height: 'auto' }}>
+      <DialogContent sx={{ overflow: 'hidden', height: 'auto' }}>
         <Grid spacing={3}>
           <PhongBanNewEditForm />
         </Grid>

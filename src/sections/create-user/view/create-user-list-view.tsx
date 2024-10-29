@@ -265,7 +265,7 @@ export default function GroupPolicyListView() {
   const handleDeleteRow = useCallback(
     async (id: string) => {
       await axios
-        .put(`http://localhost:8888/api/v1/ent_connguoi/delete/${id}`, [], {
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_connguoi/delete/${id}`, [], {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -324,7 +324,7 @@ export default function GroupPolicyListView() {
       setLoadingShow(true);
       confirmShow.onTrue();
       await axios
-        .get(`http://localhost:8888/api/v1/ent_connguoi/${id}`, {
+        .get(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_connguoi/${id}`, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -366,7 +366,7 @@ export default function GroupPolicyListView() {
   const handleUpdate = useCallback(
     async (id: string) => {
       await axios
-        .put(`http://localhost:8888/api/v1/ent_connguoi/update/${id}`, dataSelect, {
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_connguoi/update/${id}`, dataSelect, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -414,7 +414,7 @@ export default function GroupPolicyListView() {
     async (id: string, status: string) => {
       setLoadingShow(true);
       await axios
-        .put(`http://localhost:8888/api/v1/ent_connguoi/status/${id}/${status}`, dataShow, {
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_connguoi/status/${id}/${status}`, dataShow, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -474,18 +474,18 @@ export default function GroupPolicyListView() {
   return (
     <>
       <Container maxWidth={settings.themeStretch ? false : 'xl'}>
-        <Stack direction="row" alignItems="center" justifyContent="space-between">
+        <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{
+          mb: { xs: 1, md: 2 },
+        }}>
           <CustomBreadcrumbs
-            heading="Danh sách con người"
+            heading="Danh sách nhân sự"
             links={[
               {
-                name: 'Dashboard',
+                name: '',
                 href: paths.dashboard.root,
               },
             ]}
-            sx={{
-              mb: { xs: 3, md: 5 },
-            }}
+
           />
           <LoadingButton
             variant="contained"
@@ -545,9 +545,9 @@ export default function GroupPolicyListView() {
                   rowCount={tableData?.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
-                  // onSelectAllRows={(checked) =>
-                  //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_Connguoi))
-                  // }
+                // onSelectAllRows={(checked) =>
+                //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_Connguoi))
+                // }
                 />
 
                 <TableBody>

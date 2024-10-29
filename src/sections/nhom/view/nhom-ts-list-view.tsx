@@ -201,7 +201,7 @@ export default function GroupPolicyListView() {
     async (id: string) => {
       await axios
         .put(
-          `http://localhost:8888/api/v1/ent_nhomts/delete/${id}`,
+          `https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_nhomts/delete/${id}`,
 
           {
             headers: {
@@ -267,7 +267,7 @@ export default function GroupPolicyListView() {
     async (id: string) => {
       await axios
         .put(
-          `http://localhost:8888/api/v1/ent_nhomts/update/${id}`,
+          `https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_nhomts/update/${id}`,
           {
             Manhom: dataSelect?.Manhom,
             Tennhom: dataSelect?.Tennhom,
@@ -400,9 +400,9 @@ export default function GroupPolicyListView() {
                   rowCount={tableData?.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
-                  // onSelectAllRows={(checked) =>
-                  //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_Nhomts))
-                  // }
+                // onSelectAllRows={(checked) =>
+                //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_Nhomts))
+                // }
                 />
 
                 <TableBody>
@@ -457,8 +457,8 @@ export default function GroupPolicyListView() {
       <NhomTSDialogAdd
         open={confirmAdd.value}
         onClose={confirmAdd.onFalse}
-        // onChange={handleInputChange}
-        // handleUpdate={handleUpdate}
+      // onChange={handleInputChange}
+      // handleUpdate={handleUpdate}
       />
     </>
   );

@@ -28,9 +28,10 @@ import { ITaisan } from 'src/types/taisan';
 // ----------------------------------------------------------------------
 type Props = {
   taiSan: ITaisan[];
+  ID_Nghiepvu: any
 };
 
-export default function PhieuNXNewEditDetails({ taiSan }: Props) {
+export default function PhieuNXNewEditDetails({ taiSan, ID_Nghiepvu }: Props) {
   const { control, setValue, watch, resetField } = useFormContext();
 
   const { fields, append, remove } = useFieldArray({
@@ -51,8 +52,10 @@ export default function PhieuNXNewEditDetails({ taiSan }: Props) {
   const handleAdd = () => {
     append({
       ID_Taisan: null,
+      ID_TaisanQrcode: null,
       Soluong: 0,
       Dongia: 0,
+      Tents: "",
       Tong: 0,
       Namsx: 0,
       isDelete: 0,
@@ -108,6 +111,7 @@ export default function PhieuNXNewEditDetails({ taiSan }: Props) {
         if (selectedOption) {
           // Set the corresponding ID_Taisan value in the form state
           setValue(`phieunxct[${index}].ID_Taisan`, selectedOption.ID_Taisan);
+          setValue(`phieunxct[${index}].Tents`, selectedOption.Tents);
           setValue(`phieunxct[${index}].isUpdate`, 1);
         }
       }
@@ -152,7 +156,7 @@ export default function PhieuNXNewEditDetails({ taiSan }: Props) {
 
   return (
     <Box sx={{ p: 2 }}>
-      <Typography variant="h6" sx={{  mb: 3 }}>
+      <Typography variant="h6" sx={{ mb: 3 }}>
         Phiếu nhập xuất chi tiết:
       </Typography>
 
@@ -165,13 +169,20 @@ export default function PhieuNXNewEditDetails({ taiSan }: Props) {
                   <Controller
                     name={`phieunxct[${index}].ID_Taisan`}
                     control={control}
-                    render={() => (
+                    render={({ field }) => (
                       <Autocomplete
+                        disabled={ID_Nghiepvu === 3 && true}
                         options={taiSan?.map((option: any) => option)}
                         getOptionLabel={(option) =>
                           typeof option.Tents === 'string' ? option.Tents : String(option.Tents)
                         }
-                        onChange={(event, newValue) => handleTaiSanChange(event, newValue, index)}
+                        value={
+                          taiSan.find((option: any) => option.ID_Taisan === field.value) || null
+                        }
+                        onChange={(event, newValue) => {
+                          handleTaiSanChange(event, newValue, index);
+                          field.onChange(newValue ? newValue.ID_Taisan : null);
+                        }}
                         renderInput={(params) => (
                           <TextField
                             {...params}
@@ -198,7 +209,7 @@ export default function PhieuNXNewEditDetails({ taiSan }: Props) {
                     placeholder="0"
                     onChange={(event) => handleChangeYear(event, index)}
                     InputLabelProps={{ shrink: true }}
-                    // sx={{ maxWidth: { md: 96 } }}
+                  // sx={{ maxWidth: { md: 96 } }}
                   />
 
                   <RHFTextField
@@ -209,7 +220,7 @@ export default function PhieuNXNewEditDetails({ taiSan }: Props) {
                     placeholder="0"
                     onChange={(event) => handleChangeQuantity(event, index)}
                     InputLabelProps={{ shrink: true }}
-                    // sx={{ maxWidth: { md: 96 } }}
+                  // sx={{ maxWidth: { md: 96 } }}
                   />
 
                   <RHFTextField

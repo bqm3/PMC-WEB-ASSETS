@@ -1,7 +1,7 @@
 import * as Yup from 'yup';
 import { useMemo, useEffect, useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, useWatch } from 'react-hook-form';
 // @mui
 import LoadingButton from '@mui/lab/LoadingButton';
 import Card from '@mui/material/Card';
@@ -29,7 +29,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import axios from 'axios';
 import { useBoolean } from 'src/hooks/use-boolean';
 
-import PhieuNXNewEditDetails from './phieuncc-new-details';
+import PhieuNCCNewEditDetails from './phieuncc-new-details';
 
 // ----------------------------------------------------------------------
 
@@ -111,7 +111,8 @@ export default function SuaChuaTSNewForm() {
           isDelete: Yup.mixed<any>().nullable(),
         })
       )
-      .nullable(),
+      .nullable()
+      .notRequired(),
   });
 
   const defaultValues = useMemo(
@@ -131,18 +132,7 @@ export default function SuaChuaTSNewForm() {
       NgayNX: currentPhieuNCC?.NgayNX || new Date(),
       Ghichu: currentPhieuNCC?.Ghichu || '',
       ID_Quy: currentPhieuNCC?.ID_Quy || null,
-      phieunccct: currentPhieuNCC?.tb_phieunccct || [
-        {
-          ID_Taisan: null,
-          ID_TaisanQrcode: null,
-          Dongia: 0,
-          Soluong: 0,
-          Namsx: 0,
-          Tong: 0,
-          isDelete: 0,
-          isUpdate: 0,
-        },
-      ],
+      phieunccct: currentPhieuNCC?.tb_phieunccct || [],
     }),
     [currentPhieuNCC]
   );
@@ -208,10 +198,33 @@ export default function SuaChuaTSNewForm() {
     setTaiSan(dataTaiSan);
   }, [values.ID_Loainhom, taisan, setValue]);
 
+
+  const nghiepvuValue = useWatch({ control, name: 'ID_Nghiepvu' });
+
+  const [previousNghiepvuValue, setPreviousNghiepvuValue] = useState(null);
+
+  // Theo dõi sự thay đổi của nghiepvu và cập nhật phieunccct
+  useEffect(() => {
+    if (nghiepvuValue !== previousNghiepvuValue) {
+      // Tạo một mảng mới với tất cả phần tử có isDelete = 0
+      const updatedPhieuNccct = values?.phieunccct?.map(item => ({
+        ...item,
+        isDelete: 1,
+      }));
+
+      // Cập nhật lại state phieunccct
+      setValue('phieunccct', updatedPhieuNccct);
+      setPreviousNghiepvuValue(nghiepvuValue);
+
+    }
+  }, [nghiepvuValue, setValue, values.phieunccct, previousNghiepvuValue]);
+
+
+
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`http://localhost:8888/api/v1/tb_phieuncc/create`, data, {
+      .post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieuncc/create`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -254,14 +267,14 @@ export default function SuaChuaTSNewForm() {
 
   const handleFilter = async () => {
     setLoadingFilter(true);
-  
+
     // Kiểm tra xem các trường bắt buộc có giá trị hay không
     const { ID_Loainhom, ID_NoiNhap, ID_NoiXuat, ID_Nghiepvu, ID_Quy } = values;
-  
+
     // Nếu thiếu bất kỳ trường nào thì không thực hiện tìm kiếm, thông báo bằng snackbar
     if (!ID_Loainhom || !ID_NoiNhap || !ID_NoiXuat || !ID_Nghiepvu || !ID_Quy) {
       setLoadingFilter(false); // Dừng quá trình loading
-  
+
       enqueueSnackbar({
         variant: 'warning',
         autoHideDuration: 2000,
@@ -269,7 +282,7 @@ export default function SuaChuaTSNewForm() {
       });
       return; // Dừng quá trình tìm kiếm
     }
-  
+
     // Nếu tất cả các trường đều có giá trị, thực hiện tìm kiếm
     const dataReq = {
       ID_Loainhom,
@@ -278,15 +291,15 @@ export default function SuaChuaTSNewForm() {
       ID_Nghiepvu,
       ID_Quy,
     };
-  
+
     try {
-      const res = await axios.post(`http://localhost:8888/api/v1/tb_phieuncc/taisan`, dataReq, {
+      const res = await axios.post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieuncc/taisan`, dataReq, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
         },
       });
-  
+
       if (res.status === 200) {
         setValue('phieunccct', res.data.data);
       } else {
@@ -306,7 +319,6 @@ export default function SuaChuaTSNewForm() {
       setLoadingFilter(false); // Dừng loading khi quá trình tìm kiếm hoàn tất
     }
   };
-  
 
   const renderDetails = (
     <Grid xs={12} md={12}>
@@ -435,21 +447,23 @@ export default function SuaChuaTSNewForm() {
           </RHFSelect>
           <RHFTextField name="Ghichu" multiline rows={2} label="Ghi chú" />
         </Stack>
-        {`${values.ID_Nghiepvu}` === '5' && (
-          <LoadingButton
-            size="large"
-            color="success"
-            variant="contained"
-            loading={loadingFilter}
-            onClick={handleFilter}
-            sx={{
-              float: 'right',
-              m: 2,
-            }}
-          >
-            Tìm kiếm
-          </LoadingButton>
-        )}
+        {(`${values.ID_Nghiepvu}` === '5' ||
+          `${values.ID_Nghiepvu}` === '7' ||
+          `${values.ID_Nghiepvu}` === '6') && (
+            <LoadingButton
+              size="large"
+              color="success"
+              variant="contained"
+              loading={loadingFilter}
+              onClick={handleFilter}
+              sx={{
+                float: 'right',
+                m: 2,
+              }}
+            >
+              Tìm kiếm
+            </LoadingButton>
+          )}
       </Card>
     </Grid>
   );
@@ -458,7 +472,7 @@ export default function SuaChuaTSNewForm() {
     <FormProvider methods={methods}>
       {renderDetails}
       <Card sx={{ mt: 3 }}>
-        <PhieuNXNewEditDetails taiSan={taiSan} ID_Nghiepvu={values.ID_Nghiepvu} />
+        <PhieuNCCNewEditDetails taiSan={taiSan} ID_Nghiepvu={values.ID_Nghiepvu} />
       </Card>
 
       <Stack justifyContent="flex-end" direction="row" spacing={2} sx={{ mt: 3 }}>

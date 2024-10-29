@@ -251,7 +251,7 @@ export default function GroupPolicyListView() {
   const handleDeleteRow = useCallback(
     async (id: string) => {
       await axios
-        .put(`http://localhost:8888/api/v1/ent_user/delete/${id}`, [], {
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_user/delete/${id}`, [], {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -310,7 +310,7 @@ export default function GroupPolicyListView() {
       setLoadingShow(true);
       confirmShow.onTrue();
       await axios
-        .get(`http://localhost:8888/api/v1/ent_user/${id}`, {
+        .get(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_user/${id}`, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -352,7 +352,7 @@ export default function GroupPolicyListView() {
   const handleUpdate = useCallback(
     async (id: string) => {
       await axios
-        .put(`http://localhost:8888/api/v1/ent_user/update/${id}`, dataSelect, {
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_user/update/${id}`, dataSelect, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -411,18 +411,18 @@ export default function GroupPolicyListView() {
   return (
     <>
       <Container maxWidth={settings.themeStretch ? false : 'xl'}>
-        <Stack direction="row" alignItems="center" justifyContent="space-between">
+        <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{
+          mb: { xs: 1, md: 2 },
+        }}>
           <CustomBreadcrumbs
             heading="Danh sách con người"
             links={[
               {
-                name: 'Dashboard',
+                name: '',
                 href: paths.dashboard.root,
               },
             ]}
-            sx={{
-              mb: { xs: 3, md: 5 },
-            }}
+
           />
           <LoadingButton
             variant="contained"
@@ -482,9 +482,9 @@ export default function GroupPolicyListView() {
                   rowCount={tableData?.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
-                  // onSelectAllRows={(checked) =>
-                  //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_User))
-                  // }
+                // onSelectAllRows={(checked) =>
+                //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_User))
+                // }
                 />
 
                 <TableBody>

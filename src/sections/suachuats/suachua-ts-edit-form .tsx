@@ -7,7 +7,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid';
-import TextField  from '@mui/material/TextField'
+import TextField from '@mui/material/TextField'
 import { Button } from '@mui/material';
 // hooks
 import { useRouter } from 'src/routes/hooks';
@@ -98,7 +98,7 @@ export default function SuachuatsNewForm({ currentSuaChuaTs, mutate }: Props) {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .put(`http://localhost:8888/api/v1/tb_suachuats/update/${currentSuaChuaTs?.ID_SuachuaTS}`, data, {
+      .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_suachuats/update/${currentSuaChuaTs?.ID_SuachuaTS}`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -142,13 +142,13 @@ export default function SuachuatsNewForm({ currentSuaChuaTs, mutate }: Props) {
   const handleClose = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .put(`http://localhost:8888/api/v1/tb_suachuats/close/${currentSuaChuaTs?.ID_SuachuaTS}`, data, {
+      .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_suachuats/close/${currentSuaChuaTs?.ID_SuachuaTS}`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
         },
       })
-      .then(async(res) => {
+      .then(async (res) => {
         setLoading(false);
         await mutate()
         enqueueSnackbar({
@@ -199,13 +199,13 @@ export default function SuachuatsNewForm({ currentSuaChuaTs, mutate }: Props) {
 
             </Grid>
             <Grid item xs={12} sm={4}>
-            <Stack width="100%">
-              <DatePicker
-                label="Ngày giao"
-                value={new Date(values?.Ngaygiao)}
-                onChange={(newValue) => setValue('Ngaygiao', newValue)}
-                
-              />
+              <Stack width="100%">
+                <DatePicker
+                  label="Ngày giao"
+                  value={new Date(values?.Ngaygiao)}
+                  onChange={(newValue) => setValue('Ngaygiao', newValue)}
+
+                />
               </Stack>
             </Grid>
             <Grid item xs={12} sm={4}>
@@ -230,10 +230,10 @@ export default function SuachuatsNewForm({ currentSuaChuaTs, mutate }: Props) {
       </Card>
 
       <Stack justifyContent="flex-end" direction="row" spacing={2} sx={{ mt: 3 }}>
-      {currentSuaChuaTs && `${currentSuaChuaTs.iTinhtrang}` === `0` && (
+        {currentSuaChuaTs && `${currentSuaChuaTs.iTinhtrang}` === `0` && (
           <>
             <Button size="large" variant="soft" color="primary" onClick={handleClose}>
-              Khoá tài sản 
+              Khoá tài sản
             </Button>
 
             <LoadingButton

@@ -213,7 +213,7 @@ export default function PhieuGNListView() {
   const handleDeleteRow = useCallback(
     async (id: string) => {
       await axios
-        .put(`http://localhost:8888/api/v1/tb_giaonhan/delete/${id}`,[], {
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_giaonhan/delete/${id}`, [], {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -257,7 +257,7 @@ export default function PhieuGNListView() {
   const handleCloseRow = useCallback(
     async (id: string) => {
       await axios
-        .put(`http://localhost:8888/api/v1/tb_giaonhan/close-fast/${id}`,[], {
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_giaonhan/close-fast/${id}`, [], {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -298,7 +298,7 @@ export default function PhieuGNListView() {
           }
         });
     },
-    [accessToken, enqueueSnackbar, dataInPage.length, table, tableData,confirm] // Add accessToken and enqueueSnackbar as dependencies
+    [accessToken, enqueueSnackbar, dataInPage.length, table, tableData, confirm] // Add accessToken and enqueueSnackbar as dependencies
   );
 
   const handleResetFilters = useCallback(() => {
@@ -315,7 +315,7 @@ export default function PhieuGNListView() {
   const handleUpdate = useCallback(
     async (id: string) => {
       await axios
-        .put(`http://localhost:8888/api/v1/tb_phieuGN/update/${id}`, dataSelect, {
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieuGN/update/${id}`, dataSelect, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -470,23 +470,23 @@ export default function PhieuGNListView() {
                   rowCount={tableData?.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
-                  // onSelectAllRows={(checked) =>
-                  //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_Giaonhan))
-                  // }
+                // onSelectAllRows={(checked) =>
+                //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_Giaonhan))
+                // }
                 />
 
                 <TableBody>
                   {dataInPage.map((row) => (
-                      <PhieuGNTableRow
-                        key={row.ID_Giaonhan}
-                        row={row}
-                        selected={table.selected.includes(row.ID_Giaonhan)}
-                        onSelectRow={() => table.onSelectRow(row.ID_Giaonhan)}
-                        onDeleteRow={() => handleDeleteRow(row.ID_Giaonhan)}
-                        onViewRow={() => handleViewRow(row.ID_Giaonhan)}
-                        onCloseRow={()=>handleCloseRow(row.ID_Giaonhan)}
-                      />
-                    ))}
+                    <PhieuGNTableRow
+                      key={row.ID_Giaonhan}
+                      row={row}
+                      selected={table.selected.includes(row.ID_Giaonhan)}
+                      onSelectRow={() => table.onSelectRow(row.ID_Giaonhan)}
+                      onDeleteRow={() => handleDeleteRow(row.ID_Giaonhan)}
+                      onViewRow={() => handleViewRow(row.ID_Giaonhan)}
+                      onCloseRow={() => handleCloseRow(row.ID_Giaonhan)}
+                    />
+                  ))}
 
                   <TableEmptyRows
                     height={denseHeight}
@@ -559,7 +559,7 @@ function applyFilter({
       (item) =>
         `${item.NguoigiaoInfo.ent_connguoi.Hoten}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         `${item.NguoinhanInfo.ent_connguoi.Hoten}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        `${item.ent_phongbanda.Tenphongban}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 
+        `${item.ent_phongbanda.Tenphongban}`.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
 

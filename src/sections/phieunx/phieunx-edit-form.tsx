@@ -91,7 +91,7 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
   const { taisan } = useGetTaisan();
 
   const [filteredQuarty, setFilteredQuarty] = useState(QUARTY); // Default is QUARTY
-  
+
   const { enqueueSnackbar } = useSnackbar();
 
   const NewProductSchema = Yup.object().shape({
@@ -115,17 +115,7 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
       NgayNX: currentPhieuNX?.NgayNX || new Date(),
       Ghichu: currentPhieuNX?.Ghichu || '',
       ID_Quy: currentPhieuNX?.ID_Quy || '',
-      phieunxct: currentPhieuNX?.tb_phieunxct || [
-        {
-          ID_Taisan: null,
-          Dongia: 0,
-          Soluong: 0,
-          Namsx: 0,
-          Tong: 0,
-          isUpdate: 0,
-          isDelete: 0,
-        },
-      ],
+      phieunxct: currentPhieuNX?.tb_phieunxct || [],
     }),
     [currentPhieuNX]
   );
@@ -209,16 +199,14 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
   }, [values.ID_Loainhom, taisan, setValue]);
 
   const onSubmit = handleSubmit(async (data) => {
-    setLoading(true);
     await axios
-      .put(`http://localhost:8888/api/v1/tb_phieunx/update/${currentPhieuNX?.ID_PhieuNX}`, data, {
+      .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieunx/update/${currentPhieuNX?.ID_PhieuNX}`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
         },
       })
       .then(async (res) => {
-        setLoading(false);
         await mutate();
         enqueueSnackbar({
           variant: 'success',
@@ -227,7 +215,6 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
         });
       })
       .catch((error) => {
-        setLoading(false);
         if (error.response) {
           enqueueSnackbar({
             variant: 'error',
@@ -255,7 +242,7 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
   const handleClose = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`http://localhost:8888/api/v1/tb_phieunx/close/${currentPhieuNX?.ID_PhieuNX}`, data, {
+      .post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieunx/close/${currentPhieuNX?.ID_PhieuNX}`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -309,7 +296,7 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
               PaperPropsSx={{ textTransform: 'capitalize' }}
             >
               {nghiepvu
-                ?.filter((item) => ['1', '9', '7', '6', '3'].includes(`${item?.ID_Nghiepvu}`))
+                ?.filter((item) => ['1', '9', '3'].includes(`${item?.ID_Nghiepvu}`))
                 .map((item) => (
                   <MenuItem key={item?.ID_Nghiepvu} value={item?.ID_Nghiepvu}>
                     {item?.Nghiepvu}
@@ -407,16 +394,20 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
       <Stack justifyContent="flex-end" direction="row" spacing={2} sx={{ mt: 3 }}>
         {currentPhieuNX && `${currentPhieuNX.iTinhtrang}` === `0` && (
           <>
-            <Button size="large" variant="soft" color="primary" onClick={handleClose}>
+            {/* <Button size="large" variant="soft" color="primary"  >
               Khoá phiếu
-            </Button>
+            </Button> */}
+
+            <LoadingButton loading={loading} loadingIndicator="Loading…" variant="outlined" onClick={handleClose}>
+              Khoá phiếu
+            </LoadingButton>
 
             <LoadingButton
               type="submit"
               size="large"
               color="success"
               variant="contained"
-              loading={loadingSend.value && isSubmitting}
+              loading={loadingSend.value || isSubmitting}
               onClick={onSubmit}
             >
               Cập nhật

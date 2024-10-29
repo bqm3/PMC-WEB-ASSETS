@@ -220,7 +220,7 @@ export default function GroupPolicyListView() {
   const handleDeleteRow = useCallback(
     async (id: string) => {
       await axios
-        .put(`http://localhost:8888/api/v1/ent_taisan/delete/${id}`, [], {
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_taisan/delete/${id}`, [], {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -282,7 +282,7 @@ export default function GroupPolicyListView() {
   const handleUpdate = useCallback(
     async (id: string) => {
       await axios
-        .put(`http://localhost:8888/api/v1/ent_taisan/update/${id}`, dataSelect, {
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_taisan/update/${id}`, dataSelect, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -396,9 +396,9 @@ export default function GroupPolicyListView() {
                   rowCount={tableData?.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
-                  // onSelectAllRows={(checked) =>
-                  //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_Taisan))
-                  // }
+                // onSelectAllRows={(checked) =>
+                //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_Taisan))
+                // }
                 />
 
                 <TableBody>
@@ -584,6 +584,14 @@ function TaiSanDialog({
         <DialogContent dividers={scroll === 'paper'}>
           <Stack spacing={3} sx={{ p: 3 }}>
             <Stack style={{ display: 'flex', flexDirection: 'row' }} spacing={3}>
+              <TextField
+                name="Tents"
+                label="Tên tài sản *"
+                value={dataSelect?.Tents}
+                onChange={onChange}
+                fullWidth
+                onBlur={onBlur}
+              />
               {nhomts?.length > 0 && (
                 <FormControl fullWidth>
                   <InputLabel id="demo-simple-select-label">Tài sản</InputLabel>
@@ -648,14 +656,33 @@ function TaiSanDialog({
                 )}
               />
             </Stack>
-            <TextField
-              name="Tents"
-              label="Tên tài sản" // Vietnamese for "Category Name"
-              value={dataSelect?.Tents}
-              onChange={onChange} // Update local state and notify parent
-              fullWidth
-              onBlur={onBlur}
-            />
+            <Stack style={{ display: 'flex', flexDirection: 'row' }} spacing={3}>
+              <TextField
+                name="Tentscu"
+                label="Tên tài sản cũ"
+                value={dataSelect?.Tentscu}
+                onChange={onChange}
+                fullWidth
+                onBlur={onBlur}
+              />
+              <TextField
+                name="Model"
+                label="Model"
+                value={dataSelect?.Model}
+                onChange={onChange}
+                fullWidth
+                onBlur={onBlur}
+              />
+              <TextField
+                name="SerialNumber"
+                label="Serial Number"
+                value={dataSelect?.SerialNumber}
+                onChange={onChange}
+                fullWidth
+                onBlur={onBlur}
+              />
+            </Stack>
+
             <RHFEditor
               simple
               name="Thongso"
@@ -671,9 +698,9 @@ function TaiSanDialog({
 
             <TextField
               name="Ghichu"
-              label="Ghi chú" // Vietnamese for "Category Name"
+              label="Ghi chú"
               value={dataSelect?.Ghichu}
-              onChange={onChange} // Update local state and notify parent
+              onChange={onChange}
               fullWidth
               multiline
               rows={2}

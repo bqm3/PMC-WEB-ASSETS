@@ -77,7 +77,7 @@ export default function GroupPolicyNewForm() {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`http://localhost:8888/api/v1/ent_loainhom/create`, data, {
+      .post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_loainhom/create`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -132,9 +132,9 @@ export default function GroupPolicyNewForm() {
       )}
 
       <Grid xs={12} md={8}>
-          <Stack spacing={2} sx={{ p: 1.5 }}>
-            <RHFTextField name="Loainhom" label="Loại nhóm" />
-          </Stack>
+        <Stack spacing={2} sx={{ p: 1.5 }}>
+          <RHFTextField name="Loainhom" label="Loại nhóm" />
+        </Stack>
       </Grid>
     </>
   );
@@ -145,7 +145,7 @@ export default function GroupPolicyNewForm() {
       <Grid
         xs={12}
         md={8}
-        sx={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'column-reverse', pb:4 }}
+        sx={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'column-reverse', pb: 4 }}
       >
         <LoadingButton
           type="submit"

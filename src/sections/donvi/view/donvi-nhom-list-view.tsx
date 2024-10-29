@@ -274,7 +274,7 @@ export default function DonViNhomListView() {
     async (id: string) => {
       await axios
         .put(
-          `http://localhost:8888/api/v1/ent_loainhom/delete/${id}`,
+          `https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_loainhom/delete/${id}`,
 
           {
             headers: {
@@ -322,7 +322,7 @@ export default function DonViNhomListView() {
     async (id: string) => {
       await axios
         .put(
-          `http://localhost:8888/api/v1/ent_donvi/delete/${id}`,
+          `https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_donvi/delete/${id}`,
 
           {
             headers: {
@@ -402,7 +402,7 @@ export default function DonViNhomListView() {
     async (id: string) => {
       await axios
         .put(
-          `http://localhost:8888/api/v1/ent_loainhom/update/${id}`,
+          `https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_loainhom/update/${id}`,
           {
             Loainhom: dataSelectLoaiNhom?.Loainhom,
             ID_Loainhom: dataSelectLoaiNhom?.ID_Loainhom,
@@ -456,7 +456,7 @@ export default function DonViNhomListView() {
     async (id: string) => {
       await axios
         .put(
-          `http://localhost:8888/api/v1/ent_donvi/update/${id}`,
+          `https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_donvi/update/${id}`,
           {
             Donvi: dataSelectDonVi?.Donvi,
             ID_Donvi: dataSelectDonVi?.ID_Donvi,
@@ -526,7 +526,7 @@ export default function DonViNhomListView() {
                     name: '',
                   }
                 ]}
-               
+
               />
               <LoadingButton
                 variant="contained"
@@ -575,9 +575,9 @@ export default function DonViNhomListView() {
                       rowCount={tableDataLoaiNhom?.length}
                       numSelected={table.selected.length}
                       onSort={table.onSort}
-                      // onSelectAllRows={(checked) =>
-                      //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_Loainhom))
-                      // }
+                    // onSelectAllRows={(checked) =>
+                    //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_Loainhom))
+                    // }
                     />
 
                     <TableBody>
@@ -634,7 +634,7 @@ export default function DonViNhomListView() {
                     name: '',
                   },
                 ]}
-               
+
               />
               <LoadingButton
                 variant="contained"
@@ -856,7 +856,7 @@ function LoaiNhomDialog({
 
         <TextField
           name="Loainhom"
-          label="Loại tài sản" 
+          label="Loại tài sản"
           value={dataSelect?.Loainhom}
           onChange={onChange}
           fullWidth
@@ -906,7 +906,7 @@ function DonViDialog({
   handleSelectChange,
 }: ConfirmTransferDonViDialogProps) {
   const ID_Donvi = dataSelect?.ID_Donvi;
-  
+
   return (
     <Dialog open={open} fullWidth maxWidth="xs" onClose={onClose}>
       <DialogTitle>Cập nhật</DialogTitle>

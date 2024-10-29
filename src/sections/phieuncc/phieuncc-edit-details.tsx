@@ -52,9 +52,11 @@ export default function PhieuNXEditDetails({ taiSan }: Props) {
   const handleAdd = () => {
     append({
       ID_Taisan: null,
+      ID_TaisanQrcode: null,
       Soluong: 0,
       Dongia: 0,
       Namsx: 0,
+      Tents: '',
       Tong: 0,
       isDelete: 0,
       isUpdate: 0,
@@ -110,6 +112,7 @@ export default function PhieuNXEditDetails({ taiSan }: Props) {
         if (selectedOption) {
           // Set the corresponding ID_Taisan value in the form state
           setValue(`phieunccct[${index}].ID_Taisan`, selectedOption.ID_Taisan);
+          setValue(`phieunccct[${index}].Tents`, selectedOption.Tents);
           setValue(`phieunccct[${index}].isUpdate`, 1);
         }
       }
@@ -154,7 +157,7 @@ export default function PhieuNXEditDetails({ taiSan }: Props) {
 
   return (
     <Box sx={{ p: 2 }}>
-      <Typography variant="h6" sx={{  mb: 2 }}>
+      <Typography variant="h6" sx={{ mb: 2 }}>
         Phiếu nhập xuất chi tiết:
       </Typography>
 
@@ -165,11 +168,13 @@ export default function PhieuNXEditDetails({ taiSan }: Props) {
               <Stack key={item.id} alignItems="flex-end" spacing={1.5}>
                 <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ width: 1 }}>
                   <Controller
+
                     name={`phieunccct[${index}].ID_Taisan`}
                     control={control}
                     defaultValue={`phieunccct[${index}].ent_taisan` || ''} // Ensure item?.ID_Taisan is correctly populated
                     render={({ field }) => (
                       <Autocomplete
+                        disabled
                         {...field}
                         options={taiSan}
                         getOptionLabel={(option: any) =>
@@ -202,7 +207,7 @@ export default function PhieuNXEditDetails({ taiSan }: Props) {
                     placeholder="0"
                     onChange={(event) => handleChangeYear(event, index)}
                     InputLabelProps={{ shrink: true }}
-                    // sx={{ maxWidth: { md: 96 } }}
+                  // sx={{ maxWidth: { md: 96 } }}
                   />
 
                   <RHFTextField
@@ -213,7 +218,7 @@ export default function PhieuNXEditDetails({ taiSan }: Props) {
                     placeholder="0"
                     onChange={(event) => handleChangeQuantity(event, index)}
                     InputLabelProps={{ shrink: true }}
-                    // sx={{ maxWidth: { md: 96 } }}
+                  // sx={{ maxWidth: { md: 96 } }}
                   />
 
                   <RHFTextField
@@ -242,7 +247,7 @@ export default function PhieuNXEditDetails({ taiSan }: Props) {
                     placeholder="0.00"
                     value={
                       values.phieunccct[index]?.Tong === 0 ||
-                      values.phieunccct[index]?.Tong === undefined
+                        values.phieunccct[index]?.Tong === undefined
                         ? values.phieunccct[index].Soluong * values.phieunccct[index].Dongia
                         : formatCash(values.phieunccct[index]?.Tong)
                     }

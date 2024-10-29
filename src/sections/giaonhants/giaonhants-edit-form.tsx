@@ -91,7 +91,7 @@ export default function PhieuGNNewForm({ currentPhieuGN, mutate }: Props) {
   const { taisan } = useGetTaisan();
 
   const [filteredQuarty, setFilteredQuarty] = useState(QUARTY); // Default is QUARTY
-  
+
   const { enqueueSnackbar } = useSnackbar();
 
   const NewProductSchema = Yup.object().shape({
@@ -175,7 +175,7 @@ export default function PhieuGNNewForm({ currentPhieuGN, mutate }: Props) {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .put(`http://localhost:8888/api/v1/tb_phieunx/update/${currentPhieuGN?.ID_Giaonhan}`, data, {
+      .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieunx/update/${currentPhieuGN?.ID_Giaonhan}`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -219,7 +219,7 @@ export default function PhieuGNNewForm({ currentPhieuGN, mutate }: Props) {
   const handleClose = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`http://localhost:8888/api/v1/tb_phieunx/close/${currentPhieuGN?.ID_Giaonhan}`, data, {
+      .post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieunx/close/${currentPhieuGN?.ID_Giaonhan}`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -316,7 +316,7 @@ export default function PhieuGNNewForm({ currentPhieuGN, mutate }: Props) {
               onChange={(newValue) => setValue('Ngay', newValue)}
             />
           </Stack> */}
-        </Stack> 
+        </Stack>
         <Stack
           spacing={2}
           sx={{ p: 2, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}

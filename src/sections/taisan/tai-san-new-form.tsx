@@ -66,7 +66,7 @@ export default function GroupPolicyNewForm() {
     Tents: Yup.string().required('Không được để trống'),
     ID_Nhomts: Yup.string().required('Không được để trống'),
     ID_Donvi: Yup.string().required('Không được để trống'),
-    i_MaQrCode: Yup.string()
+    i_MaQrCode: Yup.string().nonNullable(),
   });
 
   const defaultValues = useMemo(
@@ -76,14 +76,15 @@ export default function GroupPolicyNewForm() {
       Mats: '',
       Nuocsx: '',
       Tents: '',
+      Tentscu: '',
+      Model: '',
+      SerialNumber: '',
       Thongso: '',
       Ghichu: '',
       i_MaQrCode: '0',
     }),
     []
   );
-
- 
 
   const methods = useForm({
     resolver: yupResolver(NewProductSchema),
@@ -111,7 +112,7 @@ export default function GroupPolicyNewForm() {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`http://localhost:8888/api/v1/ent_taisan/create`, data, {
+      .post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_taisan/create`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -120,7 +121,7 @@ export default function GroupPolicyNewForm() {
       .then((res) => {
         setLoading(false);
         reset();
-        mutateTaisan()
+        mutateTaisan();
         enqueueSnackbar({
           variant: 'success',
           autoHideDuration: 2000,
@@ -155,23 +156,13 @@ export default function GroupPolicyNewForm() {
 
   const renderDetails = (
     <>
-      {mdUp && (
-        <Grid md={3}>
-          <Typography variant="h6" sx={{ mb: 0.5 }}>
-            Chi tiết
-          </Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Thông tin...
-          </Typography>
-        </Grid>
-      )}
-
-      <Grid xs={12} md={9}>
+      <Grid xs={12} md={12}>
         <Card>
           <Stack
             spacing={3}
             sx={{ p: 2, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
           >
+            <RHFTextField name="Tents" label="Tên tài sản *" />
             {nhomts?.length > 0 && (
               <RHFSelect
                 name="ID_Nhomts"
@@ -188,8 +179,24 @@ export default function GroupPolicyNewForm() {
               </RHFSelect>
             )}
 
-            <Stack sx={{flexGrow: 1}}>
-            <RHFAutocomplete
+            {donvi?.length > 0 && (
+              <RHFSelect
+                name="ID_Donvi"
+                label="Đơn vị"
+                InputLabelProps={{ shrink: true }}
+                PaperPropsSx={{ textTransform: 'capitalize' }}
+                sx={{ flexGrow: 1 }}
+              >
+                {donvi?.map((item) => (
+                  <MenuItem key={item?.ID_Donvi} value={item?.ID_Donvi}>
+                    {item?.Donvi}
+                  </MenuItem>
+                ))}
+              </RHFSelect>
+            )}
+
+            <Stack sx={{ flexGrow: 1 }}>
+              <RHFAutocomplete
                 name="Nuocsx"
                 label="Nước sản xuất"
                 freeSolo
@@ -213,28 +220,17 @@ export default function GroupPolicyNewForm() {
                 }}
               />
             </Stack>
-              
-            {donvi?.length > 0 && (
-              <RHFSelect
-                name="ID_Donvi"
-                label="Đơn vị"
-                InputLabelProps={{ shrink: true }}
-                PaperPropsSx={{ textTransform: 'capitalize' }}
-                sx={{ flexGrow: 1 }}
-              >
-                {donvi?.map((item) => (
-                  <MenuItem key={item?.ID_Donvi} value={item?.ID_Donvi}>
-                    {item?.Donvi}
-                  </MenuItem>
-                ))}
-              </RHFSelect>
-            )}
-              
-            </Stack>
-
-          <Stack spacing={3} sx={{ p: 2 }}>
-            <RHFTextField name="Tents" label="Tên tài sản" />
           </Stack>
+
+          <Stack
+            spacing={3}
+            sx={{ p: 2, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
+          >
+            <RHFTextField name="Tentscu" label="Tên tài sản cũ" />
+            <RHFTextField name="Model" label="Model máy" />
+            <RHFTextField name="SerialNumber" label="Serial Number" />
+          </Stack>
+
           <Stack spacing={3} sx={{ p: 2 }}>
             <RHFEditor simple name="Thongso" />
           </Stack>
@@ -242,13 +238,17 @@ export default function GroupPolicyNewForm() {
             <RHFTextField name="Ghichu" multiline rows={2} label="Ghi chú" />
           </Stack>
           <Stack spacing={3} sx={{ p: 2 }}>
-          <FormControlLabel
+            <FormControlLabel
               control={
-                <Switch checked={`${values.i_MaQrCode}` === '0'} onChange={handleChangeIncludeCheck} color='success'/>
+                <Switch
+                  checked={`${values.i_MaQrCode}` === '0'}
+                  onChange={handleChangeIncludeCheck}
+                  color="success"
+                />
               }
               label="Qr Code"
             />
-            </Stack>
+          </Stack>
         </Card>
       </Grid>
     </>
@@ -260,7 +260,7 @@ export default function GroupPolicyNewForm() {
       <Grid
         xs={12}
         md={8}
-        sx={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'column-reverse'}}
+        sx={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'column-reverse' }}
       >
         <LoadingButton
           type="submit"

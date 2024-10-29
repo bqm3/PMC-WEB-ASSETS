@@ -92,7 +92,7 @@ export default function SuachuatsNewForm() {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`http://localhost:8888/api/v1/tb_suachuats/create`, data, {
+      .post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_suachuats/create`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -177,7 +177,7 @@ export default function SuachuatsNewForm() {
           size="large"
           variant="contained"
           loading={loadingSend.value && isSubmitting}
-          // onClick={handleCreateAndSend}
+        // onClick={handleCreateAndSend}
         >
           Tạo mới
         </LoadingButton>

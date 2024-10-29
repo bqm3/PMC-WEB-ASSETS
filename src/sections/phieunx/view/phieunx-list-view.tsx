@@ -201,7 +201,7 @@ export default function PhieuNXListView() {
   const handleDeleteRow = useCallback(
     async (id: string) => {
       await axios
-        .put(`http://localhost:8888/api/v1/tb_phieunx/delete/${id}`,[], {
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieunx/delete/${id}`, [], {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -245,7 +245,7 @@ export default function PhieuNXListView() {
   const handleCloseRow = useCallback(
     async (id: string) => {
       await axios
-        .put(`http://localhost:8888/api/v1/tb_phieunx/close-fast/${id}`,[], {
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieunx/close-fast/${id}`, [], {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -286,7 +286,7 @@ export default function PhieuNXListView() {
           }
         });
     },
-    [accessToken, enqueueSnackbar, dataInPage.length, table, tableData,confirm] // Add accessToken and enqueueSnackbar as dependencies
+    [accessToken, enqueueSnackbar, dataInPage.length, table, tableData, confirm] // Add accessToken and enqueueSnackbar as dependencies
   );
 
   const handleResetFilters = useCallback(() => {
@@ -303,7 +303,7 @@ export default function PhieuNXListView() {
   const handleUpdate = useCallback(
     async (id: string) => {
       await axios
-        .put(`http://localhost:8888/api/v1/tb_phieunx/update/${id}`, dataSelect, {
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieunx/update/${id}`, dataSelect, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -457,23 +457,23 @@ export default function PhieuNXListView() {
                   rowCount={tableData?.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
-                  // onSelectAllRows={(checked) =>
-                  //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_PhieuNX))
-                  // }
+                // onSelectAllRows={(checked) =>
+                //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_PhieuNX))
+                // }
                 />
 
                 <TableBody>
                   {dataInPage.map((row) => (
-                      <PhieuNXTableRow
-                        key={row.ID_PhieuNX}
-                        row={row}
-                        selected={table.selected.includes(row.ID_PhieuNX)}
-                        onSelectRow={() => table.onSelectRow(row.ID_PhieuNX)}
-                        onDeleteRow={() => handleDeleteRow(row.ID_PhieuNX)}
-                        onViewRow={() => handleViewRow(row.ID_PhieuNX)}
-                        onCloseRow={()=>handleCloseRow(row.ID_PhieuNX)}
-                      />
-                    ))}
+                    <PhieuNXTableRow
+                      key={row.ID_PhieuNX}
+                      row={row}
+                      selected={table.selected.includes(row.ID_PhieuNX)}
+                      onSelectRow={() => table.onSelectRow(row.ID_PhieuNX)}
+                      onDeleteRow={() => handleDeleteRow(row.ID_PhieuNX)}
+                      onViewRow={() => handleViewRow(row.ID_PhieuNX)}
+                      onCloseRow={() => handleCloseRow(row.ID_PhieuNX)}
+                    />
+                  ))}
 
                   <TableEmptyRows
                     height={denseHeight}

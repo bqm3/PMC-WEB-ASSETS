@@ -62,7 +62,7 @@ export default function CalvTableRow({
   const popover = usePopover();
 
   const getTinhtrangLabel = (iTinhtrang: number) => {
-    switch (iTinhtrang) {
+    switch (Number(iTinhtrang)) {
       case 1:
         return (
           <Label color="success" sx={{ textTransform: 'none' }}>
@@ -93,16 +93,16 @@ export default function CalvTableRow({
   // Generate labels for all ent_nhansupbda entries
   const tinhtrangLabels = ent_nhansupbda
     ? ent_nhansupbda.map(
-        (item, index) =>
-          `${item.isDelete}` === '0' && (
-            <Box key={index} sx={{ mb: 0.5 }}>
-              {getTinhtrangLabel(Number(item.iTinhtrang))}
-            </Box>
-          )
-      )
+      (item, index) =>
+        `${item.isDelete}` === '0' && (
+          <Box key={index} sx={{ mb: 0.5 }}>
+            {getTinhtrangLabel(Number(item.iTinhtrang))}
+          </Box>
+        )
+    )
     : 'Không xác định';
 
-  const phongBanDA = ent_nhansupbda.map((item, index) => `${item.isDelete}` === '0' && `${item.ent_phongbanda.Tenphongban}`)
+  const phongBanDA = ent_nhansupbda.map((item, index) => `${item.isDelete}` === '0' && `${item.iTinhtrang}` === '1' && `${item.ent_phongbanda.Tenphongban}`)
 
   const renderPrimary = (
     <TableRow

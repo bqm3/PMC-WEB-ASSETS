@@ -103,13 +103,27 @@ export default function SuaChuaTSNewForm() {
 
   const [filteredQuarty, setFilteredQuarty] = useState(QUARTY); // Default is QUARTY
 
-  const NewProductSchema = Yup.object().shape({
+  const NewPhieuNXSchema = Yup.object().shape({
     Sophieu: Yup.mixed<any>().nullable(),
     NgayNX: Yup.mixed<any>().required('Phải có ngày nhập xuất'),
     ID_Nghiepvu: Yup.string().required('Không được để trống'),
     ID_NoiXuat: Yup.mixed<any>().required('Không được để trống'),
     ID_NoiNhap: Yup.mixed<any>().required('Không được để trống'),
     ID_Loainhom: Yup.mixed<any>().required('Không được để trống'),
+    ID_Quy: Yup.mixed<any>().required('Không được để trống'),
+    phieunxct: Yup.array()
+      .of(
+        Yup.object().shape({
+          ID_Taisan: Yup.mixed<any>(),
+          Dongia: Yup.mixed<any>().nullable(),
+          Soluong: Yup.mixed<any>().nullable(),
+          Namsx: Yup.mixed<any>().nullable(),
+          Tong: Yup.mixed<any>().nullable(),
+          isDelete: Yup.mixed<any>().nullable(),
+        })
+      )
+      .nullable()
+      .notRequired(), // Thêm vào đây
   });
 
   const defaultValues = useMemo(
@@ -122,22 +136,13 @@ export default function SuaChuaTSNewForm() {
       NgayNX: new Date(),
       Ghichu: '',
       ID_Quy: null,
-      phieunxct: [
-        {
-          ID_Taisan: null,
-          Dongia: 0,
-          Soluong: 0,
-          Tong: 0,
-          Namsx: 0,
-          isDelete: 0,
-        },
-      ],
+      phieunxct: [],
     }),
     []
   );
 
   const methods = useForm({
-    resolver: yupResolver(NewProductSchema),
+    resolver: yupResolver(NewPhieuNXSchema),
     defaultValues,
   });
 
@@ -159,23 +164,6 @@ export default function SuaChuaTSNewForm() {
       setFilteredQuarty(QUARTY);
     }
   }, [values.ID_Loainhom]);
-
-  // 1: Phiếu hàng tồn đầu kỳ
-  // 2: Phiếu nhập ngoài
-  // 3: Phiếu nhập xuất nội bộ
-  // 4: Phiếu nhập khác
-  // 5: Phiếu xuất trả nhà cung cấp
-  // 6: Phiếu xuất thanh lý
-  // 7: Phiếu xuất hủy
-  // 8: Phiếu xuất khác
-  // 9: Phiếu kiểm kê // }
-
-  // 1-9 ID_NX = ID_NN
-  // 3 ID_NX !== ID_NN
-  // 4-8 (vẫn là phongbanda) random
-  // 7 - 6 ID_NX = ID_NN
-
-  // 2-5 là của bảng ENT_PhieuNCC
 
   useEffect(() => {
     let dataNoiNhap: any = [];
@@ -227,7 +215,7 @@ export default function SuaChuaTSNewForm() {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`http://localhost:8888/api/v1/tb_phieunx/create`, data, {
+      .post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieunx/create`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -268,21 +256,61 @@ export default function SuaChuaTSNewForm() {
       });
   });
 
-  const handleFilter = handleSubmit(async (data) => {
-    // setLoadingFilter(true)
-    const res = await axios.post(
-      `http://localhost:8888/api/v1/tb_phieunx/filter/${values.ID_Nghiepvu}`,
-      data,
-      {
+  const handleFilter = async () => {
+    setLoadingFilter(true);
+
+    // Kiểm tra xem các trường bắt buộc có giá trị hay không
+    const { ID_Loainhom, ID_NoiNhap, ID_NoiXuat, ID_Nghiepvu, ID_Quy } = values;
+
+    // Nếu thiếu bất kỳ trường nào thì không thực hiện tìm kiếm, thông báo bằng snackbar
+    if (!ID_Loainhom || !ID_NoiNhap || !ID_NoiXuat || !ID_Nghiepvu || !ID_Quy) {
+      setLoadingFilter(false); // Dừng quá trình loading
+
+      enqueueSnackbar({
+        variant: 'warning',
+        autoHideDuration: 2000,
+        message: 'Vui lòng điền đầy đủ thông tin trước khi tìm kiếm',
+      });
+      return; // Dừng quá trình tìm kiếm
+    }
+
+    // Nếu tất cả các trường đều có giá trị, thực hiện tìm kiếm
+    const dataReq = {
+      ID_Loainhom,
+      ID_NoiNhap,
+      ID_NoiXuat,
+      ID_Nghiepvu,
+      ID_Quy,
+    };
+
+    try {
+      const res = await axios.post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieunx/taisan`, dataReq, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
         },
+      });
+
+      if (res.status === 200) {
+        setValue('phieunxct', res.data.data);
+      } else {
+        enqueueSnackbar({
+          variant: 'warning',
+          autoHideDuration: 2000,
+          message: 'Tìm kiếm thất bại',
+        });
       }
-    );
-    console.log('res', res.data);
-    // setLoadingFilter(false)
-  });
+    } catch (error) {
+      console.log('err', error)
+      enqueueSnackbar({
+        variant: 'error',
+        autoHideDuration: 2000,
+        message: 'Có lỗi xảy ra khi tìm kiếm',
+      });
+    } finally {
+      setLoadingFilter(false); // Dừng loading khi quá trình tìm kiếm hoàn tất
+    }
+  };
 
   const renderDetails = (
     <Grid xs={12} md={12}>
@@ -296,7 +324,7 @@ export default function SuaChuaTSNewForm() {
               PaperPropsSx={{ textTransform: 'capitalize' }}
             >
               {nghiepvu
-                ?.filter((item) => ['1', '9', '7', '6', '3'].includes(`${item?.ID_Nghiepvu}`))
+                ?.filter((item) => ['1', '9', '3'].includes(`${item?.ID_Nghiepvu}`))
                 .map((item) => (
                   <MenuItem key={item?.ID_Nghiepvu} value={item?.ID_Nghiepvu}>
                     {item?.Nghiepvu}
@@ -385,7 +413,6 @@ export default function SuaChuaTSNewForm() {
         </Stack>
         {`${values.ID_Nghiepvu}` === '3' && (
           <LoadingButton
-            type="submit"
             size="large"
             color="success"
             variant="contained"
@@ -407,7 +434,7 @@ export default function SuaChuaTSNewForm() {
     <FormProvider methods={methods}>
       {renderDetails}
       <Card sx={{ mt: 3 }}>
-        <PhieuNXNewEditDetails taiSan={taiSan} />
+        <PhieuNXNewEditDetails taiSan={taiSan} ID_Nghiepvu={values.ID_Nghiepvu} />
       </Card>
 
       <Stack justifyContent="flex-end" direction="row" spacing={2} sx={{ mt: 3 }}>
@@ -415,6 +442,7 @@ export default function SuaChuaTSNewForm() {
           type="submit"
           size="large"
           variant="contained"
+          color="success"
           loading={loading}
           onClick={onSubmit}
         >
