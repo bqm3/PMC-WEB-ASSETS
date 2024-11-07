@@ -31,7 +31,7 @@ import FormProvider, {
 } from 'src/components/hook-form';
 // types
 // api
-import { useGetGroupPolicy, useGetChinhanh, useGetNhomPb } from 'src/api/taisan';
+import { useGetGroupPolicy, useGetChinhanh, useGetNhomPb, useGetDuan } from 'src/api/taisan';
 // components
 import { useSnackbar } from 'src/components/snackbar';
 // types
@@ -51,6 +51,8 @@ export default function GroupPolicyNewForm() {
 
   const [loading, setLoading] = useState<Boolean | any>(false);
 
+  const [thuoc, setThuoc] = useState('');
+
   const accessToken = localStorage.getItem(STORAGE_KEY);
 
   const mdUp = useResponsive('up', 'md');
@@ -58,6 +60,7 @@ export default function GroupPolicyNewForm() {
   const { chinhanh } = useGetChinhanh();
 
   const { nhompb } = useGetNhomPb();
+  const { duan } = useGetDuan();
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -73,6 +76,7 @@ export default function GroupPolicyNewForm() {
     () => ({
       Mapb: '',
       Tenphongban: '',
+      ID_Duan: '',
       Diachi: '',
       ID_Nhompb: null,
       ID_Chinhanh: null,
@@ -100,51 +104,108 @@ export default function GroupPolicyNewForm() {
 
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
-    await axios
-      .post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_phongbanda/create`, data, {
-        headers: {
-          Accept: 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-        },
-      })
-      .then((res) => {
-        setLoading(false);
-        reset();
-        enqueueSnackbar({
-          variant: 'success',
-          autoHideDuration: 2000,
-          message: 'Tạo mới thành công',
-        });
-      })
-      .catch((error) => {
-        setLoading(false);
-        if (error.response) {
-          enqueueSnackbar({
-            variant: 'error',
-            autoHideDuration: 2000,
-            message: `${error.response.data.message}`,
-          });
-        } else if (error.request) {
-          // Lỗi không nhận được phản hồi từ server
-          enqueueSnackbar({
-            variant: 'error',
-            autoHideDuration: 2000,
-            message: `Không nhận được phản hồi từ máy chủ`,
-          });
-        } else {
-          // Lỗi khi cấu hình request
-          enqueueSnackbar({
-            variant: 'error',
-            autoHideDuration: 2000,
-            message: `Lỗi gửi yêu cầu`,
-          });
-        }
-      });
+    console.log('data', data);
+    setLoading(false);
+    // await axios
+    //   .post(`http://localhost:8888/api/v1/ent_phongbanda/create`, data, {
+    //     headers: {
+    //       Accept: 'application/json',
+    //       Authorization: `Bearer ${accessToken}`,
+    //     },
+    //   })
+    //   .then((res) => {
+    //     setLoading(false);
+    //     reset();
+    //     enqueueSnackbar({
+    //       variant: 'success',
+    //       autoHideDuration: 2000,
+    //       message: 'Tạo mới thành công',
+    //     });
+    //   })
+    //   .catch((error) => {
+    //     setLoading(false);
+    //     if (error.response) {
+    //       enqueueSnackbar({
+    //         variant: 'error',
+    //         autoHideDuration: 2000,
+    //         message: `${error.response.data.message}`,
+    //       });
+    //     } else if (error.request) {
+    //       // Lỗi không nhận được phản hồi từ server
+    //       enqueueSnackbar({
+    //         variant: 'error',
+    //         autoHideDuration: 2000,
+    //         message: `Không nhận được phản hồi từ máy chủ`,
+    //       });
+    //     } else {
+    //       // Lỗi khi cấu hình request
+    //       enqueueSnackbar({
+    //         variant: 'error',
+    //         autoHideDuration: 2000,
+    //         message: `Lỗi gửi yêu cầu`,
+    //       });
+    //     }
+    //   });
   });
 
   const renderDetails = (
     <Card>
       <Grid container>
+        <Grid xs={4}>
+          <Stack sx={{ pt: 2, px: 2 }}>
+            <Typography variant="subtitle2">Thuộc</Typography>
+            <RHFRadioGroup
+              row
+              spacing={2}
+              name="Thuoc"
+              options={TAISAN_EXPERIENCE_OPTIONS}
+              onChange={(event) => setValue('Thuoc', event.target.value)}
+            />
+          </Stack>
+        </Grid>
+
+        {values.Thuoc !== `Dự án ngoài` && (
+          <>
+            <Grid xs={4}>
+              <Stack sx={{ pt: 2, px: 2 }}>
+                {chinhanh?.length > 0 && (
+                  <RHFSelect
+                    name="ID_Chinhanh"
+                    label="Chi nhánh"
+                    InputLabelProps={{ shrink: true }}
+                    PaperPropsSx={{ textTransform: 'capitalize' }}
+                  >
+                    {chinhanh?.map((item) => (
+                      <MenuItem key={item?.ID_Chinhanh} value={item?.ID_Chinhanh}>
+                        {item?.Tenchinhanh}
+                      </MenuItem>
+                    ))}
+                  </RHFSelect>
+                )}
+              </Stack>
+            </Grid>
+
+            <Grid xs={4}>
+              <Stack sx={{ pt: 2, px: 2 }}>
+                {duan?.length > 0 && (
+                  <RHFSelect
+                    name="ID_Duan"
+                    label="Dự án"
+                    InputLabelProps={{ shrink: true }}
+                    PaperPropsSx={{ textTransform: 'capitalize' }}
+                  >
+                    {duan?.map((item) => (
+                      <MenuItem key={item?.ID_Duan} value={item?.ID_Duan}>
+                        {item?.Duan}
+                      </MenuItem>
+                    ))}
+                  </RHFSelect>
+                )}
+              </Stack>
+            </Grid>
+          </>
+        )}
+
         <Grid xs={4}>
           <Stack sx={{ pt: 2, px: 2 }}>
             {nhompb?.length > 0 && (
@@ -161,32 +222,6 @@ export default function GroupPolicyNewForm() {
                 ))}
               </RHFSelect>
             )}
-          </Stack>
-        </Grid>
-
-        <Grid xs={4}>
-          <Stack sx={{ pt: 2, px: 2 }}>
-            {chinhanh?.length > 0 && (
-              <RHFSelect
-                name="ID_Chinhanh"
-                label="Chi nhánh"
-                InputLabelProps={{ shrink: true }}
-                PaperPropsSx={{ textTransform: 'capitalize' }}
-              >
-                {chinhanh?.map((item) => (
-                  <MenuItem key={item?.ID_Chinhanh} value={item?.ID_Chinhanh}>
-                    {item?.Tenchinhanh}
-                  </MenuItem>
-                ))}
-              </RHFSelect>
-            )}
-          </Stack>
-        </Grid>
-
-        <Grid xs={4}>
-          <Stack sx={{ pt: 2, px: 2 }}>
-            <Typography variant="subtitle2">Thuộc</Typography>
-            <RHFRadioGroup row spacing={2} name="Thuoc" options={TAISAN_EXPERIENCE_OPTIONS} />
           </Stack>
         </Grid>
 

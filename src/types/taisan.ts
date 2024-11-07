@@ -81,6 +81,11 @@ export type IDonvi = {
   Donvi: string;
 };
 
+export type IHang = {
+  ID_Hang: string;
+  Tenhang: string;
+};
+
 export type ILoainhom = {
   ID_Loainhom: string;
   Loainhom: string;
@@ -94,6 +99,9 @@ export type INhaCC = {
   Sodienthoai: string;
   Sotaikhoan: string;
   Nganhang: string;
+  Nguoilienhe: string;
+  Email: string;
+  Thanhpho: string;
   Diachi: string;
   Ghichu: string;
   isDelete: string;
@@ -188,6 +196,7 @@ export type ITaisan = {
   ID_Taisan: string;
   ID_Nhomts: string;
   ID_Donvi: string;
+  ID_Hang: string;
   Mats: string;
   Tents: string;
   Tentscu: string;
@@ -199,6 +208,7 @@ export type ITaisan = {
   Ghichu: string;
   ent_nhomts: INhomts;
   ent_donvi: IDonvi;
+  ent_hang:IHang;
 };
 
 export type ITaisanQrCode = {
@@ -235,6 +245,7 @@ export type IConnguoi = {
 export type IPhongbanda = {
   ID_Phongban: string;
   ID_Chinhanh: string;
+  ID_Duan: string;
   ID_Nhompb: string;
   Mapb: string;
   Thuoc: string;
@@ -243,6 +254,7 @@ export type IPhongbanda = {
   Ghichu: string;
   ent_chinhanh: IChinhanh;
   ent_nhompb: INhompb;
+  ent_duan: IDuan;
 };
 
 export type IChucvu = {
@@ -342,4 +354,10 @@ export type ISuachuaTS = {
   iTinhtrang: string;
   isDelete: string;
   tb_suachuact: ISuaChuaCT;
+};
+
+export type IDuan = {
+  ID_Duan: string;
+  Duan: string;
+  isDelete: string;
 };

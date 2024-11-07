@@ -20,7 +20,13 @@ import { useRouter } from 'src/routes/hooks';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // _mock
-import { useGetTaisan, useGetNhomts, useGetDonvi, useGetLoaiNhom } from 'src/api/taisan';
+import {
+  useGetTaisan,
+  useGetNhomts,
+  useGetDonvi,
+  useGetLoaiNhom,
+  useGetHang,
+} from 'src/api/taisan';
 // components
 
 import Iconify from 'src/components/iconify';
@@ -53,7 +59,14 @@ import { useSnackbar } from 'src/components/snackbar';
 // types
 import FormProvider, { RHFEditor } from 'src/components/hook-form';
 
-import { IDonvi, INhomts, ITaisan, ITaisanFilterValue, ITaisanFilters } from 'src/types/taisan';
+import {
+  IDonvi,
+  IHang,
+  INhomts,
+  ITaisan,
+  ITaisanFilterValue,
+  ITaisanFilters,
+} from 'src/types/taisan';
 //
 import { list_country } from 'src/_mock/map/countries';
 import TaiSanTableRow from '../tai-san-table-row';
@@ -68,6 +81,7 @@ const TABLE_HEAD = [
   { id: 'Mats', label: 'Mã tài sản', width: 100 },
   { id: 'ID_Nhomts', label: 'Nhóm tài sản', width: 100 },
   { id: 'ID_Donvi', label: 'Đơn vị', width: 150 },
+  { id: 'ID_Hang', label: 'Tên hãng', width: 100 },
   { id: 'Nuocsx', label: 'Nước sản xuất', width: 100 },
 
   { id: '', width: 50 },
@@ -109,6 +123,7 @@ export default function GroupPolicyListView() {
   const { nhomts } = useGetNhomts();
   const { loainhom } = useGetLoaiNhom();
   const { donvi } = useGetDonvi();
+  const { hang } = useGetHang();
   const [rowsPerPageCustom, setRowsPerPageCustom] = useState(table?.rowsPerPage || 30); // Giá trị mặc định của số mục trên mỗi trang
 
   const [tableData, setTableData] = useState<ITaisan[]>([]);
@@ -191,12 +206,14 @@ export default function GroupPolicyListView() {
     Tents: Yup.string().required('Không được để trống'),
     ID_Nhomts: Yup.string().required('Không được để trống'),
     ID_Donvi: Yup.string().required('Không được để trống'),
+    ID_Hang: Yup.string().required('Không được để trống'),
   });
 
   const defaultValues = useMemo(
     () => ({
       ID_Nhomts: dataSelect?.ID_Nhomts || '',
       ID_Donvi: dataSelect?.ID_Donvi || '',
+      ID_Hang: dataSelect?.ID_Hang || '',
       Mats: dataSelect?.Mats || '',
       Tents: dataSelect?.Tents || '',
       Thongso: dataSelect?.Thongso || '',
@@ -220,7 +237,7 @@ export default function GroupPolicyListView() {
   const handleDeleteRow = useCallback(
     async (id: string) => {
       await axios
-        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_taisan/delete/${id}`, [], {
+        .put(`http://localhost:8888/api/v1/ent_taisan/delete/${id}`, [], {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -282,7 +299,7 @@ export default function GroupPolicyListView() {
   const handleUpdate = useCallback(
     async (id: string) => {
       await axios
-        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_taisan/update/${id}`, dataSelect, {
+        .put(`http://localhost:8888/api/v1/ent_taisan/update/${id}`, dataSelect, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -396,9 +413,9 @@ export default function GroupPolicyListView() {
                   rowCount={tableData?.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
-                // onSelectAllRows={(checked) =>
-                //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_Taisan))
-                // }
+                  // onSelectAllRows={(checked) =>
+                  //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_Taisan))
+                  // }
                 />
 
                 <TableBody>
@@ -485,6 +502,7 @@ export default function GroupPolicyListView() {
         dataSelect={dataSelect}
         nhomts={nhomts}
         donvi={donvi}
+        hang={hang}
         onClose={confirm.onFalse}
         onChange={handleInputChange}
         handleUpdate={handleUpdate}
@@ -531,6 +549,9 @@ function applyFilter({
         `${order.Mats}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         `${order.Nuocsx}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         `${order.Tents}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        `${order?.ent_hang?.Tenhang}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        `${order?.ent_donvi?.Donvi}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        `${order?.ent_nhomts?.ent_loainhom?.Loainhom}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         `${order.Thongso}`.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
@@ -551,6 +572,7 @@ interface ConfirmTransferDialogProps {
   handleUpdate: (id: string) => void;
   handleChange: any;
   donvi: IDonvi[];
+  hang: IHang[];
   nhomts: INhomts[];
   onChange: (event: React.FocusEvent<HTMLInputElement>) => void;
   onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
@@ -563,6 +585,7 @@ function TaiSanDialog({
   open,
   dataSelect,
   donvi,
+  hang,
   nhomts,
   methods,
   handleSelectChange,
@@ -582,7 +605,7 @@ function TaiSanDialog({
         <DialogTitle>Cập nhật</DialogTitle>
 
         <DialogContent dividers={scroll === 'paper'}>
-          <Stack spacing={3} sx={{ p: 3 }}>
+          <Stack spacing={4} sx={{ p: 4 }}>
             <Stack style={{ display: 'flex', flexDirection: 'row' }} spacing={3}>
               <TextField
                 name="Tents"
@@ -593,7 +616,15 @@ function TaiSanDialog({
                 onBlur={onBlur}
               />
               {nhomts?.length > 0 && (
-                <FormControl fullWidth>
+                <FormControl
+                  fullWidth
+                  sx={{
+                    '& .MuiInputLabel-root': {
+                      backgroundColor: 'white',
+                      padding: '0 4px',
+                    },
+                  }}
+                >
                   <InputLabel id="demo-simple-select-label">Tài sản</InputLabel>
                   <Select
                     name="ID_Nhomts"
@@ -612,7 +643,15 @@ function TaiSanDialog({
               )}
 
               {donvi?.length > 0 && (
-                <FormControl fullWidth>
+                <FormControl
+                  fullWidth
+                  sx={{
+                    '& .MuiInputLabel-root': {
+                      backgroundColor: 'white',
+                      padding: '0 4px',
+                    },
+                  }}
+                >
                   <InputLabel id="demo-simple-select-label">Đơn vị</InputLabel>
                   <Select
                     name="ID_Donvi"
@@ -630,31 +669,32 @@ function TaiSanDialog({
                 </FormControl>
               )}
 
-              <Autocomplete
-                freeSolo
-                id="free-solo-2-demo"
-                fullWidth
-                disableClearable
-                value={dataSelect?.Nuocsx || ''}
-                options={list_country.map((option) => option.name)}
-                onChange={(event, newValue) => {
-                  // Handle the change event and update state
-                  setDataSelect((prevData: any) => ({
-                    ...prevData,
-                    Nuocsx: newValue,
-                  }));
-                }}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Nước sản xuất"
-                    InputProps={{
-                      ...params.InputProps,
-                      type: 'search',
-                    }}
-                  />
-                )}
-              />
+              {hang?.length > 0 && (
+                <FormControl
+                  fullWidth
+                  sx={{
+                    '& .MuiInputLabel-root': {
+                      backgroundColor: 'white',
+                      padding: '0 4px',
+                    },
+                  }}
+                >
+                  <InputLabel id="demo-simple-select-label">Tên hãng</InputLabel>
+                  <Select
+                    name="ID_Hang"
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={dataSelect?.ID_Hang}
+                    onChange={handleSelectChange}
+                  >
+                    {hang?.map((item) => (
+                      <MenuItem key={item?.ID_Hang} value={item?.ID_Hang}>
+                        {item?.Tenhang}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
             </Stack>
             <Stack style={{ display: 'flex', flexDirection: 'row' }} spacing={3}>
               <TextField
@@ -680,6 +720,31 @@ function TaiSanDialog({
                 onChange={onChange}
                 fullWidth
                 onBlur={onBlur}
+              />
+              <Autocomplete
+                freeSolo
+                id="free-solo-2-demo"
+                fullWidth
+                disableClearable
+                value={dataSelect?.Nuocsx || ''}
+                options={list_country.map((option) => option.name)}
+                onChange={(event, newValue) => {
+                  // Handle the change event and update state
+                  setDataSelect((prevData: any) => ({
+                    ...prevData,
+                    Nuocsx: newValue,
+                  }));
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Nước sản xuất"
+                    InputProps={{
+                      ...params.InputProps,
+                      type: 'search',
+                    }}
+                  />
+                )}
               />
             </Stack>
 

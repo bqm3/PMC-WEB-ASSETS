@@ -51,7 +51,7 @@ export default function CalvTableRow({
   onSelectRow,
   onDeleteRow,
 }: Props) {
-  const { ID_Nhacc, TenNhacc,MaNhacc, Masothue, Sodienthoai, Sotaikhoan, Nganhang, Diachi, Ghichu } = row;
+  const { ID_Nhacc, TenNhacc,MaNhacc, Masothue, Sodienthoai, Sotaikhoan, Nganhang, Nguoilienhe, Email, Thanhpho, Diachi, Ghichu } = row;
 
   const confirm = useBoolean();
 
@@ -89,7 +89,11 @@ export default function CalvTableRow({
       <StyledTableCell sx={{ alignItems: 'center' }}>{Sodienthoai}</StyledTableCell>
       <StyledTableCell sx={{ alignItems: 'center' }}>{Sotaikhoan}</StyledTableCell>
       <StyledTableCell sx={{ alignItems: 'center' }}>{Nganhang}</StyledTableCell>
-      <StyledTableCell sx={{ alignItems: 'center' }}>{Diachi}</StyledTableCell>
+      {/* <StyledTableCell sx={{ alignItems: 'center' }}>{Nguoilienhe || "null"}</StyledTableCell>
+      <StyledTableCell sx={{ alignItems: 'center' }}>{Email || "null"}</StyledTableCell> */}
+      <StyledTableCell sx={{ alignItems: 'center' }}>{Thanhpho}</StyledTableCell>
+      {/* <StyledTableCell sx={{ alignItems: 'center' }}>{Diachi}</StyledTableCell> */}
+      <StyledTableCell sx={{ alignItems: 'center' }}>{Ghichu}</StyledTableCell>
       <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
         <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
           <Iconify icon="eva:more-vertical-fill" />
@@ -121,6 +125,7 @@ export default function CalvTableRow({
           onClick={() => {
             confirm.onTrue();
             popover.onClose();
+            onDeleteRow()
           }}
           sx={{ color: 'error.main' }}
         >

@@ -55,6 +55,25 @@ import Dialog, { DialogProps } from '@mui/material/Dialog';
 import Image from 'src/components/image';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import CircularProgress from '@mui/material/CircularProgress';
+import Timeline from '@mui/lab/Timeline';
+import TimelineItem from '@mui/lab/TimelineItem';
+import TimelineSeparator from '@mui/lab/TimelineSeparator';
+import TimelineConnector from '@mui/lab/TimelineConnector';
+import TimelineContent from '@mui/lab/TimelineContent';
+import TimelineOppositeContent from '@mui/lab/TimelineOppositeContent';
+import TimelineDot from '@mui/lab/TimelineDot';
+import { Typography } from '@mui/material';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import Grid from '@mui/material/Grid';
+import InputLabel from '@mui/material/InputLabel';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LoadingButton } from '@mui/lab';
 
 import { useSnackbar } from 'src/components/snackbar';
 import { fTimestamp } from 'src/utils/format-time';
@@ -86,7 +105,7 @@ const TABLE_HEAD = [
   { id: 'Giatri', label: 'Giá trị', width: 150 },
   { id: 'iTinhTrang', label: 'Tình trạng', width: 150 },
   { id: 'ID_PhongBan', label: 'Phòng ban', width: 150 },
-  { id: 'ID_Connguoi', label: 'Người tạo', width: 150 },
+  { id: 'ID_Connguoi', label: 'Người sử dụng', width: 150 },
   { id: '', width: 88 },
 ];
 
@@ -111,6 +130,8 @@ export default function GroupPolicyListView() {
 
   const confirm = useBoolean();
 
+  const confirmShow = useBoolean();
+
   const confirmDownload = useBoolean();
 
   const confirmQr = useBoolean();
@@ -130,6 +151,8 @@ export default function GroupPolicyListView() {
   const [tableData, setTableData] = useState<ITaisanQrCode[]>([]);
 
   const [dataSelect, setDataSelect] = useState<ITaisanQrCode>();
+
+  const [dataShow, setDataShow] = useState<any>();
 
   const [STATUS_OPTIONS, set_STATUS_OPTIONS] = useState([
     { value: 'all', label: 'Tất cả' },
@@ -215,7 +238,7 @@ export default function GroupPolicyListView() {
   const handleDeleteRow = useCallback(
     async (id: string) => {
       await axios
-        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_taisanqrcode/delete/${id}`, {
+        .put(`http://localhost:8888/api/v1/tb_taisanqrcode/delete/${id}`, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -274,7 +297,7 @@ export default function GroupPolicyListView() {
       confirm.onTrue();
       popover.onClose();
       await axios
-        .get(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_taisanqrcode/${data.ID_TaisanQrcode}`, {
+        .get(`http://localhost:8888/api/v1/tb_taisanqrcode/${data.ID_TaisanQrcode}`, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -310,7 +333,7 @@ export default function GroupPolicyListView() {
       const maQrCodes = selectedQrCodes.join(',');
 
       const response = await axios.post(
-        `https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_taisanqrcode/generate-qr-codes?maQrCodes=${maQrCodes}`,
+        `http://localhost:8888/api/v1/tb_taisanqrcode/generate-qr-codes?maQrCodes=${maQrCodes}`,
         {},
         {
           headers: {
@@ -337,7 +360,7 @@ export default function GroupPolicyListView() {
   const handleUpdate = useCallback(
     async (id: string) => {
       await axios
-        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_taisanqrcode/update/${id}`, dataSelect, {
+        .put(`http://localhost:8888/api/v1/tb_taisanqrcode/update/${id}`, dataSelect, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -381,6 +404,51 @@ export default function GroupPolicyListView() {
     },
     [accessToken, enqueueSnackbar, reset, confirm, dataSelect, popover, mutateTaisanQr] // Add accessToken and enqueueSnackbar as dependencies
   );
+
+  // const handleShowRow = useCallback(
+  //   async (id: string) => {
+  //    // setLoadingShow(true);
+  //     confirmShow.onTrue();
+  //     await axios
+  //       .get(`http://localhost:8888/api/v1/tb_taisanqrcode/detail/${id}`, {
+  //         headers: {
+  //           Accept: 'application/json',
+  //           Authorization: `Bearer ${accessToken}`,
+  //         },
+  //       })
+  //       .then(async (res) => {
+  //         popover.onClose();
+  //         setDataShow(res.data);
+  //         console.log("data",dataShow)
+  //        // setLoadingShow(false);
+  //       })
+  //       .catch((error) => {
+  //        // setLoadingShow(false);
+  //         if (error.response) {
+  //           enqueueSnackbar({
+  //             variant: 'error',
+  //             autoHideDuration: 2000,
+  //             message: `${error.response.data.message}`,
+  //           });
+  //         } else if (error.request) {
+  //           // Lỗi không nhận được phản hồi từ server
+  //           enqueueSnackbar({
+  //             variant: 'error',
+  //             autoHideDuration: 2000,
+  //             message: `Không nhận được phản hồi từ máy chủ`,
+  //           });
+  //         } else {
+  //           // Lỗi khi cấu hình request
+  //           enqueueSnackbar({
+  //             variant: 'error',
+  //             autoHideDuration: 2000,
+  //             message: `Lỗi gửi yêu cầu`,
+  //           });
+  //         }
+  //       });
+  //   },
+  //   [accessToken, confirmShow, dataShow,  popover, enqueueSnackbar]
+  // );
 
   const handleFilterStatus = useCallback(
     (event: React.SyntheticEvent, newValue: string) => {
@@ -514,6 +582,7 @@ export default function GroupPolicyListView() {
                         onDeleteRow={() => handleDeleteRow(row.ID_TaisanQrcode)}
                         onCreateRow={() => handleCreateRow(row)}
                         onViewRow={() => handleViewRow(row)}
+                        // onShowRow={() => handleShowRow(row.ID_TaisanQrcode)}
                       />
                     ))}
 
@@ -538,6 +607,17 @@ export default function GroupPolicyListView() {
             dense={table.dense}
             onChangeDense={table.onChangeDense}
           />
+
+          {/* <TaisanQRShowDialog
+            open={confirmShow.value}
+            dataSelect={dataShow}
+            onClose={confirmShow.onFalse}
+            // onChange={handleInputShowChange}
+            // loadingShow={loadingShow}
+            // handleInputDate={handleInputShowDate}
+            // handleUpdate={handleUpdateStatus}
+            // nhompb={nhompb}
+          /> */}
         </Card>
       </Container>
 
@@ -612,7 +692,7 @@ function applyFilter({
         order.ent_phongbanda.Mapb.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         order.MaQrCode.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         order.ent_taisan.Tents.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.ent_user.Hoten.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        order.ent_user?.Hoten.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         `${order.Giatri}`.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
@@ -756,5 +836,104 @@ function GroupPolicyDialog({
         </DialogActions>
       </Dialog>
     </FormProvider>
+  );
+}
+
+function TaisanQRShowDialog({
+  open,
+  dataSelect,
+  onChange,
+  onClose,
+  loadingShow,
+  onBlur,
+  handleUpdate,
+  handleInputDate,
+}: any) {
+  const ID_Connguoi = dataSelect?.ID_TaisanQrcode;
+//  const { phongbanda } = useGetPhongBanDa();
+  const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
+  const { enqueueSnackbar } = useSnackbar();
+
+  const sortedData = dataSelect?.ent_nhansupbda?.sort((a: any, b: any) => {
+    if (a.iTinhtrang !== b.iTinhtrang) {
+      return b.iTinhtrang - a.iTinhtrang;
+    }
+
+    const dateA = new Date(a.Ngayvao).getTime();
+    const dateB = new Date(b.Ngayvao).getTime();
+    return dateA - dateB;
+  });
+
+  const [selectedValue, setSelectedValue] = useState('0');
+
+  const handleRadioChange = (event: any) => {
+    setSelectedValue(event.target.value);
+  };
+
+  return (
+    <Dialog open={open} fullWidth maxWidth="md" onClose={onClose}>
+      <DialogTitle>Chi tiết tài sản</DialogTitle>
+
+      <DialogContent dividers={scroll === 'paper'}>
+        {loadingShow === true ? (
+          <Stack spacing={3} sx={{ p: 3, alignItems: 'center' }}>
+            <CircularProgress />
+          </Stack>
+        ) : (
+          <Stack spacing={2} sx={{ p: 2 }}>
+            <Timeline position="alternate">
+              {sortedData?.map((item: any, index: number) => {
+                let color: any;
+                let position: any;
+                switch (`${item.iTinhtrang}`) {
+                  case '1':
+                    color = 'success'; // xanh
+                    position = 'right';
+                    break;
+                  case '2':
+                    color = 'warning'; // vàng
+                    position = 'left';
+                    break;
+                  case '3':
+                    color = 'error'; // đỏ
+                    position = 'left';
+                    break;
+                  default:
+                    color = 'grey';
+                    position = 'left';
+                    break;
+                }
+
+                return (
+                  <TimelineItem key={index} position={position}>
+                    <TimelineOppositeContent variant="caption" sx={{ m: 'auto 0' }}>
+                      {item.iTinhtrang === '1' ? (
+                        `Ngày vào: ${item?.Ngayvao}`
+                      ) : (
+                        <>
+                          Ngày vào: {item?.Ngayvao}
+                          <br />
+                          {item?.Ngay && `Ngày ra: ${item?.Ngay}`}
+                        </>
+                      )}
+                    </TimelineOppositeContent>
+                    <TimelineSeparator>
+                      <TimelineDot color={color} />
+                      {index < sortedData.length - 1 && <TimelineConnector />}
+                    </TimelineSeparator>
+                    <TimelineContent sx={{ px: 2 }}>
+                      <Typography variant="subtitle1">{item.ent_phongbanda.Tenphongban}</Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {item.ent_phongbanda.Diachi}
+                      </Typography>
+                    </TimelineContent>
+                  </TimelineItem>
+                );
+              })}
+            </Timeline>
+          </Stack>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -7,7 +7,6 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Unstable_Grid2';
-import MenuItem from '@mui/material/MenuItem';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
@@ -19,30 +18,22 @@ import { useRouter } from 'src/routes/hooks';
 import { useResponsive } from 'src/hooks/use-responsive';
 // _mock
 import { _tags, _roles, USER_GENDER_OPTIONS } from 'src/_mock';
-import FormProvider, {
-  RHFSelect,
-  RHFEditor,
-  RHFUpload,
-  RHFMultiSelect,
-  RHFTextField,
-  RHFAutocomplete,
-  RHFMultiCheckbox,
-} from 'src/components/hook-form';
-// types
 // api
-import { useGetGroupPolicy } from 'src/api/taisan';
 // components
 import { useSnackbar } from 'src/components/snackbar';
 // types
 // components
 import { useSettingsContext } from 'src/components/settings';
 import axios from 'axios';
+import FormProvider, { RHFSelect, RHFTextField } from 'src/components/hook-form';
+import { MenuItem } from '@mui/material';
+import { useGetLoaiNhom, useGetHang } from 'src/api/taisan';
 
 // ----------------------------------------------------------------------
 
 const STORAGE_KEY = 'accessToken';
 
-export default function GroupPolicyNewForm() {
+export default function GroupPolicyNewForm({onClose}: any) {
   const router = useRouter();
 
   const settings = useSettingsContext();
@@ -53,21 +44,17 @@ export default function GroupPolicyNewForm() {
 
   const mdUp = useResponsive('up', 'md');
 
-  const { grouppolicy } = useGetGroupPolicy();
-
   const { enqueueSnackbar } = useSnackbar();
 
+  const { hang, mutateHang } = useGetHang();
+
   const NewProductSchema = Yup.object().shape({
-    GroupPolicy: Yup.string().required('Không được để trống'),
-    Policy: Yup.string().required('Không được để trống'),
-    ID_GroupPolicy: Yup.string().required('Không được để trống'),
+    Tenhang: Yup.string().required('Không được để trống'),
   });
 
   const defaultValues = useMemo(
     () => ({
-      GroupPolicy: '',
-      ID_GroupPolicy: '',
-      Policy: '',
+      Tenhang: '',
     }),
     []
   );
@@ -80,8 +67,6 @@ export default function GroupPolicyNewForm() {
   const {
     reset,
     watch,
-    control,
-    setValue,
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
@@ -91,7 +76,7 @@ export default function GroupPolicyNewForm() {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`http://localhost:8888/api/v1/ent_policy/create`, data, {
+      .post(`http://localhost:8888/api/v1/ent_hang/create`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -100,11 +85,13 @@ export default function GroupPolicyNewForm() {
       .then((res) => {
         setLoading(false);
         reset();
+        mutateHang();
         enqueueSnackbar({
           variant: 'success',
           autoHideDuration: 2000,
           message: 'Tạo mới thành công',
         });
+        onClose();
       })
       .catch((error) => {
         setLoading(false);
@@ -146,30 +133,9 @@ export default function GroupPolicyNewForm() {
       )}
 
       <Grid xs={12} md={8}>
-        <Card>
-          <Stack spacing={3} sx={{ p: 2 }}>
-            {grouppolicy?.length > 0 && (
-              <RHFSelect
-                name="ID_GroupPolicy"
-                label="Chính sách nhóm"
-                InputLabelProps={{ shrink: true }}
-                PaperPropsSx={{ textTransform: 'capitalize' }}
-              >
-                {grouppolicy?.map((item) => (
-                  <MenuItem key={item?.ID_GroupPolicy} value={item?.ID_GroupPolicy}>
-                    {item?.GroupPolicy}
-                  </MenuItem>
-                ))}
-              </RHFSelect>
-            )}
-          </Stack>
-          <Stack spacing={3} sx={{ p: 2 }}>
-            <RHFTextField name="Policy" label="Quyền " />
-          </Stack>
-          <Stack spacing={3} sx={{ p: 2 }}>
-            <RHFTextField name="GroupPolicy" label="Tiêu chí" />
-          </Stack>
-        </Card>
+        <Stack spacing={2} sx={{ p: 1.5 }}>
+          <RHFTextField name="Tenhang" label="Tên hãng" />
+        </Stack>
       </Grid>
     </>
   );
@@ -180,7 +146,7 @@ export default function GroupPolicyNewForm() {
       <Grid
         xs={12}
         md={8}
-        sx={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'column-reverse' }}
+        sx={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'column-reverse', pb: 4 }}
       >
         <LoadingButton
           type="submit"

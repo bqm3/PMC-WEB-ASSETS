@@ -171,7 +171,7 @@ export default function GroupPolicyListView() {
     async (id: string) => {
       await axios
         .put(
-          `https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_grouppolicy/delete/${id}`,
+          `http://localhost:8888/api/v1/ent_grouppolicy/delete/${id}`,
           {
             GroupPolicy: dataSelect?.GroupPolicy,
           },
@@ -239,7 +239,7 @@ export default function GroupPolicyListView() {
     async (id: string) => {
       await axios
         .put(
-          `https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_grouppolicy/update/${id}`,
+          `http://localhost:8888/api/v1/ent_grouppolicy/update/${id}`,
           {
             GroupPolicy: dataSelect?.GroupPolicy,
           },

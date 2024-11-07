@@ -3,7 +3,7 @@ import { useEffect, useMemo } from 'react';
 
 // types
 import useSWR from 'swr';
-import { IChinhanh, IConnguoi, IDonvi, IGroupPolicy, INam, INghiepvu, INhompb,
+import { IChinhanh, IConnguoi, IDonvi, IHang, IDuan, IGroupPolicy, INam, INghiepvu, INhompb,
   ITaisanQrCode, INhomts, IPhieuNX, IPhongbanda, IPolicy, ISuachuaTS, ITaisan, IThang,
   ILoainhom,IUser,
   INhaCC,
@@ -16,7 +16,7 @@ const STORAGE_KEY = 'accessToken';
 
 export function useGetGroupPolicy() {
   const accessToken = localStorage.getItem(STORAGE_KEY);
-  const URL = 'https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_grouppolicy/all';
+  const URL = 'http://localhost:8888/api/v1/ent_grouppolicy/all';
   const fetCher = (url: string) =>
     fetch(url, {
       method: 'get',
@@ -43,7 +43,7 @@ export function useGetGroupPolicy() {
 
 export function useGetPolicy() {
   const accessToken = localStorage.getItem(STORAGE_KEY);
-  const URL = 'https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_policy/all';
+  const URL = 'http://localhost:8888/api/v1/ent_policy/all';
   const fetCher = (url: string) =>
     fetch(url, {
       method: 'get',
@@ -71,7 +71,7 @@ export function useGetPolicy() {
 
 export function useGetConNguoi() {
   const accessToken = localStorage.getItem(STORAGE_KEY);
-  const URL = 'https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_connguoi/all';
+  const URL = 'http://localhost:8888/api/v1/ent_connguoi/all';
   const fetCher = (url: string) =>
     fetch(url, {
       method: 'get',
@@ -99,7 +99,7 @@ export function useGetConNguoi() {
 
 export function useGetUser() {
   const accessToken = localStorage.getItem(STORAGE_KEY);
-  const URL = 'https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_user/all';
+  const URL = 'http://localhost:8888/api/v1/ent_user/all';
   const fetCher = (url: string) =>
     fetch(url, {
       method: 'get',
@@ -127,7 +127,7 @@ export function useGetUser() {
 
 export function useGetNhomPb() {
   const accessToken = localStorage.getItem(STORAGE_KEY);
-  const URL = 'https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_nhompb/all';
+  const URL = 'http://localhost:8888/api/v1/ent_nhompb/all';
   const fetCher = (url: string) =>
     fetch(url, {
       method: 'get',
@@ -154,7 +154,7 @@ export function useGetNhomPb() {
 
 export function useGetChinhanh() {
   const accessToken = localStorage.getItem(STORAGE_KEY);
-  const URL = 'https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_chinhanh/all';
+  const URL = 'http://localhost:8888/api/v1/ent_chinhanh/all';
   const fetCher = (url: string) =>
     fetch(url, {
       method: 'get',
@@ -181,7 +181,7 @@ export function useGetChinhanh() {
 
 export function useGetLoaiNhom() {
   const accessToken = localStorage.getItem(STORAGE_KEY);
-  const URL = 'https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_loainhom/all';
+  const URL = 'http://localhost:8888/api/v1/ent_loainhom/all';
   const fetCher = (url: string) =>
     fetch(url, {
       method: 'get',
@@ -209,7 +209,7 @@ export function useGetLoaiNhom() {
 
 export function useGetNhacc() {
   const accessToken = localStorage.getItem(STORAGE_KEY);
-  const URL = 'https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_nhacc/all';
+  const URL = 'http://localhost:8888/api/v1/ent_nhacc/all';
   const fetCher = (url: string) =>
     fetch(url, {
       method: 'get',
@@ -237,7 +237,7 @@ export function useGetNhacc() {
 
 export function useGetNhomts() {
   const accessToken = localStorage.getItem(STORAGE_KEY);
-  const URL = 'https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_nhomts/all';
+  const URL = 'http://localhost:8888/api/v1/ent_nhomts/all';
   const fetCher = (url: string) =>
     fetch(url, {
       method: 'get',
@@ -265,7 +265,7 @@ export function useGetNhomts() {
 
 export function useGetTaisan() {
   const accessToken = localStorage.getItem(STORAGE_KEY);
-  const URL = 'https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_taisan/all';
+  const URL = 'http://localhost:8888/api/v1/ent_taisan/all';
   const fetCher = (url: string) =>
     fetch(url, {
       method: 'get',
@@ -293,7 +293,7 @@ export function useGetTaisan() {
 
 export function useGetTaisanQrCode() {
   const accessToken = localStorage.getItem(STORAGE_KEY);
-  const URL = 'https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_taisanqrcode/all';
+  const URL = 'http://localhost:8888/api/v1/tb_taisanqrcode/all';
   const fetCher = (url: string) =>
     fetch(url, {
       method: 'get',
@@ -320,7 +320,7 @@ export function useGetTaisanQrCode() {
 
 export function useGetDonvi() {
   const accessToken = localStorage.getItem(STORAGE_KEY);
-  const URL = 'https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_donvi/all';
+  const URL = 'http://localhost:8888/api/v1/ent_donvi/all';
   const fetCher = (url: string) =>
     fetch(url, {
       method: 'get',
@@ -346,9 +346,65 @@ export function useGetDonvi() {
   return memoizedValue;
 }
 
+export function useGetHang() {
+  const accessToken = localStorage.getItem(STORAGE_KEY);
+  const URL = 'http://localhost:8888/api/v1/ent_hang/all';
+  const fetCher = (url: string) =>
+    fetch(url, {
+      method: 'get',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }).then((res) => res.json());
+  const { data, isLoading, error, isValidating , mutate} = useSWR(URL, fetCher);
+
+  const memoizedValue = useMemo(
+    () => ({
+      hang: (data?.data as IHang[]) || [],
+      hangLoading: isLoading,
+      hangError: error,
+      hangValidating: isValidating,
+      hangEmpty: !isLoading && !data.length,
+      mutateHang: mutate
+    }),
+    [data, error, isLoading, isValidating, mutate]
+  );
+
+  return memoizedValue;
+}
+
+export function useGetDuan() {
+  const accessToken = localStorage.getItem(STORAGE_KEY);
+  const URL = 'http://localhost:8888/api/v1/ent_duan/all';
+  const fetCher = (url: string) =>
+    fetch(url, {
+      method: 'get',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }).then((res) => res.json());
+  const { data, isLoading, error, isValidating , mutate} = useSWR(URL, fetCher);
+
+  const memoizedValue = useMemo(
+    () => ({
+      duan: (data?.data as IDuan[]) || [],
+      duanLoading: isLoading,
+      duanError: error,
+      duanValidating: isValidating,
+      duanEmpty: !isLoading && !data.length,
+      mutateDuan: mutate
+    }),
+    [data, error, isLoading, isValidating, mutate]
+  );
+
+  return memoizedValue;
+}
+
 export function useGetPhongBanDa() {
   const accessToken = localStorage.getItem(STORAGE_KEY);
-  const URL = 'https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_phongbanda/all';
+  const URL = 'http://localhost:8888/api/v1/ent_phongbanda/all';
   const fetCher = (url: string) =>
     fetch(url, {
       method: 'get',
@@ -376,7 +432,7 @@ export function useGetPhongBanDa() {
 
 export function useGetChucvu() {
   const accessToken = localStorage.getItem(STORAGE_KEY);
-  const URL = 'https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_chucvu/all';
+  const URL = 'http://localhost:8888/api/v1/ent_chucvu/all';
   const fetCher = (url: string) =>
     fetch(url, {
       method: 'get',
@@ -404,7 +460,7 @@ export function useGetChucvu() {
 
 export function useGetNghiepvu() {
   const accessToken = localStorage.getItem(STORAGE_KEY);
-  const URL = 'https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_nghiepvu/all';
+  const URL = 'http://localhost:8888/api/v1/ent_nghiepvu/all';
   const fetCher = (url: string) =>
     fetch(url, {
       method: 'get',
@@ -431,7 +487,7 @@ export function useGetNghiepvu() {
 
 export function useGetNam() {
   const accessToken = localStorage.getItem(STORAGE_KEY);
-  const URL = 'https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_nam/all';
+  const URL = 'http://localhost:8888/api/v1/ent_nam/all';
   const fetCher = (url: string) =>
     fetch(url, {
       method: 'get',
@@ -458,7 +514,7 @@ export function useGetNam() {
 
 export function useGetThang() {
   const accessToken = localStorage.getItem(STORAGE_KEY);
-  const URL = 'https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_thang/all';
+  const URL = 'http://localhost:8888/api/v1/ent_thang/all';
   const fetCher = (url: string) =>
     fetch(url, {
       method: 'get',
@@ -485,7 +541,7 @@ export function useGetThang() {
 
 export function useGetPhieuGiaoNhanTS() {
   const accessToken = localStorage.getItem(STORAGE_KEY);
-  const URL = 'https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_giaonhants/all';
+  const URL = 'http://localhost:8888/api/v1/tb_giaonhants/all';
   const fetCher = (url: string) =>
     fetch(url, {
       method: 'get',
@@ -513,7 +569,7 @@ export function useGetPhieuGiaoNhanTS() {
 
 export function useGetPhieuNX() {
   const accessToken = localStorage.getItem(STORAGE_KEY);
-  const URL = 'https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieunx/all';
+  const URL = 'http://localhost:8888/api/v1/tb_phieunx/all';
   const fetCher = (url: string) =>
     fetch(url, {
       method: 'get',
@@ -541,7 +597,7 @@ export function useGetPhieuNX() {
 
 export function useGetPhieuNCC() {
   const accessToken = localStorage.getItem(STORAGE_KEY);
-  const URL = 'https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieuncc/all';
+  const URL = 'http://localhost:8888/api/v1/tb_phieuncc/all';
   const fetCher = (url: string) =>
     fetch(url, {
       method: 'get',
@@ -569,7 +625,7 @@ export function useGetPhieuNCC() {
 
 export function useGetDetailPhieuNCC(id: string) {
   const accessToken = localStorage.getItem(STORAGE_KEY);
-  const URL = `https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieuncc/${id}`;
+  const URL = `http://localhost:8888/api/v1/tb_phieuncc/${id}`;
   const fetCher = (url: string) =>
     fetch(url, {
       method: 'get',
@@ -597,7 +653,7 @@ export function useGetDetailPhieuNCC(id: string) {
 
 export function useGetDetailPhieuNX(id: string) {
   const accessToken = localStorage.getItem(STORAGE_KEY);
-  const URL = `https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieunx/${id}`;
+  const URL = `http://localhost:8888/api/v1/tb_phieunx/${id}`;
   const fetCher = (url: string) =>
     fetch(url, {
       method: 'get',
@@ -625,7 +681,7 @@ export function useGetDetailPhieuNX(id: string) {
 
 export function useGetDetailPhieuGNCT(id: string) {
   const accessToken = localStorage.getItem(STORAGE_KEY);
-  const URL = `https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_giaonhants/get_detail/${id}`;
+  const URL = `http://localhost:8888/api/v1/tb_giaonhants/detail/${id}`;
   const fetCher = (url: string) =>
     fetch(url, {
       method: 'get',
@@ -653,7 +709,7 @@ export function useGetDetailPhieuGNCT(id: string) {
 
 export function useGetDetailSuaChuaTS(id: string) {
   const accessToken = localStorage.getItem(STORAGE_KEY);
-  const URL = `https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_suachuats/${id}`;
+  const URL = `http://localhost:8888/api/v1/tb_suachuats/${id}`;
   const fetCher = (url: string) =>
     fetch(url, {
       method: 'get',
@@ -681,7 +737,7 @@ export function useGetDetailSuaChuaTS(id: string) {
 
 export function useGetSuachuaTs() {
   const accessToken = localStorage.getItem(STORAGE_KEY);
-  const URL = 'https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_suachuats/all';
+  const URL = 'http://localhost:8888/api/v1/tb_suachuats/all';
   const fetCher = (url: string) =>
     fetch(url, {
       method: 'get',

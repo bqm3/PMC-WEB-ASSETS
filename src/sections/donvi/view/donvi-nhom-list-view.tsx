@@ -23,7 +23,13 @@ import { useRouter } from 'src/routes/hooks';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // _mock
-import { useGetDonvi, useGetGroupPolicy, useGetLoaiNhom, useGetNhomts } from 'src/api/taisan';
+import {
+  useGetDonvi,
+  useGetGroupPolicy,
+  useGetLoaiNhom,
+  useGetNhomts,
+  useGetHang,
+} from 'src/api/taisan';
 // components
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
@@ -56,6 +62,7 @@ import { IKhuvucTableFilters, IKhuvucTableFilterValue } from 'src/types/khuvuc';
 
 import {
   IDonvi,
+  IHang,
   ILoainhom,
   INhomts,
   ITaisanTableFilterValue,
@@ -72,6 +79,11 @@ import DonViTableToolbar from '../donvi-table-toolbar';
 import DonViTableFiltersResult from '../donvi-table-filters-result';
 import DonViNewForm from '../donvi-new-form';
 
+import HangTableRow from '../hang-table-row';
+import HangTableToolbar from '../hang-table-toolbar';
+// import DonViTableFiltersResult from '../donvi-table-filters-result';
+import HangNewForm from '../hang-new-form';
+
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -83,6 +95,12 @@ const TABLE_HEAD = [
 const TABLE_HEAD_DONVI = [
   { id: 'ID_Donvi', label: 'Mã', width: 50 },
   { id: 'Donvi', label: 'Đơn vị', width: 150 },
+  { id: '', width: 50 },
+];
+
+const TABLE_HEAD_HANG = [
+  { id: 'ID_Hang', label: 'Mã', width: 50 },
+  { id: 'Tenhang', label: 'Tên hãng', width: 150 },
   { id: '', width: 50 },
 ];
 
@@ -100,12 +118,20 @@ const defaultFiltersDonVi: ITaisanTableFilters = {
   endDate: null,
 };
 
+const defaultFiltersHang: ITaisanTableFilters = {
+  name: '',
+  status: 'all',
+  startDate: null,
+  endDate: null,
+};
+
 const STORAGE_KEY = 'accessToken';
 // ----------------------------------------------------------------------
 
 export default function DonViNhomListView() {
   const table = useTable({ defaultOrderBy: 'ID_Loainhom' });
   const tableDonVi = useTable({ defaultOrderBy: 'ID_Donvi' });
+  const tableHang = useTable({ defaultOrderBy: 'ID_Hang' });
 
   const settings = useSettingsContext();
 
@@ -115,17 +141,24 @@ export default function DonViNhomListView() {
 
   const popoverDonvi = usePopover();
 
+  const popoverHang = usePopover();
+
   const confirm = useBoolean();
 
   const confirmDonVi = useBoolean();
+
+  const confirmHang = useBoolean();
 
   const confirmAdd = useBoolean();
 
   const confirmAddDonVi = useBoolean();
 
+  const confirmAddHang = useBoolean();
+
   const popoverAdd = usePopover();
 
   const popoverAddDonVi = usePopover();
+  const popoverAddHang = usePopover();
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -135,16 +168,22 @@ export default function DonViNhomListView() {
 
   const [filtersDonVi, setFiltersDonVi] = useState(defaultFiltersDonVi);
 
+  const [filtersHang, setFiltersHang] = useState(defaultFiltersHang);
+
   const { loainhom, mutateLoainhom } = useGetLoaiNhom();
 
   const { donvi, mutateDonvi } = useGetDonvi();
 
+  const { hang, mutateHang } = useGetHang();
+
+  const [tableDataHang, setTableDataHang] = useState<IHang[]>([]);
   const [tableDataDonVi, setTableDataDonVi] = useState<IDonvi[]>([]);
 
   const [tableDataLoaiNhom, setTableDataLoaiNhom] = useState<ILoainhom[]>([]);
 
   const [dataSelectLoaiNhom, setDataSelectLoaiNhom] = useState<ILoainhom>();
   const [dataSelectDonVi, setDataSelectDonVi] = useState<IDonvi>();
+  const [dataSelectHang, setDataSelectHang] = useState<IHang>();
 
   useEffect(() => {
     if (loainhom?.length > 0) {
@@ -158,6 +197,12 @@ export default function DonViNhomListView() {
     }
   }, [donvi, mutateDonvi]);
 
+  useEffect(() => {
+    if (hang?.length > 0) {
+      setTableDataHang(hang);
+    }
+  }, [hang, mutateHang]);
+
   const dataFilteredLoaiNhom = applyFilterLoaiNhom({
     inputData: tableDataLoaiNhom,
     comparator: getComparator(table.order, table.orderBy),
@@ -170,6 +215,12 @@ export default function DonViNhomListView() {
     filters: filtersDonVi,
   });
 
+  const dataFilteredHang = applyFilterHang({
+    inputData: tableDataHang,
+    comparator: getComparator(table.order, table.orderBy),
+    filters: filtersHang,
+  });
+
   const dataInPageLoaiNhom = dataFilteredLoaiNhom?.slice(
     table.page * table.rowsPerPage,
     table.page * table.rowsPerPage + table.rowsPerPage
@@ -180,16 +231,24 @@ export default function DonViNhomListView() {
     tableDonVi.page * tableDonVi.rowsPerPage + tableDonVi.rowsPerPage
   );
 
+  const dataInPageHang = dataFilteredHang?.slice(
+    table.page * table.rowsPerPage,
+    table.page * table.rowsPerPage + table.rowsPerPage
+  );
+
   const denseHeight = table.dense ? 52 : 72;
 
   const denseHeightDonVi = tableDonVi.dense ? 52 : 72;
+  const denseHeightHang = tableDonVi.dense ? 52 : 72;
 
   const canReset = !!filters.name || filters.status !== 'all';
   const canResetDonVi = !!filtersDonVi.name || filtersDonVi.status !== 'all';
+  const canResetHang = !!filtersHang.name || filtersHang.status !== 'all';
 
   const notFoundLoaiNhom =
     (!dataFilteredLoaiNhom?.length && canReset) || !dataFilteredLoaiNhom?.length;
   const notFoundDonVi = (!dataFilteredDonVi?.length && canResetDonVi) || !dataFilteredDonVi?.length;
+  const notFoundHang = (!dataFilteredHang?.length && canResetHang) || !dataFilteredHang?.length;
 
   const handleInputChangeLoaiNhom = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -213,6 +272,17 @@ export default function DonViNhomListView() {
     }
   };
 
+  const handleInputChangeHang = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    if (dataSelectHang) {
+      // Update the corresponding field in `dataSelect`
+      setDataSelectHang({
+        ...dataSelectHang,
+        [name]: value,
+      });
+    }
+  };
+
   const handleSelectChangeLoaiNhom = (event: SelectChangeEvent) => {
     const { name, value } = event.target;
     setDataSelectLoaiNhom((prev: any) => ({
@@ -224,6 +294,14 @@ export default function DonViNhomListView() {
   const handleSelectChangeDonVi = (event: SelectChangeEvent) => {
     const { name, value } = event.target;
     setDataSelectDonVi((prev: any) => ({
+      ...prev,
+      [name]: `${value}`,
+    }));
+  };
+
+  const handleSelectChangeHang = (event: SelectChangeEvent) => {
+    const { name, value } = event.target;
+    setDataSelectHang((prev: any) => ({
       ...prev,
       [name]: `${value}`,
     }));
@@ -244,6 +322,17 @@ export default function DonViNhomListView() {
     (name: string, value: IKhuvucTableFilterValue) => {
       tableDonVi.onResetPage();
       setFiltersDonVi((prevState) => ({
+        ...prevState,
+        [name]: value,
+      }));
+    },
+    [tableDonVi]
+  );
+
+  const handleFiltersHang = useCallback(
+    (name: string, value: IKhuvucTableFilterValue) => {
+      tableDonVi.onResetPage();
+      setFiltersHang((prevState) => ({
         ...prevState,
         [name]: value,
       }));
@@ -274,7 +363,7 @@ export default function DonViNhomListView() {
     async (id: string) => {
       await axios
         .put(
-          `https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_loainhom/delete/${id}`,
+          `http://localhost:8888/api/v1/ent_loainhom/delete/${id}`,
 
           {
             headers: {
@@ -322,7 +411,7 @@ export default function DonViNhomListView() {
     async (id: string) => {
       await axios
         .put(
-          `https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_donvi/delete/${id}`,
+          `http://localhost:8888/api/v1/ent_donvi/delete/${id}`,
 
           {
             headers: {
@@ -336,7 +425,7 @@ export default function DonViNhomListView() {
           const deleteRow = tableDataDonVi?.filter((row) => row.ID_Donvi !== id);
           setTableDataDonVi(deleteRow);
 
-          table.onUpdatePageDeleteRow(dataInPageDonVi.length);
+          tableDonVi.onUpdatePageDeleteRow(dataInPageDonVi.length);
           enqueueSnackbar('Xóa thành công!');
         })
         .catch((error) => {
@@ -363,7 +452,55 @@ export default function DonViNhomListView() {
           }
         });
     },
-    [accessToken, enqueueSnackbar, dataInPageDonVi.length, table, tableDataDonVi] // Add accessToken and enqueueSnackbar as dependencies
+    [accessToken, enqueueSnackbar, dataInPageDonVi.length, tableDonVi, tableDataDonVi] // Add accessToken and enqueueSnackbar as dependencies
+  );
+
+  const handleDeleteRowHang = useCallback(
+    async (id: string) => {
+      await axios
+        .put(
+          `http://localhost:8888/api/v1/ent_hang/delete/${id}`,
+
+          {
+            headers: {
+              Accept: 'application/json',
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        )
+        .then((res) => {
+          // reset();
+          const deleteRow = tableDataHang?.filter((row) => row.ID_Hang !== id);
+          setTableDataHang(deleteRow);
+
+          tableHang.onUpdatePageDeleteRow(dataInPageHang.length);
+          enqueueSnackbar('Xóa thành công!');
+        })
+        .catch((error) => {
+          if (error.response) {
+            enqueueSnackbar({
+              variant: 'error',
+              autoHideDuration: 2000,
+              message: `${error.response.data.message}`,
+            });
+          } else if (error.request) {
+            // Lỗi không nhận được phản hồi từ server
+            enqueueSnackbar({
+              variant: 'error',
+              autoHideDuration: 2000,
+              message: `Không nhận được phản hồi từ máy chủ`,
+            });
+          } else {
+            // Lỗi khi cấu hình request
+            enqueueSnackbar({
+              variant: 'error',
+              autoHideDuration: 2000,
+              message: `Lỗi gửi yêu cầu`,
+            });
+          }
+        });
+    },
+    [accessToken, enqueueSnackbar, dataInPageHang.length, tableHang, tableDataHang] // Add accessToken and enqueueSnackbar as dependencies
   );
 
   const handleResetFilters = useCallback(() => {
@@ -388,6 +525,15 @@ export default function DonViNhomListView() {
     [confirmDonVi, popoverDonvi]
   );
 
+  const handleViewRowHang = useCallback(
+    (data: IHang) => {
+      confirmHang.onTrue();
+      popoverHang.onClose();
+      setDataSelectHang(data);
+    },
+    [confirmHang, popoverHang]
+  );
+
   const handleViewAdd = useCallback(() => {
     confirmAdd.onTrue();
     popoverAdd.onClose();
@@ -398,11 +544,16 @@ export default function DonViNhomListView() {
     popoverAddDonVi.onClose();
   }, [popoverAddDonVi, confirmAddDonVi]);
 
+  const handleViewAddHang = useCallback(() => {
+    confirmAddHang.onTrue();
+    popoverAddHang.onClose();
+  }, [popoverAddHang, confirmAddHang]);
+
   const handleUpdate = useCallback(
     async (id: string) => {
       await axios
         .put(
-          `https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_loainhom/update/${id}`,
+          `http://localhost:8888/api/v1/ent_loainhom/update/${id}`,
           {
             Loainhom: dataSelectLoaiNhom?.Loainhom,
             ID_Loainhom: dataSelectLoaiNhom?.ID_Loainhom,
@@ -456,7 +607,7 @@ export default function DonViNhomListView() {
     async (id: string) => {
       await axios
         .put(
-          `https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_donvi/update/${id}`,
+          `http://localhost:8888/api/v1/ent_donvi/update/${id}`,
           {
             Donvi: dataSelectDonVi?.Donvi,
             ID_Donvi: dataSelectDonVi?.ID_Donvi,
@@ -506,6 +657,60 @@ export default function DonViNhomListView() {
     [accessToken, enqueueSnackbar, dataSelectDonVi, reset, confirmDonVi, popoverDonvi, mutateDonvi] // Add accessToken and enqueueSnackbar as dependencies
   );
 
+  const handleUpdateHang = useCallback(
+    async (id: string) => {
+      await axios
+        .put(
+          `http://localhost:8888/api/v1/ent_hang/update/${id}`,
+          {
+            Tenhang: dataSelectHang?.Tenhang,
+            ID_Hang: dataSelectHang?.ID_Hang,
+          },
+          {
+            headers: {
+              Accept: 'application/json',
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        )
+        .then(async (res) => {
+          reset();
+          confirmHang.onFalse();
+          popoverHang.onClose();
+          mutateHang();
+          enqueueSnackbar({
+            variant: 'success',
+            autoHideDuration: 2000,
+            message: 'Cập nhật thành công',
+          });
+        })
+        .catch((error) => {
+          if (error.response) {
+            enqueueSnackbar({
+              variant: 'error',
+              autoHideDuration: 2000,
+              message: `${error.response.data.message}`,
+            });
+          } else if (error.request) {
+            // Lỗi không nhận được phản hồi từ server
+            enqueueSnackbar({
+              variant: 'error',
+              autoHideDuration: 2000,
+              message: `Không nhận được phản hồi từ máy chủ`,
+            });
+          } else {
+            // Lỗi khi cấu hình request
+            enqueueSnackbar({
+              variant: 'error',
+              autoHideDuration: 2000,
+              message: `Lỗi gửi yêu cầu`,
+            });
+          }
+        });
+    },
+    [accessToken, enqueueSnackbar, dataSelectHang, reset, confirmHang, popoverHang, mutateHang] // Add accessToken and enqueueSnackbar as dependencies
+  );
+
   const handleFilterStatus = useCallback(
     (event: React.SyntheticEvent, newValue: string) => {
       handleFilters('status', newValue);
@@ -524,9 +729,8 @@ export default function DonViNhomListView() {
                 links={[
                   {
                     name: '',
-                  }
+                  },
                 ]}
-
               />
               <LoadingButton
                 variant="contained"
@@ -575,9 +779,9 @@ export default function DonViNhomListView() {
                       rowCount={tableDataLoaiNhom?.length}
                       numSelected={table.selected.length}
                       onSort={table.onSort}
-                    // onSelectAllRows={(checked) =>
-                    //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_Loainhom))
-                    // }
+                      // onSelectAllRows={(checked) =>
+                      //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_Loainhom))
+                      // }
                     />
 
                     <TableBody>
@@ -634,7 +838,6 @@ export default function DonViNhomListView() {
                     name: '',
                   },
                 ]}
-
               />
               <LoadingButton
                 variant="contained"
@@ -726,6 +929,110 @@ export default function DonViNhomListView() {
             </Card>
           </Container>
         </Grid>
+
+
+        {/* hãng */}
+        <Grid xs={12} md={6} mt={2}>
+          <Container maxWidth="xl">
+            <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
+              <CustomBreadcrumbs
+                heading="Danh sách hãng"
+                links={[
+                  {
+                    name: '',
+                  },
+                ]}
+              />
+              <LoadingButton
+                variant="contained"
+                startIcon={<Iconify icon="eva:add-upload-fill" />}
+                onClick={handleViewAddHang}
+              >
+                Thêm mới
+              </LoadingButton>
+            </Stack>
+
+            <Card>
+              <HangTableToolbar
+                filters={filtersHang}
+                onFilters={handleFiltersHang}
+                //
+                canReset={canResetHang}
+                onResetFilters={handleResetFilters}
+              />
+
+              <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
+                <TableSelectedAction
+                  dense={tableHang.dense}
+                  numSelected={tableHang.selected.length}
+                  rowCount={tableDataHang?.length}
+                  onSelectAllRows={(checked) =>
+                    tableHang.onSelectAllRows(checked, tableDataHang?.map((row) => row?.ID_Hang))
+                  }
+                  action={
+                    <Tooltip title="Delete">
+                      <IconButton color="primary" onClick={confirmDonVi.onTrue}>
+                        <Iconify icon="solar:trash-bin-trash-bold" />
+                      </IconButton>
+                    </Tooltip>
+                  }
+                />
+
+                <Scrollbar>
+                  <Table size={tableHang.dense ? 'small' : 'medium'}>
+                    <TableHeadCustom
+                      order={tableHang.order}
+                      orderBy={tableHang.orderBy}
+                      headLabel={TABLE_HEAD_HANG}
+                      rowCount={tableDataHang?.length}
+                      numSelected={tableHang.selected.length}
+                      onSort={tableHang.onSort}
+                    />
+
+                    <TableBody>
+                      {dataFilteredHang
+                        .slice(
+                          tableHang.page * tableHang.rowsPerPage,
+                          tableHang.page * tableHang.rowsPerPage + tableHang.rowsPerPage
+                        )
+                        .map((row) => (
+                          <HangTableRow
+                            key={row.ID_Hang}
+                            row={row}
+                            selected={tableDonVi.selected.includes(row.ID_Hang)}
+                            onSelectRow={() => tableDonVi.onSelectRow(row.ID_Hang)}
+                            onDeleteRow={() => handleDeleteRowHang(row.ID_Hang)}
+                            onViewRow={() => handleViewRowHang(row)}
+                          />
+                        ))}
+
+                      <TableEmptyRows
+                        height={denseHeightHang}
+                        emptyRows={emptyRows(
+                          tableHang.page,
+                          tableHang.rowsPerPage,
+                          tableDataHang?.length
+                        )}
+                      />
+
+                      <TableNoData notFound={notFoundHang} />
+                    </TableBody>
+                  </Table>
+                </Scrollbar>
+              </TableContainer>
+
+              <TablePaginationCustom
+                count={dataFilteredHang?.length}
+                page={tableHang.page}
+                rowsPerPage={tableHang.rowsPerPage}
+                onPageChange={tableHang.onChangePage}
+                onRowsPerPageChange={tableHang.onChangeRowsPerPage}
+                dense={tableHang.dense}
+                onChangeDense={tableHang.onChangeDense}
+              />
+            </Card>
+          </Container>
+        </Grid>
       </Grid>
 
       <LoaiNhomDialog
@@ -749,6 +1056,17 @@ export default function DonViNhomListView() {
       />
 
       <DonViDialogAdd open={confirmAddDonVi.value} onClose={confirmAddDonVi.onFalse} />
+
+      <HangDialog
+        open={confirmHang.value}
+        dataSelect={dataSelectHang}
+        onClose={confirmHang.onFalse}
+        onChange={handleInputChangeHang}
+        handleUpdate={handleUpdateHang}
+        handleSelectChange={handleSelectChangeHang}
+      />
+
+      <HangDialogAdd open={confirmAddHang.value} onClose={confirmAddHang.onFalse} />
     </>
   );
 }
@@ -817,6 +1135,37 @@ function applyFilterDonVi({
   return inputData;
 }
 
+function applyFilterHang({
+  inputData,
+  comparator,
+  filters, // dateError,
+}: {
+  inputData: IHang[];
+  comparator: (a: any, b: any) => number;
+  filters: ITaisanTableFilters;
+  // dateError: boolean;
+}) {
+  const { status, name } = filters;
+
+  const stabilizedThis = inputData?.map((el, index) => [el, index] as const);
+
+  stabilizedThis.sort((a, b) => {
+    const order = comparator(a[0], b[0]);
+    if (order !== 0) return order;
+    return a[1] - b[1];
+  });
+
+  inputData = stabilizedThis.map((el) => el[0]);
+
+  if (name) {
+    inputData = inputData?.filter(
+      (order) => order.Tenhang.toLowerCase().indexOf(name.toLowerCase()) !== -1
+    );
+  }
+
+  return inputData;
+}
+
 interface ConfirmTransferDialogProps {
   open: boolean;
   dataSelect?: ILoainhom;
@@ -830,6 +1179,16 @@ interface ConfirmTransferDialogProps {
 interface ConfirmTransferDonViDialogProps {
   open: boolean;
   dataSelect?: IDonvi;
+  onClose: VoidFunction;
+  handleUpdate: (id: string) => void;
+  handleSelectChange: any;
+  onChange: (event: React.FocusEvent<HTMLInputElement>) => void;
+  onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
+}
+
+interface ConfirmTransferHangDialogProps {
+  open: boolean;
+  dataSelect?: IHang;
   onClose: VoidFunction;
   handleUpdate: (id: string) => void;
   handleSelectChange: any;
@@ -853,7 +1212,6 @@ function LoaiNhomDialog({
       <DialogTitle>Cập nhật</DialogTitle>
 
       <Stack spacing={3} sx={{ px: 3 }}>
-
         <TextField
           name="Loainhom"
           label="Loại tài sản"
@@ -947,7 +1305,64 @@ function DonViDialogAdd({ open, onClose }: any) {
 
       <DialogContent sx={{ overflow: 'hidden', height: 'auto' }}>
         <Grid spacing={3}>
-          <DonViNewForm />
+          <DonViNewForm onClose = {onClose}/>
+        </Grid>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function HangDialog({
+  open,
+  dataSelect,
+  onChange,
+  onClose,
+  onBlur,
+  handleUpdate,
+  handleSelectChange,
+}: ConfirmTransferHangDialogProps) {
+  const ID_Hang = dataSelect?.ID_Hang;
+
+  return (
+    <Dialog open={open} fullWidth maxWidth="xs" onClose={onClose}>
+      <DialogTitle>Cập nhật</DialogTitle>
+
+      <Stack spacing={3} sx={{ px: 3 }}>
+        <TextField
+          name="Tenhang"
+          label="Tên hãng" // Vietnamese for "Category Name"
+          value={dataSelect?.Tenhang}
+          onChange={onChange} // Update local state and notify parent
+          fullWidth
+          onBlur={onBlur}
+        />
+      </Stack>
+
+      <DialogActions>
+        <Button
+          variant="contained"
+          color="info"
+          onClick={() => {
+            if (ID_Hang) {
+              handleUpdate(ID_Hang);
+            }
+          }}
+        >
+          Cập nhật
+        </Button>
+        <Button onClick={onClose}>Hủy</Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
+
+function HangDialogAdd({ open, onClose }: any) {
+  return (
+    <Dialog open={open} fullWidth maxWidth="md" onClose={onClose}>
+      <DialogTitle>Thêm mới</DialogTitle>
+      <DialogContent sx={{ overflow: 'hidden', height: 'auto' }}>
+        <Grid spacing={3}>
+          <HangNewForm onClose = {onClose}/>
         </Grid>
       </DialogContent>
     </Dialog>

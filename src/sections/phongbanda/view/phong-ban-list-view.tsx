@@ -31,6 +31,7 @@ import {
   useGetNhomPb,
   useGetPhongBanDa,
   useGetPolicy,
+  useGetDuan,
 } from 'src/api/taisan';
 // components
 import Label from 'src/components/label';
@@ -74,6 +75,7 @@ import {
   IPolicy,
   ITaisanTableFilterValue,
   IPhongBanTableFilters,
+  IDuan,
 } from 'src/types/taisan';
 //
 import PhongBanTableRow from '../phong-ban-table-row';
@@ -87,10 +89,10 @@ const TABLE_HEAD = [
   { id: 'ID_Phongban', label: 'Mã', width: 100 },
   { id: 'Mapb', label: 'Mã phòng ban', width: 150 },
   { id: 'Tenphongban', label: 'Tên phòng ban', width: 150 },
-  { id: 'Diachi', label: 'Địa chỉ', width: 150 },
   { id: 'Thuoc', label: 'Thuộc', width: 150 },
   { id: 'ID_Chinhanh', label: 'Chi nhánh', width: 150 },
-  { id: 'ID_Nhompb', label: 'Phòng ban', width: 150 },
+  { id: 'ID_Duan', label: 'Tên dự án', width: 150 },
+  { id: 'Diachi', label: 'Địa chỉ', width: 150 },
   { id: '', width: 50 },
 ];
 
@@ -127,6 +129,8 @@ export default function GroupPolicyListView() {
   const { chinhanh } = useGetChinhanh();
 
   const { nhompb } = useGetNhomPb();
+
+  const { duan } = useGetDuan();
 
   const { phongbanda, mutatePhongBanDa } = useGetPhongBanDa();
 
@@ -222,7 +226,7 @@ export default function GroupPolicyListView() {
   const handleDeleteRow = useCallback(
     async (id: string) => {
       await axios
-        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_policy/delete/${id}`, {
+        .put(`http://localhost:8888/api/v1/ent_policy/delete/${id}`, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -279,7 +283,7 @@ export default function GroupPolicyListView() {
   const handleUpdate = useCallback(
     async (id: string) => {
       await axios
-        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_phongbanda/update/${id}`, dataSelect, {
+        .put(`http://localhost:8888/api/v1/ent_phongbanda/update/${id}`, dataSelect, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -410,9 +414,9 @@ export default function GroupPolicyListView() {
                   rowCount={tableData?.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
-                // onSelectAllRows={(checked) =>
-                //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_Phongban))
-                // }
+                  // onSelectAllRows={(checked) =>
+                  //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_Phongban))
+                  // }
                 />
 
                 <TableBody>
@@ -461,6 +465,7 @@ export default function GroupPolicyListView() {
         dataSelect={dataSelect}
         chinhanh={chinhanh}
         nhompb={nhompb}
+        duan={duan}
         onClose={confirm.onFalse}
         onChange={handleInputChange}
         handleUpdate={handleUpdate}
@@ -504,7 +509,8 @@ function applyFilter({
         order.Diachi.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         order.Thuoc.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         order.ent_chinhanh.Tenchinhanh.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.ent_nhompb.Nhompb.toLowerCase().indexOf(name.toLowerCase()) !== -1
+        order.ent_nhompb.Nhompb.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        order.ent_duan.Duan.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
 
@@ -526,6 +532,7 @@ interface ConfirmTransferDialogProps {
   handleUpdate: (id: string) => void;
   chinhanh: IChinhanh[];
   nhompb: INhompb[];
+  duan: IDuan[];
   onChange: (event: React.FocusEvent<HTMLInputElement>) => void;
   onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
   handleSelectChange: any;
@@ -536,6 +543,7 @@ function GroupPolicyDialog({
   dataSelect,
   chinhanh,
   nhompb,
+  duan,
   handleSelectChange,
   onChange,
   onClose,
@@ -550,7 +558,15 @@ function GroupPolicyDialog({
       <DialogContent>
         <Stack spacing={3} sx={{ p: 3 }}>
           {chinhanh?.length > 0 && (
-            <FormControl fullWidth>
+            <FormControl
+              fullWidth
+              sx={{
+                '& .MuiInputLabel-root': {
+                  backgroundColor: 'white',
+                  padding: '0 4px',
+                },
+              }}
+            >
               <InputLabel id="demo-simple-select-label-chi-nhanh">Thuộc chi nhánh</InputLabel>
               <Select
                 name="ID_Chinhanh"
@@ -570,7 +586,15 @@ function GroupPolicyDialog({
           )}
 
           {nhompb?.length > 0 && (
-            <FormControl fullWidth>
+            <FormControl
+              fullWidth
+              sx={{
+                '& .MuiInputLabel-root': {
+                  backgroundColor: 'white',
+                  padding: '0 4px',
+                },
+              }}
+            >
               <InputLabel id="demo-simple-select-label-phong-ban">Thuộc phòng ban</InputLabel>
               <Select
                 name="ID_Nhompb"
@@ -601,6 +625,33 @@ function GroupPolicyDialog({
               <FormControlLabel value="Dự án ngoài" control={<Radio />} label="Dự án ngoài" />
             </RadioGroup>
           </FormControl>
+
+          {duan?.length > 0 && (
+            <FormControl
+              fullWidth
+              sx={{
+                '& .MuiInputLabel-root': {
+                  backgroundColor: 'white',
+                  padding: '0 4px',
+                },
+              }}
+            >
+              <InputLabel id="demo-simple-select-label-du-an">Dự án</InputLabel>
+              <Select
+                name="ID_Duan"
+                labelId="demo-simple-select-label-du-an"
+                id="demo-simple-select"
+                value={dataSelect?.ID_Duan}
+                onChange={handleSelectChange}
+              >
+                {duan?.map((item) => (
+                  <MenuItem key={item?.ID_Duan} value={item?.ID_Duan}>
+                    {item?.Duan}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
           <TextField
             name="Mapb"
             label="Mã phòng ban"

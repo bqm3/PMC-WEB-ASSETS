@@ -25,9 +25,12 @@ import { useSnackbar } from 'src/components/snackbar';
 // components
 import { useSettingsContext } from 'src/components/settings';
 import axios from 'axios';
-import FormProvider, { RHFSelect, RHFTextField } from 'src/components/hook-form';
+import FormProvider, { RHFSelect, RHFTextField, RHFAutocomplete } from 'src/components/hook-form';
 import { MenuItem } from '@mui/material';
 import { useGetLoaiNhom, useGetNhacc } from 'src/api/taisan';
+import { provinces } from 'src/_mock/map/provinces';
+import { districts } from 'src/_mock/map/districts';
+
 
 // ----------------------------------------------------------------------
 
@@ -80,7 +83,7 @@ export default function NhaCCNewForm() {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_nhacc/create`, data, {
+      .post(`http://localhost:8888/api/v1/ent_nhacc/create`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -134,6 +137,33 @@ export default function NhaCCNewForm() {
           <RHFTextField name="Sodienthoai" label="Số điện thoại" />
           <RHFTextField name="Sotaikhoan" label="Số tài khoản" />
           <RHFTextField name="Nganhang" label="Ngân hàng" />
+        </Stack>
+        <Stack spacing={2} sx={{ p: 2, display: 'flex', flexDirection: 'row' }}>
+          <RHFTextField name="Nguoilienhe" label="Người liên hệ" />
+          <RHFTextField name="Email" label="Email" />
+          <RHFAutocomplete
+                name="Thanhpho"
+                label="Tỉnh - Thành phố"
+                freeSolo
+                sx={{ flexGrow: 1, width: '100%', minWidth: 240 }}
+                options={provinces.map((country) => country.name_with_type)}
+                getOptionLabel={(option) => option}
+                renderOption={(props, option) => {
+                  const { code, name_with_type } = provinces.filter(
+                    (country) => country.name_with_type === option
+                  )[0];
+
+                  if (!name_with_type) {
+                    return null;
+                  }
+
+                  return (
+                    <li {...props} key={name_with_type}>
+                      {name_with_type}
+                    </li>
+                  );
+                }}
+              />
         </Stack>
         <Stack spacing={2} sx={{ p: 2, display: 'flex', flexDirection: 'row' }}>
           <RHFTextField name="Diachi" label="Địa chỉ" />

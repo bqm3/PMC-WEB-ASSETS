@@ -52,6 +52,7 @@ export default function CalvTableRow({
     Ghichu,
     ent_donvi,
     ent_nhomts,
+    ent_hang,
     Nuocsx,
   } = row;
 
@@ -95,6 +96,8 @@ export default function CalvTableRow({
           }}
         />
       </TableCell>
+
+      <TableCell>{ent_hang?.Tenhang}</TableCell>
       <TableCell>{Nuocsx}</TableCell>
 
       <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>

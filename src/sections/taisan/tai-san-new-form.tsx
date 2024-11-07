@@ -31,7 +31,7 @@ import FormProvider, {
 } from 'src/components/hook-form';
 // types
 // api
-import { useGetGroupPolicy, useGetTaisan, useGetDonvi, useGetNhomts } from 'src/api/taisan';
+import { useGetGroupPolicy, useGetTaisan, useGetDonvi, useGetNhomts, useGetHang } from 'src/api/taisan';
 // components
 import { useSnackbar } from 'src/components/snackbar';
 // types
@@ -58,6 +58,7 @@ export default function GroupPolicyNewForm() {
   const { nhomts } = useGetNhomts();
 
   const { donvi } = useGetDonvi();
+  const { hang } = useGetHang();
   const { taisan, mutateTaisan } = useGetTaisan();
 
   const { enqueueSnackbar } = useSnackbar();
@@ -66,6 +67,7 @@ export default function GroupPolicyNewForm() {
     Tents: Yup.string().required('Không được để trống'),
     ID_Nhomts: Yup.string().required('Không được để trống'),
     ID_Donvi: Yup.string().required('Không được để trống'),
+    ID_Hang: Yup.string().required('Không được để trống'),
     i_MaQrCode: Yup.string().nonNullable(),
   });
 
@@ -73,6 +75,7 @@ export default function GroupPolicyNewForm() {
     () => ({
       ID_Nhomts: '',
       ID_Donvi: '',
+      ID_Hang: '',
       Mats: '',
       Nuocsx: '',
       Tents: '',
@@ -112,7 +115,7 @@ export default function GroupPolicyNewForm() {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_taisan/create`, data, {
+      .post(`http://localhost:8888/api/v1/ent_taisan/create`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -195,8 +198,31 @@ export default function GroupPolicyNewForm() {
               </RHFSelect>
             )}
 
-            <Stack sx={{ flexGrow: 1 }}>
-              <RHFAutocomplete
+            {hang?.length > 0 && (
+              <RHFSelect
+                name="ID_Hang"
+                label="Tên hãng"
+                InputLabelProps={{ shrink: true }}
+                PaperPropsSx={{ textTransform: 'capitalize' }}
+                sx={{ flexGrow: 1 }}
+              >
+                {hang?.map((item) => (
+                  <MenuItem key={item?.ID_Hang} value={item?.ID_Hang}>
+                    {item?.Tenhang}
+                  </MenuItem>
+                ))}
+              </RHFSelect>
+            )}
+          </Stack>
+
+          <Stack
+            spacing={4}
+            sx={{ p: 2, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
+          >
+            <RHFTextField name="Tentscu" label="Tên tài sản cũ" />
+            <RHFTextField name="Model" label="Model máy" />
+            <RHFTextField name="SerialNumber" label="Serial Number" />
+            <RHFAutocomplete
                 name="Nuocsx"
                 label="Nước sản xuất"
                 freeSolo
@@ -219,16 +245,6 @@ export default function GroupPolicyNewForm() {
                   );
                 }}
               />
-            </Stack>
-          </Stack>
-
-          <Stack
-            spacing={3}
-            sx={{ p: 2, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
-          >
-            <RHFTextField name="Tentscu" label="Tên tài sản cũ" />
-            <RHFTextField name="Model" label="Model máy" />
-            <RHFTextField name="SerialNumber" label="Serial Number" />
           </Stack>
 
           <Stack spacing={3} sx={{ p: 2 }}>

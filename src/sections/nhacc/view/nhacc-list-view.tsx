@@ -1,5 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import axios from 'axios';
+import { validateEmail } from 'src/utils/utils';
+import { provinces } from 'src/_mock/map/provinces';
 // @mui
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -43,6 +45,7 @@ import {
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -74,7 +77,8 @@ const TABLE_HEAD = [
   { id: 'Sodienthoai', label: 'Số điện thoại', width: 120 },
   { id: 'Sotaikhoan', label: 'Số tài khoản', width: 120 },
   { id: 'Nganhang', label: 'Ngân hàng', width: 120 },
-  { id: 'Diachi', label: 'Địa chỉ', width: 120 },
+  { id: 'Thanhpho', label: 'Tỉnh - thành phố', width: 120 },
+  { id: 'Ghichu', label: 'Ghi chú', width: 120 },
   { id: '', width: 30 },
 ];
 
@@ -193,7 +197,7 @@ export default function GroupPolicyListView() {
     async (id: string) => {
       await axios
         .put(
-          `https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_nhacc/delete/${id}`,
+          `http://localhost:8888/api/v1/ent_nhacc/delete/${id}`,
 
           {
             headers: {
@@ -264,12 +268,15 @@ export default function GroupPolicyListView() {
         Sodienthoai: dataSelect?.Sodienthoai,
         Sotaikhoan: dataSelect?.Sotaikhoan,
         Nganhang: dataSelect?.Nganhang,
+        Nguoilienhe: dataSelect?.Nguoilienhe,
+        Email: dataSelect?.Email,
+        Thanhpho: dataSelect?.Thanhpho,
         Diachi: dataSelect?.Diachi,
         Ghichu: dataSelect?.Ghichu,
       };
 
       await axios
-        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_nhacc/update/${id}`, dataInsert, {
+        .put(`http://localhost:8888/api/v1/ent_nhacc/update/${id}`, dataInsert, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -393,9 +400,9 @@ export default function GroupPolicyListView() {
                   rowCount={tableData?.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
-                // onSelectAllRows={(checked) =>
-                //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_Nhacc))
-                // }
+                  // onSelectAllRows={(checked) =>
+                  //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_Nhacc))
+                  // }
                 />
 
                 <TableBody>
@@ -445,6 +452,7 @@ export default function GroupPolicyListView() {
         onChange={handleInputChange}
         handleUpdate={handleUpdate}
         handleSelectChange={handleSelectChange}
+        setDataSelect={setDataSelect}
       />
 
       <NhaCCDialogAdd open={confirmAdd.value} onClose={confirmAdd.onFalse} />
@@ -484,6 +492,8 @@ function applyFilter({
         order.Sodienthoai.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         order.Sotaikhoan.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         order.Nganhang.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        order.Nguoilienhe.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        order.Email.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         order.Diachi.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
@@ -499,6 +509,7 @@ interface ConfirmTransferDialogProps {
   handleSelectChange: any;
   onChange: (event: React.FocusEvent<HTMLInputElement>) => void;
   onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
+  setDataSelect: any;
 }
 
 function NhaCCDialog({
@@ -509,6 +520,7 @@ function NhaCCDialog({
   onBlur,
   handleUpdate,
   handleSelectChange,
+  setDataSelect,
 }: ConfirmTransferDialogProps) {
   const ID_Nhacc = dataSelect?.ID_Nhacc;
 
@@ -566,6 +578,48 @@ function NhaCCDialog({
             onChange={onChange}
             fullWidth
             onBlur={onBlur}
+          />
+          <TextField
+            name="Nguoilienhe"
+            label="Người liên hệ"
+            value={dataSelect?.Nguoilienhe}
+            onChange={onChange}
+            fullWidth
+            onBlur={onBlur}
+          />
+          <TextField
+            name="Email"
+            label="Email"
+            value={dataSelect?.Email}
+            onChange={onChange}
+            fullWidth
+            onBlur={onBlur}
+          />
+          <Autocomplete
+            freeSolo
+            id="free-solo-2-demo"
+            fullWidth
+            disableClearable
+            value={dataSelect?.Thanhpho || ''}
+            options={provinces.map((option) => option.name_with_type)}
+            onChange={(event, newValue) => {
+              // Handle the change event and update state
+              setDataSelect((prevData: any) => ({
+                ...prevData,
+                Thanhpho: newValue,
+              }));
+            }}
+            // onChange={onChange}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Tỉnh - Thành phố"
+                InputProps={{
+                  ...params.InputProps,
+                  type: 'search',
+                }}
+              />
+            )}
           />
           <TextField
             name="Diachi"

@@ -56,6 +56,7 @@ export default function CalvTableRow({
     Ghichu,
     ent_chinhanh,
     ent_nhompb,
+    ent_duan,
   } = row;
 
   const confirm = useBoolean();
@@ -90,10 +91,10 @@ export default function CalvTableRow({
 
       <StyledTableCell> {Mapb} </StyledTableCell>
       <StyledTableCell> {Tenphongban} </StyledTableCell>
-      <StyledTableCell> {Diachi}</StyledTableCell>
       <StyledTableCell> {Thuoc} </StyledTableCell>
       <StyledTableCell> {ent_chinhanh.Tenchinhanh} </StyledTableCell>
-      <StyledTableCell> {ent_nhompb.Nhompb} </StyledTableCell>
+      <StyledTableCell> {ent_duan.Duan} </StyledTableCell>
+      <StyledTableCell> {Diachi}</StyledTableCell>
 
       <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
         <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>

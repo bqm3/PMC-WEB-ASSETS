@@ -105,6 +105,7 @@ export default function CalvTableRow({
           onClick={() => {
             confirm.onTrue();
             popover.onClose();
+            onDeleteRow();
           }}
           sx={{ color: 'error.main' }}
         >

@@ -12,16 +12,12 @@ import Checkbox from '@mui/material/Checkbox';
 import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
 import ListItemText from '@mui/material/ListItemText';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import Dialog, { DialogProps } from '@mui/material/Dialog';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // utils
 import { fCurrency } from 'src/utils/format-number';
 // types
-import { IGroupPolicy, IPolicy, ITaisan, ITaisanQrCode } from 'src/types/taisan';
+import { IDonvi, IHang, IGroupPolicy, ILoainhom, INhomts } from 'src/types/taisan';
 // components
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
@@ -32,39 +28,21 @@ import moment from 'moment';
 // ----------------------------------------------------------------------
 
 type Props = {
-  row: ITaisanQrCode;
+  row: IHang;
   selected: boolean;
   onViewRow: VoidFunction;
- // onShowRow: VoidFunction;
   onSelectRow: VoidFunction;
   onDeleteRow: VoidFunction;
-  onCreateRow: VoidFunction;
 };
 
-export default function TaiSanQrTableRow({
+export default function CalvTableRow({
   row,
   selected,
   onViewRow,
-//  onShowRow,
   onSelectRow,
   onDeleteRow,
-  onCreateRow,
 }: Props) {
-  const {
-    ID_TaisanQrcode,
-    ID_Taisan,
-    Ngaykhoitao,
-    ID_Donvi,
-    MaQrCode,
-    Giatri,
-    iTinhtrang,
-    Ghichu,
-    ID_Phongban,
-    ID_Connguoi,
-    ent_phongbanda,
-    ent_user,
-    ent_taisan,
-  } = row;
+  const { ID_Hang, Tenhang } = row;
 
   const confirm = useBoolean();
 
@@ -78,9 +56,6 @@ export default function TaiSanQrTableRow({
         borderBottom: '2px solid rgba(0, 0, 0, 0.05)', // Thicker border
       },
     }}>
-       <TableCell padding="checkbox">
-        <Checkbox checked={selected} onClick={onSelectRow} />
-      </TableCell>
       <TableCell>
         <Box
           onClick={onViewRow}
@@ -91,29 +66,13 @@ export default function TaiSanQrTableRow({
             },
           }}
         >
-          TS-{ID_TaisanQrcode}
+          TH-{ID_Hang}
         </Box>
       </TableCell>
-      <TableCell> {ent_taisan.Tents} </TableCell>
 
-      <TableCell> { moment(Ngaykhoitao).format('DD-MM-YYYY')} </TableCell>
-      <TableCell> {MaQrCode} </TableCell>
-      <TableCell> {fCurrency(Giatri) || ''} </TableCell>
-      <TableCell>
-        <Label
-          variant="soft"
-          color={
-            (`${iTinhtrang}` === '1' && 'warning') ||
-            (`${iTinhtrang}` === '0' && 'success') || 'default'
-          }
-        >
-          {`${iTinhtrang}` === '1'  && 'Sửa chữa'}
-          {`${iTinhtrang}` === '0'  && 'Sử dụng'}
-          {`${iTinhtrang}` === '2'  && 'Thanh lý'}
-        </Label>
-        </TableCell>
-      <TableCell> {ent_phongbanda?.Tenphongban} </TableCell>
-      <TableCell> {ent_user?.Hoten} </TableCell>
+      <TableCell sx={{  alignItems: 'center' }}>
+        {Tenhang}
+      </TableCell>
 
       <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
         <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
@@ -142,30 +101,30 @@ export default function TaiSanQrTableRow({
           <Iconify icon="solar:eye-bold" />
           Xem
         </MenuItem>
-
-        {/* <MenuItem
-          onClick={() => {
-            onShowRow();
-            popover.onClose();
-          }}
-        >
-          <Iconify icon="solar:eye-bold" />
-          Test
-        </MenuItem> */}
-
         <MenuItem
           onClick={() => {
-            onCreateRow();
+            confirm.onTrue();
             popover.onClose();
+            onDeleteRow();
           }}
+          sx={{ color: 'error.main' }}
         >
-          <Iconify icon="mdi:qrcode" />
-          Ảnh Qr
+          <Iconify icon="solar:trash-bin-trash-bold" />
+          Xóa
         </MenuItem>
-       
       </CustomPopover>
 
-    
+      {/* <ConfirmDialog
+        open={confirm.value}
+        onClose={confirm.onFalse}
+        title="PMC thông báo"
+        content="Bạn có thực sự muốn xóa không?"
+        action={
+          <Button variant="contained" color="error" onClick={onDeleteRow}>
+            Xóa
+          </Button>
+        }
+      /> */}
     </>
   );
 }
