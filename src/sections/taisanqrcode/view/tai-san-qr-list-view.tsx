@@ -688,12 +688,12 @@ function applyFilter({
   if (name) {
     inputData = inputData?.filter(
       (order) =>
-        order.ent_phongbanda.Tenphongban.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.ent_phongbanda.Mapb.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.MaQrCode.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.ent_taisan.Tents.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.ent_user?.Hoten.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        `${order.Giatri}`.toLowerCase().indexOf(name.toLowerCase()) !== -1
+        `${order?.ent_phongbanda?.Tenphongban}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        `${order?.ent_phongbanda?.Mapb}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        `${order?.MaQrCode}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        `${order?.ent_taisan?.Tents}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        `${order?.ent_user?.Hoten}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        `${order?.Giatri}`.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
 

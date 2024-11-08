@@ -1,11 +1,14 @@
 // routes
 import { paths } from 'src/routes/paths';
 
+
 // API
 // ----------------------------------------------------------------------
 
 export const HOST_API = process.env.REACT_APP_HOST_API;
 export const ASSETS_API = process.env.REACT_APP_ASSETS_API;
+
+export const PATH_URL = "http://localhost:8888/api/v1";
 
 export const FIREBASE_API = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,

@@ -75,9 +75,9 @@ const TABLE_HEAD = [
   { id: 'TenNhacc', label: 'Tên NCC', width: 200 },
   { id: 'Masothue', label: 'Mã số thuế', width: 120 },
   { id: 'Sodienthoai', label: 'Số điện thoại', width: 120 },
-  { id: 'Sotaikhoan', label: 'Số tài khoản', width: 120 },
-  { id: 'Nganhang', label: 'Ngân hàng', width: 120 },
-  { id: 'Thanhpho', label: 'Tỉnh - thành phố', width: 120 },
+  // { id: 'Sotaikhoan', label: 'Số tài khoản', width: 120 },
+  // { id: 'Nganhang', label: 'Ngân hàng', width: 120 },
+  { id: 'Thanhpho', label: 'Tỉnh - Thành phố', width: 120 },
   { id: 'Ghichu', label: 'Ghi chú', width: 120 },
   { id: '', width: 30 },
 ];
@@ -487,14 +487,12 @@ function applyFilter({
   if (name) {
     inputData = inputData?.filter(
       (order) =>
-        order.MaNhacc.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.Masothue.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.Sodienthoai.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.Sotaikhoan.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.Nganhang.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.Nguoilienhe.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.Email.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.Diachi.toLowerCase().indexOf(name.toLowerCase()) !== -1
+        `${order?.MaNhacc}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        `${order?.Masothue}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        `${order?.TenNhacc}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        `${order?.Sodienthoai}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        `${order?.Thanhpho}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        `${order?.Ghichu}`.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
 
@@ -531,7 +529,7 @@ function NhaCCDialog({
       <DialogContent>
         <Stack spacing={2} sx={{ p: 2 }}>
           <TextField
-            name="MaNhacc"
+            name="}`"
             label="Mã nhóm"
             value={dataSelect?.MaNhacc}
             onChange={onChange}

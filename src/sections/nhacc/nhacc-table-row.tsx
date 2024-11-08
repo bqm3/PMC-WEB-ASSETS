@@ -87,9 +87,9 @@ export default function CalvTableRow({
       <StyledTableCell sx={{ alignItems: 'center' }}>{TenNhacc}</StyledTableCell>
       <StyledTableCell sx={{ alignItems: 'center' }}>{Masothue}</StyledTableCell>
       <StyledTableCell sx={{ alignItems: 'center' }}>{Sodienthoai}</StyledTableCell>
-      <StyledTableCell sx={{ alignItems: 'center' }}>{Sotaikhoan}</StyledTableCell>
+      {/* <StyledTableCell sx={{ alignItems: 'center' }}>{Sotaikhoan}</StyledTableCell>
       <StyledTableCell sx={{ alignItems: 'center' }}>{Nganhang}</StyledTableCell>
-      {/* <StyledTableCell sx={{ alignItems: 'center' }}>{Nguoilienhe || "null"}</StyledTableCell>
+      <StyledTableCell sx={{ alignItems: 'center' }}>{Nguoilienhe || "null"}</StyledTableCell>
       <StyledTableCell sx={{ alignItems: 'center' }}>{Email || "null"}</StyledTableCell> */}
       <StyledTableCell sx={{ alignItems: 'center' }}>{Thanhpho}</StyledTableCell>
       {/* <StyledTableCell sx={{ alignItems: 'center' }}>{Diachi}</StyledTableCell> */}

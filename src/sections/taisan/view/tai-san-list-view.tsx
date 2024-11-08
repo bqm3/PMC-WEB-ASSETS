@@ -544,15 +544,15 @@ function applyFilter({
   if (name) {
     inputData = inputData?.filter(
       (order) =>
-        `${order.ent_nhomts.Manhom}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        `${order?.ent_nhomts?.Manhom}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         `${order?.ent_nhomts?.Tennhom}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        `${order.Mats}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        `${order.Nuocsx}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        `${order.Tents}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        `${order?.Mats}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        `${order?.Nuocsx}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        `${order?.Tents}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         `${order?.ent_hang?.Tenhang}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         `${order?.ent_donvi?.Donvi}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         `${order?.ent_nhomts?.ent_loainhom?.Loainhom}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        `${order.Thongso}`.toLowerCase().indexOf(name.toLowerCase()) !== -1
+        `${order?.Thongso}`.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
 

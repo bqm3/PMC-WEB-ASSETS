@@ -504,13 +504,13 @@ function applyFilter({
   if (name) {
     inputData = inputData?.filter(
       (order) =>
-        order.Mapb.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.Tenphongban.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.Diachi.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.Thuoc.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.ent_chinhanh.Tenchinhanh.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.ent_nhompb.Nhompb.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.ent_duan.Duan.toLowerCase().indexOf(name.toLowerCase()) !== -1
+        `${order.Mapb}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        `${order.Tenphongban}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        `${order.Diachi}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        `${order.Thuoc}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        `${order.ent_chinhanh.Tenchinhanh}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        `${order.ent_nhompb.Nhompb}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        `${order.ent_duan.Duan}`.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
 
