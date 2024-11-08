@@ -33,7 +33,7 @@ import { useGetLoaiNhom, useGetHang } from 'src/api/taisan';
 
 const STORAGE_KEY = 'accessToken';
 
-export default function GroupPolicyNewForm({onClose}: any) {
+export default function GroupPolicyNewForm({ onClose }: any) {
   const router = useRouter();
 
   const settings = useSettingsContext();
@@ -76,7 +76,7 @@ export default function GroupPolicyNewForm({onClose}: any) {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`http://localhost:8888/api/v1/ent_hang/create`, data, {
+      .post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_hang/create`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,

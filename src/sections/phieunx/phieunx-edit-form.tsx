@@ -200,7 +200,7 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
 
   const onSubmit = handleSubmit(async (data) => {
     await axios
-      .put(`http://localhost:8888/api/v1/tb_phieunx/update/${currentPhieuNX?.ID_PhieuNX}`, data, {
+      .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieunx/update/${currentPhieuNX?.ID_PhieuNX}`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -242,7 +242,7 @@ export default function PhieuNXNewForm({ currentPhieuNX, mutate }: Props) {
   const handleClose = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`http://localhost:8888/api/v1/tb_phieunx/close/${currentPhieuNX?.ID_PhieuNX}`, data, {
+      .post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieunx/close/${currentPhieuNX?.ID_PhieuNX}`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,

@@ -205,7 +205,7 @@ export default function PhieuNXListView() {
   const handleDeleteRow = useCallback(
     async (id: string) => {
       await axios
-        .put(`http://localhost:8888/api/v1/tb_phieuncc/delete/${id}`, [], {
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieuncc/delete/${id}`, [], {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -249,7 +249,7 @@ export default function PhieuNXListView() {
   const handleCloseRow = useCallback(
     async (id: string) => {
       await axios
-        .put(`http://localhost:8888/api/v1/tb_phieuncc/close-fast/${id}`, [], {
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieuncc/close-fast/${id}`, [], {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -307,7 +307,7 @@ export default function PhieuNXListView() {
   const handleUpdate = useCallback(
     async (id: string) => {
       await axios
-        .put(`http://localhost:8888/api/v1/tb_phieuncc/update/${id}`, dataSelect, {
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieuncc/update/${id}`, dataSelect, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,

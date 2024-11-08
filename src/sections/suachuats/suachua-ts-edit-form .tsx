@@ -98,7 +98,7 @@ export default function SuachuatsNewForm({ currentSuaChuaTs, mutate }: Props) {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .put(`http://localhost:8888/api/v1/tb_suachuats/update/${currentSuaChuaTs?.ID_SuachuaTS}`, data, {
+      .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_suachuats/update/${currentSuaChuaTs?.ID_SuachuaTS}`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -142,7 +142,7 @@ export default function SuachuatsNewForm({ currentSuaChuaTs, mutate }: Props) {
   const handleClose = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .put(`http://localhost:8888/api/v1/tb_suachuats/close/${currentSuaChuaTs?.ID_SuachuaTS}`, data, {
+      .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_suachuats/close/${currentSuaChuaTs?.ID_SuachuaTS}`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,

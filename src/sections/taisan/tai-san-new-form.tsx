@@ -115,7 +115,7 @@ export default function GroupPolicyNewForm() {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`http://localhost:8888/api/v1/ent_taisan/create`, data, {
+      .post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_taisan/create`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -223,28 +223,28 @@ export default function GroupPolicyNewForm() {
             <RHFTextField name="Model" label="Model máy" />
             <RHFTextField name="SerialNumber" label="Serial Number" />
             <RHFAutocomplete
-                name="Nuocsx"
-                label="Nước sản xuất"
-                freeSolo
-                sx={{ flexGrow: 1, width: '100%', minWidth: 240 }}
-                options={list_country.map((country) => country.name)}
-                getOptionLabel={(option) => option}
-                renderOption={(props, option) => {
-                  const { code, name } = list_country.filter(
-                    (country) => country.name === option
-                  )[0];
+              name="Nuocsx"
+              label="Nước sản xuất"
+              freeSolo
+              sx={{ flexGrow: 1, width: '100%', minWidth: 240 }}
+              options={list_country.map((country) => country.name)}
+              getOptionLabel={(option) => option}
+              renderOption={(props, option) => {
+                const { code, name } = list_country.filter(
+                  (country) => country.name === option
+                )[0];
 
-                  if (!name) {
-                    return null;
-                  }
+                if (!name) {
+                  return null;
+                }
 
-                  return (
-                    <li {...props} key={name}>
-                      {name}
-                    </li>
-                  );
-                }}
-              />
+                return (
+                  <li {...props} key={name}>
+                    {name}
+                  </li>
+                );
+              }}
+            />
           </Stack>
 
           <Stack spacing={3} sx={{ p: 2 }}>

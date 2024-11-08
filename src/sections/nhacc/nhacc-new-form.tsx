@@ -83,7 +83,7 @@ export default function NhaCCNewForm() {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`http://localhost:8888/api/v1/ent_nhacc/create`, data, {
+      .post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_nhacc/create`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -142,28 +142,28 @@ export default function NhaCCNewForm() {
           <RHFTextField name="Nguoilienhe" label="Người liên hệ" />
           <RHFTextField name="Email" label="Email" />
           <RHFAutocomplete
-                name="Thanhpho"
-                label="Tỉnh - Thành phố"
-                freeSolo
-                sx={{ flexGrow: 1, width: '100%', minWidth: 240 }}
-                options={provinces.map((country) => country.name_with_type)}
-                getOptionLabel={(option) => option}
-                renderOption={(props, option) => {
-                  const { code, name_with_type } = provinces.filter(
-                    (country) => country.name_with_type === option
-                  )[0];
+            name="Thanhpho"
+            label="Tỉnh - Thành phố"
+            freeSolo
+            sx={{ flexGrow: 1, width: '100%', minWidth: 240 }}
+            options={provinces.map((country) => country.name_with_type)}
+            getOptionLabel={(option) => option}
+            renderOption={(props, option) => {
+              const { code, name_with_type } = provinces.filter(
+                (country) => country.name_with_type === option
+              )[0];
 
-                  if (!name_with_type) {
-                    return null;
-                  }
+              if (!name_with_type) {
+                return null;
+              }
 
-                  return (
-                    <li {...props} key={name_with_type}>
-                      {name_with_type}
-                    </li>
-                  );
-                }}
-              />
+              return (
+                <li {...props} key={name_with_type}>
+                  {name_with_type}
+                </li>
+              );
+            }}
+          />
         </Stack>
         <Stack spacing={2} sx={{ p: 2, display: 'flex', flexDirection: 'row' }}>
           <RHFTextField name="Diachi" label="Địa chỉ" />

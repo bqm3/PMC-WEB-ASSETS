@@ -363,7 +363,7 @@ export default function DonViNhomListView() {
     async (id: string) => {
       await axios
         .put(
-          `http://localhost:8888/api/v1/ent_loainhom/delete/${id}`,
+          `https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_loainhom/delete/${id}`,
 
           {
             headers: {
@@ -411,7 +411,7 @@ export default function DonViNhomListView() {
     async (id: string) => {
       await axios
         .put(
-          `http://localhost:8888/api/v1/ent_donvi/delete/${id}`,
+          `https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_donvi/delete/${id}`,
 
           {
             headers: {
@@ -459,7 +459,7 @@ export default function DonViNhomListView() {
     async (id: string) => {
       await axios
         .put(
-          `http://localhost:8888/api/v1/ent_hang/delete/${id}`,
+          `https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_hang/delete/${id}`,
 
           {
             headers: {
@@ -553,7 +553,7 @@ export default function DonViNhomListView() {
     async (id: string) => {
       await axios
         .put(
-          `http://localhost:8888/api/v1/ent_loainhom/update/${id}`,
+          `https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_loainhom/update/${id}`,
           {
             Loainhom: dataSelectLoaiNhom?.Loainhom,
             ID_Loainhom: dataSelectLoaiNhom?.ID_Loainhom,
@@ -607,7 +607,7 @@ export default function DonViNhomListView() {
     async (id: string) => {
       await axios
         .put(
-          `http://localhost:8888/api/v1/ent_donvi/update/${id}`,
+          `https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_donvi/update/${id}`,
           {
             Donvi: dataSelectDonVi?.Donvi,
             ID_Donvi: dataSelectDonVi?.ID_Donvi,
@@ -661,7 +661,7 @@ export default function DonViNhomListView() {
     async (id: string) => {
       await axios
         .put(
-          `http://localhost:8888/api/v1/ent_hang/update/${id}`,
+          `https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_hang/update/${id}`,
           {
             Tenhang: dataSelectHang?.Tenhang,
             ID_Hang: dataSelectHang?.ID_Hang,
@@ -779,9 +779,9 @@ export default function DonViNhomListView() {
                       rowCount={tableDataLoaiNhom?.length}
                       numSelected={table.selected.length}
                       onSort={table.onSort}
-                      // onSelectAllRows={(checked) =>
-                      //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_Loainhom))
-                      // }
+                    // onSelectAllRows={(checked) =>
+                    //   table.onSelectAllRows(checked, tableData?.map((row) => row.ID_Loainhom))
+                    // }
                     />
 
                     <TableBody>
@@ -1305,7 +1305,7 @@ function DonViDialogAdd({ open, onClose }: any) {
 
       <DialogContent sx={{ overflow: 'hidden', height: 'auto' }}>
         <Grid spacing={3}>
-          <DonViNewForm onClose = {onClose}/>
+          <DonViNewForm onClose={onClose} />
         </Grid>
       </DialogContent>
     </Dialog>
@@ -1362,7 +1362,7 @@ function HangDialogAdd({ open, onClose }: any) {
       <DialogTitle>Thêm mới</DialogTitle>
       <DialogContent sx={{ overflow: 'hidden', height: 'auto' }}>
         <Grid spacing={3}>
-          <HangNewForm onClose = {onClose}/>
+          <HangNewForm onClose={onClose} />
         </Grid>
       </DialogContent>
     </Dialog>
