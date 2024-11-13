@@ -26,6 +26,7 @@ import {
   useGetNhomPb,
   useGetPhieuNCC,
   useGetPhieuNX,
+  useGetPhieuNCC_ByNghiepVU,
 } from 'src/api/taisan';
 // components
 import Label from 'src/components/label';
@@ -113,7 +114,9 @@ export default function PhieuNXListView() {
 
   const { nhompb } = useGetNhomPb();
 
-  const { phieuncc, mutatePhieuNCC } = useGetPhieuNCC();
+ // const { phieuncc, mutatePhieuNCC } = useGetPhieuNCC();
+
+  const { phieuncc, mutatePhieuNCC } = useGetPhieuNCC_ByNghiepVU([6,7]);
 
   const [tableData, setTableData] = useState<IPhieuNCC[]>([]);
 
