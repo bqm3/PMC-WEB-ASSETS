@@ -7,17 +7,11 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Unstable_Grid2';
-import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import CardHeader from '@mui/material/CardHeader';
-// routes
-import { paths } from 'src/routes/paths';
 // hooks
 import { useRouter } from 'src/routes/hooks';
 import { useResponsive } from 'src/hooks/use-responsive';
 // _mock
-import { _tags, _roles, USER_GENDER_OPTIONS } from 'src/_mock';
+import { _tags, _roles } from 'src/_mock';
 // api
 // components
 import { useSnackbar } from 'src/components/snackbar';
@@ -26,10 +20,8 @@ import { useSnackbar } from 'src/components/snackbar';
 import { useSettingsContext } from 'src/components/settings';
 import axios from 'axios';
 import FormProvider, { RHFSelect, RHFTextField, RHFAutocomplete } from 'src/components/hook-form';
-import { MenuItem } from '@mui/material';
-import { useGetLoaiNhom, useGetNhacc } from 'src/api/taisan';
+import { useGetNhacc } from 'src/api/taisan';
 import { provinces } from 'src/_mock/map/provinces';
-import { districts } from 'src/_mock/map/districts';
 
 
 // ----------------------------------------------------------------------
@@ -83,7 +75,7 @@ export default function NhaCCNewForm() {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_nhacc/create`, data, {
+      .post(`http://localhost:8888/api/v1/ent_nhacc/create`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,

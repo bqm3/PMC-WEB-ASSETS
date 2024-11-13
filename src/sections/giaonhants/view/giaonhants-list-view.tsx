@@ -213,7 +213,7 @@ export default function PhieuGNListView() {
   const handleDeleteRow = useCallback(
     async (id: string) => {
       await axios
-        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_giaonhan/delete/${id}`, [], {
+        .put(`http://localhost:8888/api/v1/tb_giaonhan/delete/${id}`, [], {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -257,7 +257,7 @@ export default function PhieuGNListView() {
   const handleCloseRow = useCallback(
     async (id: string) => {
       await axios
-        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_giaonhan/close-fast/${id}`, [], {
+        .put(`http://localhost:8888/api/v1/tb_giaonhan/close-fast/${id}`, [], {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -315,7 +315,7 @@ export default function PhieuGNListView() {
   const handleUpdate = useCallback(
     async (id: string) => {
       await axios
-        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieuGN/update/${id}`, dataSelect, {
+        .put(`http://localhost:8888/api/v1/tb_phieuGN/update/${id}`, dataSelect, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
