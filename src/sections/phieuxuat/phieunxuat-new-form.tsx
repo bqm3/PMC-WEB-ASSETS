@@ -29,7 +29,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import axios from 'axios';
 import { useBoolean } from 'src/hooks/use-boolean';
 
-import PhieuNCCNewEditDetails from './phieuncc-new-details';
+import PhieuNCCNewEditDetails from './phieunxuat-new-details';
 
 // ----------------------------------------------------------------------
 
@@ -332,7 +332,7 @@ export default function SuaChuaTSNewForm() {
               PaperPropsSx={{ textTransform: 'capitalize' }}
             >
               {nghiepvu
-                ?.filter((item) => ['2', '5',].includes(`${item?.ID_Nghiepvu}`))
+                ?.filter((item) => ['6', '7'].includes(`${item?.ID_Nghiepvu}`))
                 .map((item) => (
                   <MenuItem key={item?.ID_Nghiepvu} value={item?.ID_Nghiepvu}>
                     {item?.Nghiepvu}

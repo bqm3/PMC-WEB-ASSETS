@@ -160,6 +160,15 @@ export function useNavData() {
             ],
           },
           {
+            title: t('phieuxuat'),
+            path: paths.dashboard.phieuxuat.root,
+            icon: ICONS.invoice,
+            children: [
+              { title: t('list'), path: paths.dashboard.phieuxuat.root },
+              { title: t('create'), path: paths.dashboard.phieuxuat.new },
+            ],
+          },
+          {
             title: t('suachuats'),
             path: paths.dashboard.suachuats.root,
             icon: ICONS.disabled,

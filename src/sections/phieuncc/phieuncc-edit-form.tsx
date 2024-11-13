@@ -306,7 +306,7 @@ export default function PhieuNXNewForm({ currentPhieuNCC, mutate }: Props) {
               PaperPropsSx={{ textTransform: 'capitalize' }}
             >
               {nghiepvu
-                ?.filter((item) => ['2', '5', '6', '7'].includes(`${item?.ID_Nghiepvu}`))
+                ?.filter((item) => ['2', '5',].includes(`${item?.ID_Nghiepvu}`))
                 .map((item) => (
                   <MenuItem key={item?.ID_Nghiepvu} value={item?.ID_Nghiepvu}>
                     {item?.Nghiepvu}

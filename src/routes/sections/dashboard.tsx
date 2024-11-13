@@ -50,6 +50,10 @@ const PhieuNCCListsPage = lazy(() => import('src/pages/dashboard/phieuncc/list')
 const PhieuNCCNewPage = lazy(() => import('src/pages/dashboard/phieuncc/new'));
 const PhieuNCCEditPage = lazy(() => import('src/pages/dashboard/phieuncc/edit'));
 
+const PhieuXuatListsPage = lazy(() => import('src/pages/dashboard/phieuxuat/list'));
+const PhieuXuatNewPage = lazy(() => import('src/pages/dashboard/phieuxuat/new'));
+const PhieuXuatEditPage = lazy(() => import('src/pages/dashboard/phieuxuat/edit'));
+
 const SuaChuaTSListsPage = lazy(() => import('src/pages/dashboard/suachuats/list'));
 const SuaChuaTSNewPage = lazy(() => import('src/pages/dashboard/suachuats/new'));
 const SuaChuaTSEditPage = lazy(() => import('src/pages/dashboard/suachuats/edit'));
@@ -168,6 +172,16 @@ export const dashboardRoutes = [
           { path: 'new', element: <PhieuNCCNewPage /> },
           { path: ':id/edit', element: <PhieuNCCEditPage /> },
           { path: ':id', element: <PhieuNCCEditPage /> },
+        ],
+      },
+      {
+        path: 'inventory-out',
+        children: [
+          { element: <PhieuXuatListsPage />, index: true },
+          { path: 'list', element: <PhieuXuatListsPage /> },
+          { path: 'new', element: <PhieuXuatNewPage /> },
+          { path: ':id/edit', element: <PhieuXuatEditPage /> },
+          { path: ':id', element: <PhieuXuatEditPage /> },
         ],
       },
 
