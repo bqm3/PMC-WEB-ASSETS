@@ -530,7 +530,7 @@ function NhaCCDialog({
         <Stack spacing={2} sx={{ p: 2 }}>
           <TextField
             name="}`"
-            label="Mã nhóm"
+            label="Mã nhà cung cấp"
             value={dataSelect?.MaNhacc}
             onChange={onChange}
             fullWidth
