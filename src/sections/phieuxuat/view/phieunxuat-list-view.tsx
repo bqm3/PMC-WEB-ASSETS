@@ -26,7 +26,7 @@ import {
   useGetNhomPb,
   useGetPhieuNCC,
   useGetPhieuNX,
-  useGetPhieuNCC_ByNghiepVU,
+  useGetPhieuNCC_ByNghiepVu,
 } from 'src/api/taisan';
 // components
 import Label from 'src/components/label';
@@ -114,19 +114,19 @@ export default function PhieuNXListView() {
 
   const { nhompb } = useGetNhomPb();
 
- // const { phieuncc, mutatePhieuNCC } = useGetPhieuNCC();
+  // const { phieuncc, mutatePhieuNCC } = useGetPhieuNCC();
 
-  const { phieuncc, mutatePhieuNCC } = useGetPhieuNCC_ByNghiepVU([6,7]);
+  const { phieuncc, mutatePhieuNCC } = useGetPhieuNCC_ByNghiepVu([6, 7]);
 
   const [tableData, setTableData] = useState<IPhieuNCC[]>([]);
 
   const [dataSelect, setDataSelect] = useState<IPhieuNCC>();
-
+  console.log('phieuncc 2', phieuncc)
   useEffect(() => {
-    if (phieuncc?.length > 0) {
+    if (phieuncc?.length >= 0) {
       setTableData(phieuncc);
     }
-  }, [phieuncc, mutatePhieuNCC]);
+  }, [phieuncc]);
 
   const [STATUS_OPTIONS, set_STATUS_OPTIONS] = useState([
     { value: 'all', label: 'Tất cả' },
@@ -208,7 +208,7 @@ export default function PhieuNXListView() {
   const handleDeleteRow = useCallback(
     async (id: string) => {
       await axios
-        .put(`http://localhost:8888/api/v1/tb_phieuncc/delete/${id}`, [], {
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieuncc/delete/${id}`, [], {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -252,7 +252,7 @@ export default function PhieuNXListView() {
   const handleCloseRow = useCallback(
     async (id: string) => {
       await axios
-        .put(`http://localhost:8888/api/v1/tb_phieuncc/close-fast/${id}`, [], {
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieuncc/close-fast/${id}`, [], {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -310,7 +310,7 @@ export default function PhieuNXListView() {
   const handleUpdate = useCallback(
     async (id: string) => {
       await axios
-        .put(`http://localhost:8888/api/v1/tb_phieuncc/update/${id}`, dataSelect, {
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieuncc/update/${id}`, dataSelect, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,

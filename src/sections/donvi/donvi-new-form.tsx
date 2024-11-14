@@ -75,7 +75,7 @@ export default function GroupPolicyNewForm({ onClose }: any) {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`http://localhost:8888/api/v1/ent_donvi/create`, data, {
+      .post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_donvi/create`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,

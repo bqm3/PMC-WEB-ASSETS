@@ -197,7 +197,7 @@ export default function GroupPolicyListView() {
     async (id: string) => {
       await axios
         .put(
-          `http://localhost:8888/api/v1/ent_nhacc/delete/${id}`,
+          `https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_nhacc/delete/${id}`,
 
           {
             headers: {
@@ -276,7 +276,7 @@ export default function GroupPolicyListView() {
       };
 
       await axios
-        .put(`http://localhost:8888/api/v1/ent_nhacc/update/${id}`, dataInsert, {
+        .put(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_nhacc/update/${id}`, dataInsert, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
