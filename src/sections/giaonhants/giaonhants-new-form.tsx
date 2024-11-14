@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import { useMemo, useEffect, useState } from 'react';
+import { useMemo, useEffect, useState, useCallback } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, Controller } from 'react-hook-form';
 // @mui
@@ -41,7 +41,7 @@ import { useSettingsContext } from 'src/components/settings';
 import axios from 'axios';
 import { useBoolean } from 'src/hooks/use-boolean';
 
-import PhieuNXNewDetails from './phieunx-new-details';
+import PhieuNXNewDetails from './giaonhants-new-details';
 
 // ----------------------------------------------------------------------
 
@@ -171,7 +171,7 @@ export default function SuaChuaTSNewForm() {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieunx/create`, data, {
+      .post(`http://localhost:8888/api/v1/tb_phieunx/create`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -212,9 +212,11 @@ export default function SuaChuaTSNewForm() {
       });
   });
 
-  const handleFilter = handleSubmit(async (data) => {
+  const handleFilter = useCallback(async () => {
     setLoadingFilter(true);
-    const res = await axios.post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_giaonhants/filter`, data, {
+    const data = values;
+    console.log(values)
+    const res = await axios.post(`http://localhost:8888/api/v1/tb_giaonhants/filter`, data, {
       headers: {
         Accept: 'application/json',
         Authorization: `Bearer ${accessToken}`,
@@ -222,7 +224,7 @@ export default function SuaChuaTSNewForm() {
     });
     setDataPhieu(res.data.data);
     setLoadingFilter(false);
-  });
+  }, [values, accessToken]);
 
   const renderDetails = (
     <Grid xs={12} md={12}>
@@ -319,12 +321,10 @@ export default function SuaChuaTSNewForm() {
           />
         </Stack>
         {values.ID_Phongban !== null && values.ID_Quy !== null && values.ID_Nam !== null && (
-          <LoadingButton
-            type="submit"
+          <Button
             size="large"
             color="success"
             variant="contained"
-            loading={loadingFilter}
             onClick={handleFilter}
             sx={{
               float: 'right',
@@ -332,7 +332,7 @@ export default function SuaChuaTSNewForm() {
             }}
           >
             Tìm kiếm
-          </LoadingButton>
+          </Button>
         )}
       </Card>
     </Grid>

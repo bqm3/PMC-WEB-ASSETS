@@ -107,7 +107,7 @@ export default function GroupPolicyNewForm() {
     console.log('data', data);
     setLoading(false);
     // await axios
-    //   .post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_phongbanda/create`, data, {
+    //   .post(`http://localhost:8888/api/v1/ent_phongbanda/create`, data, {
     //     headers: {
     //       Accept: 'application/json',
     //       Authorization: `Bearer ${accessToken}`,

@@ -215,7 +215,7 @@ export default function SuaChuaTSNewForm() {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieunx/create`, data, {
+      .post(`http://localhost:8888/api/v1/tb_phieunx/create`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -284,7 +284,7 @@ export default function SuaChuaTSNewForm() {
     };
 
     try {
-      const res = await axios.post(`https://checklist.pmcweb.vn/pmc-assets/api/v1/tb_phieunx/taisan`, dataReq, {
+      const res = await axios.post(`http://localhost:8888/api/v1/tb_phieunx/taisan`, dataReq, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,

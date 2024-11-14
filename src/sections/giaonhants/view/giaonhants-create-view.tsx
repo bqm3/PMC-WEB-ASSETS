@@ -6,7 +6,7 @@ import { paths } from 'src/routes/paths';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 //
-import PhieuNXNewForm from '../phieunx-new-form';
+import PhieuNXNewForm from '../giaonhants-new-form';
 
 // ----------------------------------------------------------------------
 
@@ -22,7 +22,7 @@ export default function PhieuNXCreateView() {
             name: 'Dashboard',
             href: paths.dashboard.root,
           },
-          
+
           { name: 'Tạo mới' },
         ]}
         sx={{

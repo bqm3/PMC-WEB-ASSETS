@@ -363,7 +363,7 @@ export default function DonViNhomListView() {
     async (id: string) => {
       await axios
         .put(
-          `https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_loainhom/delete/${id}`,
+          `http://localhost:8888/api/v1/ent_loainhom/delete/${id}`,
 
           {
             headers: {
@@ -411,7 +411,7 @@ export default function DonViNhomListView() {
     async (id: string) => {
       await axios
         .put(
-          `https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_donvi/delete/${id}`,
+          `http://localhost:8888/api/v1/ent_donvi/delete/${id}`,
 
           {
             headers: {
@@ -459,7 +459,7 @@ export default function DonViNhomListView() {
     async (id: string) => {
       await axios
         .put(
-          `https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_hang/delete/${id}`,
+          `http://localhost:8888/api/v1/ent_hang/delete/${id}`,
 
           {
             headers: {
@@ -553,7 +553,7 @@ export default function DonViNhomListView() {
     async (id: string) => {
       await axios
         .put(
-          `https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_loainhom/update/${id}`,
+          `http://localhost:8888/api/v1/ent_loainhom/update/${id}`,
           {
             Loainhom: dataSelectLoaiNhom?.Loainhom,
             ID_Loainhom: dataSelectLoaiNhom?.ID_Loainhom,
@@ -607,7 +607,7 @@ export default function DonViNhomListView() {
     async (id: string) => {
       await axios
         .put(
-          `https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_donvi/update/${id}`,
+          `http://localhost:8888/api/v1/ent_donvi/update/${id}`,
           {
             Donvi: dataSelectDonVi?.Donvi,
             ID_Donvi: dataSelectDonVi?.ID_Donvi,
@@ -661,7 +661,7 @@ export default function DonViNhomListView() {
     async (id: string) => {
       await axios
         .put(
-          `https://checklist.pmcweb.vn/pmc-assets/api/v1/ent_hang/update/${id}`,
+          `http://localhost:8888/api/v1/ent_hang/update/${id}`,
           {
             Tenhang: dataSelectHang?.Tenhang,
             ID_Hang: dataSelectHang?.ID_Hang,
