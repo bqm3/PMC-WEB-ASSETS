@@ -118,7 +118,7 @@ export default function PhieuGNNewForm({ currentPhieuGN, mutate }: Props) {
           ID_Taisan: null,
           ID_TaisanQrcode: null,
           Tinhtrangmay: "",
-          Cacttlienquan: "",
+          Cactllienquan: "",
           isUpdate: 0,
           Soluong: 0,
           Tong: 0,

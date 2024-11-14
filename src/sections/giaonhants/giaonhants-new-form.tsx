@@ -64,6 +64,17 @@ const QUARTY = [
   },
 ];
 
+const Giaonhan = [
+  {
+    value: 1,
+    label: 'Giao tài sản',
+  },
+  {
+    value: 2,
+    label: 'Nhận tài sản',
+  },
+];
+
 const STORAGE_KEY = 'accessToken';
 
 export default function SuaChuaTSNewForm() {
@@ -90,6 +101,7 @@ export default function SuaChuaTSNewForm() {
     ID_Quy: Yup.mixed<any>().nullable().required('Phải có quý giao nhận'),
     ID_Nam: Yup.mixed<any>().nullable().required('Phải có năm giao nhận'),
     ID_Phongban: Yup.mixed<any>().nullable().required('Phải có phòng ban'),
+    iGiaonhan: Yup.mixed<any>().nullable().required('Phải chọn phiếu'),
     Nguoinhan: Yup.mixed<any>().required('Không được để trống'),
     Nguoigiao: Yup.mixed<any>().required('Không được để trống'),
     // ID_NoiNhap: Yup.mixed<any>().required('Không được để trống'),
@@ -102,7 +114,7 @@ export default function SuaChuaTSNewForm() {
       Nguoigiao: null,
       Nguoinhan: null,
       ID_Phongban: null,
-      iGiaonhan: '',
+      iGiaonhan: null,
       Ngay: new Date(),
       Ghichu: '',
       ID_Quy: null,
@@ -112,7 +124,7 @@ export default function SuaChuaTSNewForm() {
           ID_Taisan: null,
           ID_TaisanQrcode: null,
           Tinhtrangmay: '',
-          Cacttlienquan: '',
+          Cactllienquan: '',
           isUpdate: 0,
           Soluong: 0,
           Tong: 0,
@@ -171,7 +183,7 @@ export default function SuaChuaTSNewForm() {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`http://localhost:8888/api/v1/tb_phieunx/create`, data, {
+      .post(`http://localhost:8888/api/v1/tb_giaonhants/create`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -230,6 +242,19 @@ export default function SuaChuaTSNewForm() {
     <Grid xs={12} md={12}>
       <Card>
         <Stack spacing={3} sx={{ p: 2, display: 'flex', flexDirection: 'row' }}>
+        <RHFSelect
+            name="iGiaonhan"
+            label="Phiếu"
+            InputLabelProps={{ shrink: true }}
+            PaperPropsSx={{ textTransform: 'capitalize' }}
+          >
+            {Giaonhan?.map((item) => (
+              <MenuItem key={item?.value} value={item?.value}>
+                {item?.label}
+              </MenuItem>
+            ))}
+          </RHFSelect>
+
           <RHFSelect
             name="ID_Phongban"
             label="Phòng ban dự án *"
@@ -342,7 +367,7 @@ export default function SuaChuaTSNewForm() {
     <FormProvider methods={methods}>
       {renderDetails}
       <Card sx={{ mt: 3 }}>
-        <PhieuNXNewDetails dataPhieu={dataPhieu} />
+        <PhieuNXNewDetails dataPhieu={dataPhieu} loadingFilter={loadingFilter}/>
       </Card>
 
       <Stack justifyContent="flex-end" direction="row" spacing={2} sx={{ mt: 3 }}>

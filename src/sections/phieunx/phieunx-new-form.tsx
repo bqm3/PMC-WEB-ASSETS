@@ -42,6 +42,7 @@ import axios from 'axios';
 import { useBoolean } from 'src/hooks/use-boolean';
 
 import PhieuNXNewEditDetails from './phieunx-new-details';
+import PhieuNXNewEditDetails1 from './phieunx-new-noibo-detail';
 
 // ----------------------------------------------------------------------
 
@@ -79,10 +80,8 @@ const QUARTYFILTER = [
 const STORAGE_KEY = 'accessToken';
 
 export default function SuaChuaTSNewForm() {
-
   const [loading, setLoading] = useState<Boolean | any>(false);
   const [loadingFilter, setLoadingFilter] = useState<Boolean | any>(false);
-
 
   const [noiXuat, setNoiXuat] = useState<any>([]);
   const [taiSan, setTaiSan] = useState<ITaisan[]>([]);
@@ -260,7 +259,7 @@ export default function SuaChuaTSNewForm() {
     setLoadingFilter(true);
 
     // Kiểm tra xem các trường bắt buộc có giá trị hay không
-    const { ID_Loainhom, ID_NoiNhap, ID_NoiXuat, ID_Nghiepvu, ID_Quy } = values;
+    const { ID_Loainhom, ID_NoiNhap, ID_NoiXuat, ID_Nghiepvu, ID_Quy, NgayNX } = values;
 
     // Nếu thiếu bất kỳ trường nào thì không thực hiện tìm kiếm, thông báo bằng snackbar
     if (!ID_Loainhom || !ID_NoiNhap || !ID_NoiXuat || !ID_Nghiepvu || !ID_Quy) {
@@ -281,6 +280,7 @@ export default function SuaChuaTSNewForm() {
       ID_NoiXuat,
       ID_Nghiepvu,
       ID_Quy,
+      NgayNX,
     };
 
     try {
@@ -301,7 +301,7 @@ export default function SuaChuaTSNewForm() {
         });
       }
     } catch (error) {
-      console.log('err', error)
+      console.log('err', error);
       enqueueSnackbar({
         variant: 'error',
         autoHideDuration: 2000,
@@ -434,7 +434,12 @@ export default function SuaChuaTSNewForm() {
     <FormProvider methods={methods}>
       {renderDetails}
       <Card sx={{ mt: 3 }}>
-        <PhieuNXNewEditDetails taiSan={taiSan} ID_Nghiepvu={values.ID_Nghiepvu} />
+        {`${values.ID_Nghiepvu}` === '3' ? (
+          // phieu nhap xuat noi bo
+          <PhieuNXNewEditDetails1 taiSan={taiSan}/>
+        ) : (
+          <PhieuNXNewEditDetails taiSan={taiSan} ID_Nghiepvu={values.ID_Nghiepvu} />
+        )}
       </Card>
 
       <Stack justifyContent="flex-end" direction="row" spacing={2} sx={{ mt: 3 }}>

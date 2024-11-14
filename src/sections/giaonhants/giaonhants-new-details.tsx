@@ -28,9 +28,11 @@ import { ITaisan } from 'src/types/taisan';
 // ----------------------------------------------------------------------
 type Props = {
   dataPhieu: any;
+  loadingFilter: boolean;
 };
 
-export default function PhieuNXNewEditDetails({ dataPhieu }: Props) {
+export default function PhieuNXNewEditDetails({ dataPhieu, loadingFilter }: Props) {
+  loadingFilter = true;
   const { control, setValue, watch, resetField } = useFormContext();
 
   const { fields, append, remove } = useFieldArray({
@@ -61,43 +63,46 @@ export default function PhieuNXNewEditDetails({ dataPhieu }: Props) {
     });
   };
 
+  // const handleRemove = (index: number) => {
+  //   setValue(`giaonhantsct[${index}].isDelete`, 1);
+  //   setValue(`giaonhantsct[${index}].isUpdate`, 1);
+  // };
+
   const handleRemove = (index: number) => {
-    setValue(`giaonhantsct[${index}].isDelete`, 1);
-    setValue(`giaonhantsct[${index}].isUpdate`, 1);
+    remove(index);
   };
+  
 
   const handleChangeQuantity = useCallback(
     (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, index: number) => {
-      setValue(`giaonhantsct[${index}].isUpdate`, 1);
-      setValue(`giaonhantsct[${index}].Soluong`, Number(event.target.value));
-      setValue(
-        `giaonhantsct[${index}].Tong`,
-        values.giaonhantsct.map((item: any) => item.Soluong * item.Dongia)[index]
-      );
+      const newValue = Number(event.target.value);
+      if (newValue === 1) {
+        // Nếu số lượng nhập vào là 1, không cho phép sửa
+        setValue(`giaonhantsct[${index}].Soluong`, 1);
+      } else {
+        setValue(`giaonhantsct[${index}].isUpdate`, 1);
+        setValue(`giaonhantsct[${index}].Soluong`, newValue);
+      }
+
+      
     },
-    [setValue, values.giaonhantsct]
+    [setValue]
   );
 
-  const handleChangePrice = useCallback(
+  const handleChangeTinhtrangmay = useCallback(
     (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, index: number) => {
-      const inputValue = event.target.value;
-      // const numericString = inputValue.replace(/[^\d]/g, '');
-      setValue(`giaonhantsct[${index}].Dongia`, inputValue);
-      setValue(`giaonhantsct[${index}].isUpdate`, 1);
-      setValue(
-        `giaonhantsct[${index}].Tong`,
-        values.giaonhantsct.map((item: any) => item.Soluong * item.Dongia)[index]
-      );
+      const newValue = event.target.value;
+      setValue(`giaonhantsct[${index}].Tinhtrangmay`, newValue);
       setValue(`giaonhantsct[${index}].isUpdate`, 1);
     },
-    [setValue, values.giaonhantsct]
+    [setValue]
   );
 
-  const handleChangeYear = useCallback(
+  const handleChangeCactllienquan = useCallback(
     (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, index: number) => {
-      const inputValue = event.target.value;
-      setValue(`giaonhantsct[${index}].Namsx`, Number(inputValue));
-
+      const newValue = event.target.value;
+      setValue(`giaonhantsct[${index}].Cactllienquan`, newValue);
+      setValue(`giaonhantsct[${index}].isUpdate`, 1);
     },
     [setValue]
   );
@@ -106,10 +111,18 @@ export default function PhieuNXNewEditDetails({ dataPhieu }: Props) {
     (event: any, newValue: any, index: number) => {
       if (newValue) {
         // Find the selected option from taisan
-        const selectedOption = dataPhieu?.resultTS?.find((option: any) => option.ID_Taisan === newValue.ID_Taisan);
+        const selectedOption = dataPhieu?.resultTS?.find(
+          (option: any) => `${option.ID_Taisan}` === `${newValue.ID_Taisan}`
+        );
         if (selectedOption) {
           // Set the corresponding ID_Taisan value in the form state
           setValue(`giaonhantsct[${index}].ID_Taisan`, selectedOption.ID_Taisan);
+          setValue(`giaonhantsct[${index}].ID_TaisanQrcode`, selectedOption.ID_TaisanQrcode);
+          setValue(`giaonhantsct[${index}].Namsx`, selectedOption.Namsx || 0);
+          setValue(
+            `giaonhantsct[${index}].Soluong`,
+            selectedOption.MaQrCode ? 1 : selectedOption.Tonsosach
+          );
         }
       }
     },
@@ -138,19 +151,6 @@ export default function PhieuNXNewEditDetails({ dataPhieu }: Props) {
     return formattedArray.reverse().join('');
   };
 
-  const renderTotal = (
-    <Stack
-      spacing={2}
-      alignItems="flex-end"
-      sx={{ mt: 3, textAlign: 'right', typography: 'body2' }}
-    >
-      <Stack direction="row" sx={{ typography: 'subtitle1' }}>
-        <Box>Tổng tiền</Box>
-        <Box sx={{ width: 160 }}>{fCurrency(subTotal) || '-'}</Box>
-      </Stack>
-    </Stack>
-  );
-
   return (
     <Box sx={{ p: 3 }}>
       <Typography variant="h6" sx={{ mb: 3 }}>
@@ -168,9 +168,11 @@ export default function PhieuNXNewEditDetails({ dataPhieu }: Props) {
                     control={control}
                     render={() => (
                       <Autocomplete
-                        options={dataPhieu?.resultTS?.map((option: any) => option)}
+                        options={dataPhieu?.resultTS?.map((option: any) => option) || []}
                         getOptionLabel={(option: any) =>
-                          typeof option?.ent_taisan?.Tents === 'string' ? option?.ent_taisan?.Tents : String(option?.ent_taisan?.Tents)
+                          typeof option?.ent_taisan?.Tents === 'string'
+                            ? `${option?.ent_taisan?.Tents} ${option?.MaQrCode || ``}`
+                            : String(option?.ent_taisan?.Tents)
                         }
                         onChange={(event, newValue) => handleTaiSanChange(event, newValue, index)}
                         renderInput={(params) => (
@@ -179,12 +181,13 @@ export default function PhieuNXNewEditDetails({ dataPhieu }: Props) {
                             label="Tài sản"
                             variant="outlined"
                             size="medium"
-                            sx={{ minWidth: { md: 300, xs: 200 } }}
+                            sx={{ minWidth: { md: 350, xs: 200 } }}
                           />
                         )}
                         renderOption={(props, option) => (
                           <li {...props} key={option?.ID_Taisan}>
-                            {option?.ent_taisan?.Tents}
+                            {option?.ent_taisan?.Tents} (
+                            {option?.MaQrCode || `Tài sản không có mã qrcode`})
                           </li>
                         )}
                       />
@@ -197,9 +200,9 @@ export default function PhieuNXNewEditDetails({ dataPhieu }: Props) {
                     name={`giaonhantsct[${index}].Namsx`}
                     label="Năm sản xuất"
                     placeholder="0"
-                    onChange={(event) => handleChangeYear(event, index)}
                     InputLabelProps={{ shrink: true }}
-                  // sx={{ maxWidth: { md: 96 } }}
+                    disabled
+                    // sx={{ maxWidth: { md: 96 } }}
                   />
 
                   <RHFTextField
@@ -210,55 +213,26 @@ export default function PhieuNXNewEditDetails({ dataPhieu }: Props) {
                     placeholder="0"
                     onChange={(event) => handleChangeQuantity(event, index)}
                     InputLabelProps={{ shrink: true }}
-                  // sx={{ maxWidth: { md: 96 } }}
+                    disabled={values.giaonhantsct[index]?.Soluong === 1}
                   />
 
                   <RHFTextField
                     size="medium"
-                    type="number"
-                    name={`giaonhantsct[${index}].Dongia`}
-                    label="Đơn giá"
-                    onChange={(event) => handleChangePrice(event, index)}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Box sx={{ typography: 'subtitle2', color: 'text.disabled' }}>
-                            <span>&#8363;</span>
-                          </Box>
-                        </InputAdornment>
-                      ),
-                    }}
+                    name={`giaonhantsct[${index}].Tinhtrangmay`}
+                    label="Tình trạng máy"
+                    placeholder="Tình trạng máy"
+                    onChange={(event) => handleChangeTinhtrangmay(event, index)}
+                    InputLabelProps={{ shrink: true }}
                   />
 
                   <RHFTextField
-                    disabled
                     size="medium"
-                    type="string"
-                    name={`giaonhantsct[${index}].Tong`}
-                    label="Tổng tiền"
-                    placeholder="0.00"
-                    value={
-                      values.giaonhantsct[index]?.Tong === 0
-                        ? ''
-                        : formatCash(values.giaonhantsct[index]?.Tong)
-                    }
-                    onChange={(event) => handleChangePrice(event, index)}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Box sx={{ typography: 'subtitle2', color: 'text.disabled' }}>
-                            <span>&#8363;</span>
-                          </Box>
-                        </InputAdornment>
-                      ),
-                    }}
-                    sx={{
-                      minWidth: { md: 150 },
-                      maxWidth: { md: 180 },
-                      [`& .${inputBaseClasses.input}`]: {
-                        textAlign: { md: 'left' },
-                      },
-                    }}
+                    name="Cactllienquan"
+                    label="Các tài liệu liên quan"
+                    placeholder="Các tài liệu liên quan"
+                    onChange={(event) => handleChangeCactllienquan(event, index)}
+                    InputLabelProps={{ shrink: true }}
+                    // sx={{ maxWidth: { md: 96 } }}
                   />
                 </Stack>
 
@@ -293,8 +267,6 @@ export default function PhieuNXNewEditDetails({ dataPhieu }: Props) {
           Thêm tài sản
         </Button>
       </Stack>
-
-      {renderTotal}
     </Box>
   );
 }

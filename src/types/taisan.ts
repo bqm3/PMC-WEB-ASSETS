@@ -167,7 +167,7 @@ export type IPhieuGNCT = {
   ID_Taisan: string;
   ID_TaisanQrcode: string;
   Tinhtrangmay: string;
-  Cacttlienquan: string;
+  Cactllienquan: string;
   Soluong: string;
   isDelete: string;
   TaisanInfo: ITaisan;
