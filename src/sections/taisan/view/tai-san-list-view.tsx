@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import axios from 'axios';
+import { PATH_URL } from 'src/config-global';
 // @mui
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -237,7 +238,7 @@ export default function GroupPolicyListView() {
   const handleDeleteRow = useCallback(
     async (id: string) => {
       await axios
-        .put(`http://localhost:8888/api/v1/ent_taisan/delete/${id}`, [], {
+        .put(`${PATH_URL}/ent_taisan/delete/${id}`, [], {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -299,7 +300,7 @@ export default function GroupPolicyListView() {
   const handleUpdate = useCallback(
     async (id: string) => {
       await axios
-        .put(`http://localhost:8888/api/v1/ent_taisan/update/${id}`, dataSelect, {
+        .put(`${PATH_URL}/ent_taisan/update/${id}`, dataSelect, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,

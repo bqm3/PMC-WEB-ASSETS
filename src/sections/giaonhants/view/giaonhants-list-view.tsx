@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import axios from 'axios';
+import { PATH_URL } from 'src/config-global';
 // @mui
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -213,7 +214,7 @@ export default function PhieuGNListView() {
   const handleDeleteRow = useCallback(
     async (id: string) => {
       await axios
-        .put(`http://localhost:8888/api/v1/tb_giaonhan/delete/${id}`, [], {
+        .put(`${PATH_URL}/tb_giaonhan/delete/${id}`, [], {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -257,7 +258,7 @@ export default function PhieuGNListView() {
   const handleCloseRow = useCallback(
     async (id: string) => {
       await axios
-        .put(`http://localhost:8888/api/v1/tb_giaonhan/close-fast/${id}`, [], {
+        .put(`${PATH_URL}/tb_giaonhan/close-fast/${id}`, [], {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -315,7 +316,7 @@ export default function PhieuGNListView() {
   const handleUpdate = useCallback(
     async (id: string) => {
       await axios
-        .put(`http://localhost:8888/api/v1/tb_phieuGN/update/${id}`, dataSelect, {
+        .put(`${PATH_URL}/tb_phieuGN/update/${id}`, dataSelect, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,

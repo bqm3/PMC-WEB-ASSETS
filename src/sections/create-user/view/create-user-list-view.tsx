@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import axios from 'axios';
+import { PATH_URL } from 'src/config-global';
 // @mui
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -265,7 +266,7 @@ export default function GroupPolicyListView() {
   const handleDeleteRow = useCallback(
     async (id: string) => {
       await axios
-        .put(`http://localhost:8888/api/v1/ent_connguoi/delete/${id}`, [], {
+        .put(`${PATH_URL}/ent_connguoi/delete/${id}`, [], {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -324,7 +325,7 @@ export default function GroupPolicyListView() {
       setLoadingShow(true);
       confirmShow.onTrue();
       await axios
-        .get(`http://localhost:8888/api/v1/ent_connguoi/${id}`, {
+        .get(`${PATH_URL}/ent_connguoi/${id}`, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -366,7 +367,7 @@ export default function GroupPolicyListView() {
   const handleUpdate = useCallback(
     async (id: string) => {
       await axios
-        .put(`http://localhost:8888/api/v1/ent_connguoi/update/${id}`, dataSelect, {
+        .put(`${PATH_URL}/ent_connguoi/update/${id}`, dataSelect, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -414,7 +415,7 @@ export default function GroupPolicyListView() {
     async (id: string, status: string) => {
       setLoadingShow(true);
       await axios
-        .put(`http://localhost:8888/api/v1/ent_connguoi/status/${id}/${status}`, dataShow, {
+        .put(`${PATH_URL}/ent_connguoi/status/${id}/${status}`, dataShow, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,

@@ -33,6 +33,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 // components
 import { useSettingsContext } from 'src/components/settings';
 import axios from 'axios';
+import { PATH_URL } from 'src/config-global';
 
 // ----------------------------------------------------------------------
 
@@ -70,7 +71,7 @@ export default function CreateUserNewForm() {
       Gioitinh: '',
       Sodienthoai: '',
       Ghichu: '',
-      NgayGhinhan: '' || new Date() || null,
+      NgayGhinhan: new Date() || null,
     }),
     []
   );
@@ -98,7 +99,7 @@ export default function CreateUserNewForm() {
     }
     setLoading(true);
     await axios
-      .post(`http://localhost:8888/api/v1/ent_connguoi/create`, dataInsert, {
+      .post(`${PATH_URL}/ent_connguoi/create`, dataInsert, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,

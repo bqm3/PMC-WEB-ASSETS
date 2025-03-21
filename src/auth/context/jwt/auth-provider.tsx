@@ -1,6 +1,7 @@
 import { useEffect, useReducer, useCallback, useMemo } from 'react';
 // utils
 import axios, { endpoints } from 'src/utils/axios';
+import { PATH_URL } from 'src/config-global';
 //
 import { AuthContext } from './auth-context';
 import { isValidToken, setSession } from './utils';
@@ -89,7 +90,7 @@ export function AuthProvider({ children }: Props) {
       if (accessToken && isValidToken(accessToken)) {
         setSession(accessToken);
 
-        const res = await axios.post('http://localhost:8888/api/v1/ent_user/check-auth',
+        const res = await axios.post(`${PATH_URL}/ent_user/check-auth`,
           {
             headers: {
               'Content-Type': 'application/json',
@@ -140,7 +141,7 @@ export function AuthProvider({ children }: Props) {
       Password,
     };
 
-    const urlHttp = 'http://localhost:8888/api/v1/ent_user/login';
+    const urlHttp = `${PATH_URL}/ent_user/login`;
     const res = await axios.post(urlHttp, data);
     const { token, user } = res.data;
 

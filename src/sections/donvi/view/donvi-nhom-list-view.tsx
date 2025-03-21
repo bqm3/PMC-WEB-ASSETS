@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import axios from 'axios';
+import { PATH_URL } from 'src/config-global';
 // @mui
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -83,6 +84,7 @@ import HangTableRow from '../hang-table-row';
 import HangTableToolbar from '../hang-table-toolbar';
 // import DonViTableFiltersResult from '../donvi-table-filters-result';
 import HangNewForm from '../hang-new-form';
+
 
 // ----------------------------------------------------------------------
 
@@ -363,7 +365,7 @@ export default function DonViNhomListView() {
     async (id: string) => {
       await axios
         .put(
-          `http://localhost:8888/api/v1/ent_loainhom/delete/${id}`,
+          `${PATH_URL}/ent_loainhom/delete/${id}`,
 
           {
             headers: {
@@ -411,7 +413,7 @@ export default function DonViNhomListView() {
     async (id: string) => {
       await axios
         .put(
-          `http://localhost:8888/api/v1/ent_donvi/delete/${id}`,
+          `${PATH_URL}/ent_donvi/delete/${id}`,
 
           {
             headers: {
@@ -459,7 +461,7 @@ export default function DonViNhomListView() {
     async (id: string) => {
       await axios
         .put(
-          `http://localhost:8888/api/v1/ent_hang/delete/${id}`,
+          `${PATH_URL}/ent_hang/delete/${id}`,
 
           {
             headers: {
@@ -553,7 +555,7 @@ export default function DonViNhomListView() {
     async (id: string) => {
       await axios
         .put(
-          `http://localhost:8888/api/v1/ent_loainhom/update/${id}`,
+          `${PATH_URL}/ent_loainhom/update/${id}`,
           {
             Loainhom: dataSelectLoaiNhom?.Loainhom,
             ID_Loainhom: dataSelectLoaiNhom?.ID_Loainhom,
@@ -607,7 +609,7 @@ export default function DonViNhomListView() {
     async (id: string) => {
       await axios
         .put(
-          `http://localhost:8888/api/v1/ent_donvi/update/${id}`,
+          `${PATH_URL}/ent_donvi/update/${id}`,
           {
             Donvi: dataSelectDonVi?.Donvi,
             ID_Donvi: dataSelectDonVi?.ID_Donvi,
@@ -661,7 +663,7 @@ export default function DonViNhomListView() {
     async (id: string) => {
       await axios
         .put(
-          `http://localhost:8888/api/v1/ent_hang/update/${id}`,
+          `${PATH_URL}/ent_hang/update/${id}`,
           {
             Tenhang: dataSelectHang?.Tenhang,
             ID_Hang: dataSelectHang?.ID_Hang,

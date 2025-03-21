@@ -28,6 +28,7 @@ import axios from 'axios';
 import FormProvider, { RHFSelect, RHFTextField } from 'src/components/hook-form';
 import { MenuItem } from '@mui/material';
 import { useGetLoaiNhom, useGetHang } from 'src/api/taisan';
+import { PATH_URL } from 'src/config-global';
 
 // ----------------------------------------------------------------------
 
@@ -76,7 +77,7 @@ export default function GroupPolicyNewForm({ onClose }: any) {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`http://localhost:8888/api/v1/ent_hang/create`, data, {
+      .post(`${PATH_URL}/ent_hang/create`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,

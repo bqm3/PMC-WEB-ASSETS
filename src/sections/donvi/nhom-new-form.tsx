@@ -28,6 +28,7 @@ import axios from 'axios';
 import FormProvider, { RHFSelect, RHFTextField } from 'src/components/hook-form';
 import { MenuItem } from '@mui/material';
 import { useGetLoaiNhom } from 'src/api/taisan';
+import { PATH_URL } from 'src/config-global';
 
 // ----------------------------------------------------------------------
 
@@ -77,7 +78,7 @@ export default function GroupPolicyNewForm() {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`http://localhost:8888/api/v1/ent_loainhom/create`, data, {
+      .post(`${PATH_URL}/ent_loainhom/create`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,

@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import axios from 'axios';
+import { PATH_URL } from 'src/config-global';
 // @mui
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -181,7 +182,7 @@ export default function GroupPolicyListView() {
     async (id: string) => {
       await axios
         .put(
-          `http://localhost:8888/api/v1/tb_suachuats/delete/${id}`,
+          `${PATH_URL}/tb_suachuats/delete/${id}`,
 
           {
             headers: {

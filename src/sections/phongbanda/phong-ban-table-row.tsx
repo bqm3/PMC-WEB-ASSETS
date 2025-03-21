@@ -18,6 +18,8 @@ import { IGroupPolicy, IPhongbanda, IPolicy } from 'src/types/taisan';
 import Iconify from 'src/components/iconify';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import moment from 'moment';
+import { ConfirmDialog } from 'src/components/custom-dialog';
+import { Button } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -135,7 +137,7 @@ export default function CalvTableRow({
         </MenuItem>
       </CustomPopover>
 
-      {/* <ConfirmDialog
+      <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
         title="PMC thông báo"
@@ -145,7 +147,7 @@ export default function CalvTableRow({
             Xóa
           </Button>
         }
-      /> */}
+      />
     </>
   );
 }

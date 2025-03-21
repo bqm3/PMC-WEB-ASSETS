@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import axios from 'axios';
 import { validateEmail } from 'src/utils/utils';
 import { provinces } from 'src/_mock/map/provinces';
+import { PATH_URL } from 'src/config-global';
 // @mui
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -197,7 +198,7 @@ export default function GroupPolicyListView() {
     async (id: string) => {
       await axios
         .put(
-          `http://localhost:8888/api/v1/ent_nhacc/delete/${id}`,
+          `${PATH_URL}/ent_nhacc/delete/${id}`,
 
           {
             headers: {
@@ -276,7 +277,7 @@ export default function GroupPolicyListView() {
       };
 
       await axios
-        .put(`http://localhost:8888/api/v1/ent_nhacc/update/${id}`, dataInsert, {
+        .put(`${PATH_URL}/ent_nhacc/update/${id}`, dataInsert, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,

@@ -2,6 +2,7 @@ import * as Yup from 'yup';
 import { useMemo, useEffect, useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, Controller } from 'react-hook-form';
+import { PATH_URL } from 'src/config-global';
 // @mui
 import LoadingButton from '@mui/lab/LoadingButton';
 import Stack from '@mui/material/Stack';
@@ -128,7 +129,7 @@ export default function CreateUserNewForm({ currentUser }: Props) {
     try {
       if (currentUser !== undefined) {
         await axios
-          .put(`http://localhost:8888/api/v1/ent_user/update/${currentUser.ID_User}`, data, {
+          .put(`${PATH_URL}/ent_user/update/${currentUser.ID_User}`, data, {
             headers: {
               Accept: 'application/json',
               Authorization: `Bearer ${accessToken}`,
@@ -167,7 +168,7 @@ export default function CreateUserNewForm({ currentUser }: Props) {
           });
       } else {
         axios
-          .post(`http://localhost:8888/api/v1/ent_user/create`, data, {
+          .post(`${PATH_URL}/ent_user/create`, data, {
             headers: {
               Accept: 'application/json',
               Authorization: `Bearer ${accessToken}`,

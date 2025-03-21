@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import axios from 'axios';
+import { PATH_URL } from 'src/config-global';
 // @mui
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -238,7 +239,7 @@ export default function GroupPolicyListView() {
   const handleDeleteRow = useCallback(
     async (id: string) => {
       await axios
-        .put(`http://localhost:8888/api/v1/tb_taisanqrcode/delete/${id}`, {
+        .put(`${PATH_URL}/tb_taisanqrcode/delete/${id}`, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -297,7 +298,7 @@ export default function GroupPolicyListView() {
       confirm.onTrue();
       popover.onClose();
       await axios
-        .get(`http://localhost:8888/api/v1/tb_taisanqrcode/${data.ID_TaisanQrcode}`, {
+        .get(`${PATH_URL}/tb_taisanqrcode/${data.ID_TaisanQrcode}`, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -333,7 +334,7 @@ export default function GroupPolicyListView() {
       const maQrCodes = selectedQrCodes.join(',');
 
       const response = await axios.post(
-        `http://localhost:8888/api/v1/tb_taisanqrcode/generate-qr-codes?maQrCodes=${maQrCodes}`,
+        `${PATH_URL}/tb_taisanqrcode/generate-qr-codes?maQrCodes=${maQrCodes}`,
         {},
         {
           headers: {
@@ -360,7 +361,7 @@ export default function GroupPolicyListView() {
   const handleUpdate = useCallback(
     async (id: string) => {
       await axios
-        .put(`http://localhost:8888/api/v1/tb_taisanqrcode/update/${id}`, dataSelect, {
+        .put(`${PATH_URL}/tb_taisanqrcode/update/${id}`, dataSelect, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -410,7 +411,7 @@ export default function GroupPolicyListView() {
   //    // setLoadingShow(true);
   //     confirmShow.onTrue();
   //     await axios
-  //       .get(`http://localhost:8888/api/v1/tb_taisanqrcode/detail/${id}`, {
+  //       .get(`${PATH_URL}/tb_taisanqrcode/detail/${id}`, {
   //         headers: {
   //           Accept: 'application/json',
   //           Authorization: `Bearer ${accessToken}`,

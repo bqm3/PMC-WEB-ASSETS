@@ -2,6 +2,7 @@ import * as Yup from 'yup';
 import { useMemo, useEffect, useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, Controller } from 'react-hook-form';
+import { PATH_URL } from 'src/config-global';
 // @mui
 import LoadingButton from '@mui/lab/LoadingButton';
 import Card from '@mui/material/Card';
@@ -175,7 +176,7 @@ export default function PhieuGNNewForm({ currentPhieuGN, mutate }: Props) {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .put(`http://localhost:8888/api/v1/tb_phieunx/update/${currentPhieuGN?.ID_Giaonhan}`, data, {
+      .put(`${PATH_URL}/tb_phieunx/update/${currentPhieuGN?.ID_Giaonhan}`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -219,7 +220,7 @@ export default function PhieuGNNewForm({ currentPhieuGN, mutate }: Props) {
   const handleClose = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`http://localhost:8888/api/v1/tb_phieunx/close/${currentPhieuGN?.ID_Giaonhan}`, data, {
+      .post(`${PATH_URL}/tb_phieunx/close/${currentPhieuGN?.ID_Giaonhan}`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,

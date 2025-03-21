@@ -28,6 +28,7 @@ import axios from 'axios';
 import FormProvider, { RHFSelect, RHFTextField } from 'src/components/hook-form';
 import { MenuItem } from '@mui/material';
 import { useGetLoaiNhom, useGetDonvi } from 'src/api/taisan';
+import { PATH_URL } from 'src/config-global';
 
 // ----------------------------------------------------------------------
 
@@ -75,7 +76,7 @@ export default function GroupPolicyNewForm({ onClose }: any) {
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
     await axios
-      .post(`http://localhost:8888/api/v1/ent_donvi/create`, data, {
+      .post(`${PATH_URL}/ent_donvi/create`, data, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${accessToken}`,

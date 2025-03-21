@@ -2,6 +2,7 @@ import * as Yup from 'yup';
 import { useMemo, useEffect, useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, Controller } from 'react-hook-form';
+import { PATH_URL } from 'src/config-global';
 // @mui
 import LoadingButton from '@mui/lab/LoadingButton';
 import Card from '@mui/material/Card';
@@ -45,6 +46,7 @@ import { TAISAN_EXPERIENCE_OPTIONS } from 'src/_mock/_taisan';
 const STORAGE_KEY = 'accessToken';
 
 export default function GroupPolicyNewForm() {
+  const autoFocus = true;
   const router = useRouter();
 
   const settings = useSettingsContext();
@@ -104,48 +106,46 @@ export default function GroupPolicyNewForm() {
 
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
-    console.log('data', data);
-    setLoading(false);
-    // await axios
-    //   .post(`http://localhost:8888/api/v1/ent_phongbanda/create`, data, {
-    //     headers: {
-    //       Accept: 'application/json',
-    //       Authorization: `Bearer ${accessToken}`,
-    //     },
-    //   })
-    //   .then((res) => {
-    //     setLoading(false);
-    //     reset();
-    //     enqueueSnackbar({
-    //       variant: 'success',
-    //       autoHideDuration: 2000,
-    //       message: 'Tạo mới thành công',
-    //     });
-    //   })
-    //   .catch((error) => {
-    //     setLoading(false);
-    //     if (error.response) {
-    //       enqueueSnackbar({
-    //         variant: 'error',
-    //         autoHideDuration: 2000,
-    //         message: `${error.response.data.message}`,
-    //       });
-    //     } else if (error.request) {
-    //       // Lỗi không nhận được phản hồi từ server
-    //       enqueueSnackbar({
-    //         variant: 'error',
-    //         autoHideDuration: 2000,
-    //         message: `Không nhận được phản hồi từ máy chủ`,
-    //       });
-    //     } else {
-    //       // Lỗi khi cấu hình request
-    //       enqueueSnackbar({
-    //         variant: 'error',
-    //         autoHideDuration: 2000,
-    //         message: `Lỗi gửi yêu cầu`,
-    //       });
-    //     }
-    //   });
+    await axios
+      .post(`${PATH_URL}/ent_phongbanda/create`, data, {
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+      .then((res) => {
+        setLoading(false);
+        reset();
+        enqueueSnackbar({
+          variant: 'success',
+          autoHideDuration: 2000,
+          message: 'Tạo mới thành công',
+        });
+      })
+      .catch((error) => {
+        setLoading(false);
+        if (error.response) {
+          enqueueSnackbar({
+            variant: 'error',
+            autoHideDuration: 2000,
+            message: `${error.response.data.message}`,
+          });
+        } else if (error.request) {
+          // Lỗi không nhận được phản hồi từ server
+          enqueueSnackbar({
+            variant: 'error',
+            autoHideDuration: 2000,
+            message: `Không nhận được phản hồi từ máy chủ`,
+          });
+        } else {
+          // Lỗi khi cấu hình request
+          enqueueSnackbar({
+            variant: 'error',
+            autoHideDuration: 2000,
+            message: `Lỗi gửi yêu cầu`,
+          });
+        }
+      });
   });
 
   const renderDetails = (
@@ -245,7 +245,13 @@ export default function GroupPolicyNewForm() {
 
         <Grid xs={4}>
           <Stack sx={{ pt: 2, px: 2 }}>
-            <RHFTextField name="Diachi" label="Địa chỉ *" />
+            <RHFTextField
+              name="Diachi"
+              label="Địa chỉ *"
+              InputLabelProps={{
+                style: { fontWeight: 'bold', color: 'black' },
+              }}
+            />
           </Stack>
         </Grid>
 

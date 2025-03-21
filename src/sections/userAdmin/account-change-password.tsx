@@ -14,6 +14,7 @@ import Iconify from 'src/components/iconify';
 import { useSnackbar } from 'src/components/snackbar';
 import FormProvider, { RHFTextField } from 'src/components/hook-form';
 import axios from 'axios';
+import { PATH_URL } from 'src/config-global';
 
 // ----------------------------------------------------------------------
 const STORAGE_KEY = 'accessToken';
@@ -58,7 +59,7 @@ export default function AccountChangePassword() {
   const onSubmit = handleSubmit(async (data) => {
     try {
       axios
-        .post(`http://localhost:8888/api/v1/ent_user/change-password`, data, {
+        .post(`${PATH_URL}/ent_user/change-password`, data, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
